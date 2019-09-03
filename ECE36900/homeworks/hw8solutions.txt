@@ -1,0 +1,201 @@
+                       EE 369 Homework #8 Solutions (Sixth Edition)
+
+
+For problems F1 to problem F3 you are to provide three things:
+
+    ==================================================
+
+    a. Formulate the decision problem as a language membership problem (i.e.,
+    describe the language L corresponding to the decision problem). You
+    may assume that there is a standard way to encode graphs and their
+    vertices and edges as strings.
+
+    b. Sketch a proof that this language is in NP.  
+
+    c. State what else would need to be proven in order to show the
+    language NP-complete (but do not prove).
+
+    ==================================================
+
+    An example (HAMILTONIAN PATH) for parts a and b is provided as
+    reference.
+
+    The HAMILTONIAN PATH problem is the problem of recognizing, given
+    a graph G=(V,E) as input, whether or not there is a tour of the
+    nodes of the graph that visits each node exactly once. I.e., is there
+    an ordering <v_1,v_2,..., v_n> of the vertices of G, where n=|V|,
+    such that (v_i,v_(i+1))\in E for all i, 1<=i<n?
+
+    a. The language corresponding to this decision problem is:
+    HAMILTONIAN_PATH={<G>| G has a hamiltonian path}. Here, <G> is the
+    string encoding of the graph G.
+
+    b. Here is a non-deterministic polynomial algorithm description for
+    the HAMILTONIAN PATH problem, where n is the number of nodes in the
+    graph:
+
+    Guess a sequence s of n nodes.               (runtime n log n)
+    Check if the sequence s has any node twice.  (runtime < n^2)
+    Check if each pair of consecutive nodes in   (runtime n * graph arc lookup)
+    sequence s is connected in the graph.
+
+    Fail if either check failed, otherwise YES, there is a Hamiltonian path.
+
+    Note: The runtime of the n guesses is n log n because each guess
+    of a node involves guessing log n bits (it takes log n bits to
+    code which node is being guessed).
+
+    The existence of this algorithm shows that HAMILTONIAN PATH is in NP.
+
+
+
+F1. (3-COLORING) "3-COLORING" is the problem of, given three colors
+and a binary relation R on a set V of "nodes", can we assign colors to
+nodes so that no pair of nodes connected by R has the same color.
+
+(a) Let a "3 coloring" of (V,R) be a mapping f from V to colors
+{c1,c2,c3} such that for all (v1,v2)\in R, v1 and v2 are not
+mapped to the same color. Then,
+
+3-COLORING={<G>| G encodes graph with vertex set V and edge relation
+R, and there exists a 3 coloring of (V,R).}
+
+(b)
+
+To show 3-COLORING is in NP, we give a polynomial-time verifier 
+V for checking certificates c, where c is a 3 coloring 
+(i.e. a mapping f from V to {c1,c2,c3}.
+
+V(<G>, f): \\ c = f
+
+   \\ Max number of edges in R is |V|^2
+1. For each (v1,v2) in R,
+       If f(v1)=f(v2) then fail
+
+2. Succeed, yes, there is a 3 coloring (and c "certifies" this).
+    
+(c)
+According to the definition of NP-complete, we need to show that
+\forall L' \in NP, L' can be reduced to 3-COLORING in polynomial-time.
+
+But the typical approach is to show the following:
+
+Pick some language L' that is already know to be NP-complete. Prove
+that L' can be reduced to 3-COLORING in polynomial-time.
+
+
+F2. (k-INDEPENDENT) Given a graph G, an independent set is a subset X of
+the vertices of G such that no pair of vertices in X is connected by
+an edge in G. The k-INDEPENDENT-SET decision problem is defined as
+follows:
+
+Given: an undirected graph G and an integer k
+Question: Does G contain an independent set of size at least k?
+
+(a)
+k-INDEPENDENT-SET={<G>,k| G contains an independent set of size at
+least k.}
+
+(b)
+
+To show k-INDEPENDENT is in NP, we give a polynomial-time verifier 
+V for checking certificates c, where c is a subset X of G's vertices.
+
+V(<G>,k,X): \\ c = X
+
+1. \\ Runtime is O(1), a constant unit of time.
+   Verify that |X| >= k. 
+   If no, fail.
+
+2. \\ Run time is no more than (|X|^2)*(graph arc lookup).
+   For each v1 in X
+       For each v2 in X
+           If (v1,v2) is in G's edge set then fail
+
+3. Succeed, YES, G contains an independent set X of size at least k
+   (and c "certifies" this).
+
+(c)
+According to the definition of NP-complete, we need to show that
+\forall L' \in NP, L' can be reduced to k-INDEPENDENT-SET in
+polynomial-time.
+
+But the typical approach is to show the following:
+
+Pick some language L' that is already know to be NP-complete. Prove
+that L' can be reduced to k-INDEPENDENT-SET in polynomial-time.
+
+
+F3. (VERTEX-COVER) Given a graph G=(V, E), and integer k <= |V|, is there
+a subset of at most k vertices such that every edge in E has at least
+one vertex in the subset?
+
+(a)
+VERTEX-COVER={<G,k> | G=(V,E), k<=|V|, and there is a subset X of V
+such that |X|<=k and for all (v1,v2)\in E, we have v1\in X or v2\in X.}
+
+(b)
+
+To show VERTEX-COVER is in NP, we give a polynomial-time verifier 
+V for checking certificates c, where c is a subset X of G's vertices.
+
+V(<G,k>,X): \\ c = X
+
+1. \\ Runtime is O(1), a constant unit of time.
+   Verify that |X| <= k. 
+   If no, fail.
+
+   \\ Run time is no more than |E|*|X|.
+2. For each (v1,v2) in E
+     If v1 is not in X and v2 is not in X then fail
+
+3. Succeed, YES, G contains a vertex-cover set X of size at most k
+   (and c "certifies" this).
+
+(c)
+According to the definition of NP-complete, we need to show that
+\forall L' \in NP, L' can be reduced to VERTEX-COVER in
+polynomial-time.
+
+But the typical approach is to show the following:
+
+Pick some language L' that is already know to be NP-complete. Prove
+that L' can be reduced to VERTEX-COVER in polynomial-time.
+
+F4. Suppose we have problems P1 and P2. Given a polynomial-time
+reduction from P1 to P2, what can we say about the existence of an
+efficient algorithm for deciding P1 if there is an efficient
+algorithm deciding P2? Can we say the same thing about an
+efficient algorithm for deciding P2 if there is an efficient
+algorithm deciding P1?  (Here an efficient algorithm is one that
+runs in polynomial-time in the size of its input).
+
+Solution:
+
+If we have a polynomial-time reduction from P1 to P2, and if there is
+an efficient algorithm for deciding P2, we know that there is also an
+efficient algorithm for deciding P1.
+
+If we have a polynomial-time reduction from P1 to P2, and if there is
+an efficient algorithm for deciding P1, we do not know if there is an
+efficient algorithm for deciding P2 (unless we can also show that we
+have a polynomial-time reduction from P2 to P1.)
+
+F5. Suppose you are considering the difficulty of deciding some
+language that comes up in a problem you are working on. Suppose
+you decide to try to show that the new language is NP-complete.
+Explain why Cook's theorem would be useful.
+
+Solution:
+
+Cook's theorem proves that all language L' in NP can be reduced to
+the SAT problem in polynomial time.
+
+This gives us a useful tool to prove some new language is NP-complete,
+because we can simply reduce SAT to the new language.  That reduction
+will imply that any language L' in NP can be reduced to the new
+language (by first reducing it to SAT).
+
+If the new language is also known to be in NP, this proves the new
+language is NP-complete.
+

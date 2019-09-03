@@ -1,0 +1,201 @@
+EE 369 Homework 1 Solutions
+
+p. 144
+
+40.  T = {x | x=2  OR  x=2y for y in T  OR  x=y+3 for y in T}
+
+     Here, T is all natural numbers greater than 1 that are not
+     multiples of 3.  Later in the course, we learn how to prove that
+     no multiple of three is in T by mathematical induction.
+     Intuitively, this is because neither doubling a number nor adding
+     three to it can output a multiple of three if the number was not.
+
+   a. 6 does not belong to T.   It is a multiple of 3.
+   b. 7 does belong to T because it is 2*2+3
+   c. 19 does belong to T because it is 2*2*2*2+3.
+   d. 12 does not belong to T, it is a multiple of 3.
+
+
+41. M = {x | x=2  OR  x=3  OR  x=y*z for y and z in M}
+
+    Here, M is all natural numbers that have only 2s and 3s in their
+    prime factorization.
+
+   a. 6  = 2*3       belongs to M
+   b. 9  = 3*3       belongs to M
+   c. 16 = 2*2*2*2   belongs to M
+   d. 21 = 3*7       not in M
+   e. 26 = 2*13      not in M
+   f. 54 = 2*3*3*3   belongs to M
+   g. 72 = 2*2*2*3*3 belongs to M
+   h. 218 = 2*109    not in M
+
+43. W = {x | x="a"  OR  x="b"  OR  x="c"  OR x=a(y)c for y in W}
+
+   a. a(b)c          belongs to W
+   b. a(a(b)c)c	     belongs to W
+   c. a(abc)c	     not in W
+   d. a(a(a(a)c)c)c  belongs to W
+   e. a(aacc)c	     not in W
+
+45. x is a well formed integer arithmetic expression iff
+
+   x is an integer  OR
+   x is y*z, y/z, y+z, or y-z,
+      where y and z are well formed integer arithmetic expressions.
+
+46. x is a well-balanced string of parentheses iff
+
+   x is the empty string, OR
+   x is yz, where y and z are well-balanced strings of parentheses, OR
+   x is (y), where y is a well-balanced string of parentheses.
+
+47.  x is a binary string with an odd number of zeroes iff
+
+   x is 0  OR
+   x is 1y or y1 or 00y or 0y0 or y00
+     where y is a binary string with an odd number of zeroes
+
+
+Section 3.1
+
+2)  a.true   b. false   c.true   d. false
+
+11) a.true b. true c. false  d. true  e.true  f.false   g.false   h.true
+
+63) a.false
+      Consider when A={1}. B={2}, C={3}, A \cup (B X C) = {1,(2,3)},
+      but (A \cup B)X(A \cup C) = {(1,1),(1,3),(2,1),(2,3)}
+
+    b.True
+      (AXB) \cap (AXC) = {(a,b)| a \in A, (b \in B) and (b \in C)}
+      = {(a,b)| a \in A, b \in (B \cap C)}=AX(B \cap C)
+
+    c.True
+      A X \emptyset = {(a,b) | a \in A, b \in \emptyset} = \emptyset
+
+    d. False
+      Consider when A={a}.
+      \Pset (A) X \Pset (A) = {\emptyset, {a}} X {\emptyset, {a}}
+      = {(\emptyset,\emptyset),(\emptyset,{a}),({a},\emptyset),({a},{a})}
+      A^2 = A X A= {(a,a)}, \Pset (A^2)={\emptyset,{(a,a)}}
+
+    e. False
+       Consider when A={1}, B={2}, C={3}.
+       A X (B X C)= A X {(2,3)} = {(1,(2,3))}.
+       (A X B) X C = {(1,2)} X C = {((1,2),3)}.
+
+89) B={S | S is a set and S \notin S}
+
+    Part A:
+    To show that B \notin B:  (Proof by contradiction)
+
+
+    Suppose B \in B. Then B is a member of B, and must satisfy the
+    properties that are common to all elements of B. Hence it must
+    satisfy B \notin B.   But this contradicts our assumption that
+    B \in B.  Hence our assumption is false.
+    Hence B \notin B.
+
+
+    Part B:
+    To show that B \in B:  (Proof by contradiction)
+
+
+    Suppose B \notin B. But B is a set, and since B \notin B, it satisfies
+    all the properties of an element of B as defined above. But B must
+    contain all sets that satisfy B \notin B. Hence B must be a member of
+B
+    But this contradicts our assumption that  B \notin B.  Hence our
+assumption is false.
+    Hence B \in B.
+
+
+section 4.1
+3.  a. (1,-1), (-3,3)
+    b. (19,7),(41,16)
+    c. (-3,-5),(-4,1/2),(1/2,1/3)
+    d. ((1,2),(3,2))
+
+
+5a. x \rho y <--> x > -1
+ b. x \rho y <--> -2 <= y <= 2
+ c. x \rho y <--> x<= 2-y
+
+
+E1. For your answer to problem 46, show how the semantics (meaning) of
+recursive definitions is applied to define the meaning of your
+definition as the union of infinitely many finite sets.  In
+particular, what are the finite sets that are unioned to give meaning
+to your definition?
+
+
+SOLUTION TO E1:
+
+The first approximation is computed by taking the definition where the
+recursive calls (options for choosing y) are taken to be empty (there
+are no options for y).  This gives just the base case:
+
+1st Approx = {empty-string}
+
+The second approx uses the first approximation as the choices for y:
+
+2nd Approx = {empty-string, ()}
+
+The third approx uses the second as the choices for y:
+
+3rd Approx = {empty-string, (), ()(), (())}
+
+and so forth for the fourth approx:
+
+4th Approx = {empty-string, (), ()(), (()),
+    	      ()()(), ()()()(), ()()(()), (())()(), (())(()),
+	      (()()), ((()))}
+
+etc,  with the
+
+i'th Approx = {x | x=empty-string or x=yz or x=(y) where y and z are in the i-1 approx}
+
+The meaning of the recursive definition is the union of these
+approximations for all i.  Note that each approximation is contained
+in the next approximation, but we still must take this union to get a
+meaning for the definition since there is no single largest approximation.
+
+
+
+
+======================================================================
+For reference, the same question answered for problem 47:
+
+
+The first approximation is computed by taking the definition where the
+recursive calls (options for choosing y) are taken to be empty (there
+are no options for y).  This gives just the base case:
+
+1st Approx = {0}
+
+The second approx uses the first approximation as the choices for y:
+
+2nd Approx = {0,10,01,000}
+
+The third approx uses the second as the choices for y:
+
+3rd Approx = {0,                      \\from the base case
+              10,01,000,              \\because 0 is in the 2nd approx
+              110,101,0010,0100,1000, \\because 10 is in the 2nd approx
+              011,0001                \\because 01 is in the 2nd approx
+                                      \\(note that duplicate entries are not listed)
+              00000}     \\because 000 is in the 2nd approx (again, dups not listed)
+
+and so forth, with the
+
+i'th approx = {x | x is any string with 2j+1 zeroes and k ones s.t. j+k < i}
+
+You can check that the recursive definition preserves this meaning of
+"i'th approx"....in other words, if you plug the i'th approx in for
+the recursive calls, the definition will mean the i+1-th approx.
+
+The meaning of the recursive definition is the union of these
+approximations for all i.  Note that each approximation is contained
+in the next approximation, but we still must take this union to get a
+meaning for the definition since there is no single largest approximation.

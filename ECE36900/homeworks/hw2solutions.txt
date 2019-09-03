@@ -1,0 +1,405 @@
+EE 369 Homework 2 Solutions
+
+Section 1.1
+
+10
+(a) B ^ D
+(b) A ^ D
+(c) D --> (B V C)
+(d) B' ^ A
+(e) D --> C
+
+
+13
+Let H, K, A be the following statements:
+H : The horse is fresh
+K : The knight wins
+A : The armor is strong
+
+(a) H --> K
+(b) K --> (H ^ A)
+(c) K --> H
+(d) K <--> A
+(e) (A v H) --> K
+
+
+17
+(a),(b) please see the back of the textbook
+
+(c)
+ A | B | A' | B' | (A' v B') | (A' v B')' | (A ^ (A' v B')')
+-------------------------------------------------------------
+ T | T | F  | F  |   F       |   T        |      T
+ T | F | F  | T  |   T       |   F        |      F
+ F | T | T  | F  |   T       |   F        |      F
+ F | F | T  | T  |   T       |   F        |      F
+ 
+(d)
+ A | B | (A ^ B) | A' | (A ^ B) --> A'
+---------------------------------------
+ T | T |   T     | F  |     F
+ T | F |   F     | F  |     T
+ F | T |   F     | T  |     T
+ F | F |   F     | T  |     T
+ 
+(e)
+ A | B | C | A-->B | AvC | BvC | [(AvC)-->(BvC)] | (A-->B) --> [(AvC)-->(BvC)]
+------------------------------------------------------------------------------
+ T | T | T |   T   |  T  |  T  |      T          |           T
+ T | T | F |   T   |  T  |  T  |      T          |           T
+ T | F | T |   F   |  T  |  T  |      T          |           T
+ T | F | F |   F   |  T  |  F  |      F          |           T
+ F | T | T |   T   |  T  |  T  |      T          |           T
+ F | T | F |   T   |  F  |  T  |      T          |           T
+ F | F | T |   T   |  T  |  T  |      T          |           T
+ F | F | F |   T   |  F  |  F  |      T          |           T
+
+is a tautology
+
+(f)
+ A | B | B-->A | A-->(B-->A)
+-----------------------------
+ T | T |   T   |    T
+ T | F |   T   |    T
+ F | T |   F   |    T
+ F | F |   T   |    T
+ 
+is a tautology
+
+(g)
+ A | B | (A ^ B) | B' | A' | (B' v A') | (A ^ B) <--> (B' v A')
+----------------------------------------------------------------
+ T | T |   T     | F  | F  |    F      |          F
+ T | F |   F     | T  | F  |    T      |          F
+ F | T |   F     | F  | T  |    T      |          F
+ F | F |   F     | T  | T  |    T      |          F
+
+is a contradiction
+
+(h)
+ A | B | B' | (A v B' ) | (A ^ B) | (A ^ B)' | (A v B' ) ^ (A ^ B)'
+--------------------------------------------------------------------
+ T | T | F  |   T       |    T    |   F      |       F
+ T | F | T  |   T       |    F    |   T      |       T
+ F | T | F  |   F       |    F    |   T      |       F
+ F | F | T  |   T       |    F    |   T      |       T
+ 
+(i)
+ A | B | C | AVB | C'| [(AvB)^C'] | A'| A'vC | [(AvB)^C']-->A'vC
+------------------------------------------------------------------------------
+ T | T | T |  T  | F |    F       | F |  T   |      T
+ T | T | F |  T  | T |    T       | F |  F   |      F
+ T | F | T |  T  | F |    F       | F |  T   |      T
+ T | F | F |  T  | T |    T       | F |  F   |      F
+ F | T | T |  T  | F |    F       | T |  T   |      T
+ F | T | F |  T  | T |    T       | T |  T   |      T
+ F | F | T |  F  | F |    F       | T |  T   |      T
+ F | F | F |  F  | T |    F       | T |  T   |      T
+
+
+33
+(a) We have to show that A-->B and A^B can be replaced by equivalent wffs that
+use only v and ' in any compound wff.
+
+We can show that A^B <==> (A')'^(B')' (see truth table below)
+                     <==> (A'vB')' (from De Morgan's law)
+(P <==> Q means P and Q are equivalent wffs as defined in page 8 of the text
+book),
+and A-->B <==> A'vB (see truth table below), hence any A-->B and A^B can be
+replaced by equivalent wffs that use only v and ' in any compound wff.
+
+ A | B | A-->B | A' | B' | A'vB | (A')' | (B')' | A^B | (A')'^(B')'
+-------------------------------------------------------------------
+ T | T |   T   | F  | F  |  T   |  T    |  T    |  T  |    T
+ T | F |   F   | F  | T  |  F   |  T    |  F    |  F  |    F    
+ F | T |   T   | T  | F  |  T   |  F    |  T    |  F  |    F
+ F | F |   T   | T  | T  |  T   |  F    |  F    |  F  |    F
+
+(b) We have to show that AvB and A^B can be replaced by equivalent wffs that
+use only --> and ' in any compound wff.
+
+We can show that AvB <==> (A')'vB 
+                     <==> A'-->B,
+and A^B <==> ((A^B)')' 
+        <==> (A'vB')' (from De Morgan's law) 
+        <==> (A-->B')'
+
+(You can use the following truth table to verify the equivalences)
+
+ A | B | AvB | A'| B'| (A')'| (A')'vB | A'-->B 
+-----------------------------------------------
+ T | T |  T  | F | F |  T   |    T    |   T    
+ T | F |  T  | F | T |  T   |    T    |   T    
+ F | T |  T  | T | F |  F   |    T    |   T
+ F | F |  F  | T | T |  F   |    F    |   F
+
+ A | B | A^B | (A^B)'| ((A^B)')'| A'| B'| A'vB'| A-->B'
+--------------------------------------------------------
+ T | T |  T  |   F   |    T     | F | F |   F  |   F
+ T | F |  F  |   T   |    F     | F | T |   T  |   T
+ F | T |  F  |   T   |    F     | T | F |   T  |   T 
+ F | F |  F  |   T   |    F     | T | T |   T  |   T 
+
+
+37
+(a) From the truth table we can find that if one of the conjuncts of A^B is
+true and the other is unknown, then A^B is unknown, thus it is reasonable to
+define T^N=N.
+If one of the disjuncts of AvB is false and the other is unknown, from the
+truth table we can find that AvB is unknown, thus it is reasonable to define
+FvN=N.
+We can also find that the negation of A is unknown when A is unknown, so it
+is reasonable to define N'=N.
+
+For (b), (c), and (d), we define A, B, C to be the following statement:
+A: Flight 237 is on time
+B: Runway conditions are icy
+C: Flight 51 is on time
+
+We know that A is true, B is false, and C is unknown from the problem.
+
+(b) We want to know the truth value of B'^C.
+From the truth tables of three valued logic, we have
+
+ B | C | B' | B'^C
+-------------------
+ F | N | T  |  N
+ 
+Therefore the truth value of the statement is unknown.
+
+(c) We want to know the truth value of C^A'.
+From the truth tables of three valued logic, we have
+
+ C | A | A' | C^A'
+-------------------
+ N | T | F  |  F
+
+Therefore the truth value of the statement is false.
+
+(d) We want to know the truth value of C'vB'.
+From the truth tables of three valued logic, we have
+
+ C | B | C' | B' | C'vB'
+------------------------
+ N | F | N  | T  |  T
+
+Therefore the truth value of the statement is true.
+
+
+43
+Let A, B be the following statements:
+A: Merlin is a truthteller
+B: Meredith is a truthteller
+
+What Merlin said can be translated as A-->B.
+Assume first that A is true, then we know that A-->B is true too.  Consider
+the following truth table:
+
+ A | B | A-->B
+---------------
+ T | T |   T   
+ T | F |   F   
+ F | T |   T   
+ F | F |   T   
+
+The only way for A to be true and A-->B to be true is that B is also true.  So 
+Meredith is also a truthteller.
+Assume now that A is false, which means Merlin is a liar.  We show that this 
+is not possible by arriving at a contradiction.  If A is false, then we know
+that A-->B is false.  From the above truth table we can find that A-->B can
+be false only when A is true and B is false.  But we already assumed that A
+is false, which leads to a contradiction.  Thus A can't be false.
+
+We have the conclusion that both Merlin and Meredith are truthtellers.
+
+
+=============================================================================
+
+E1
+There are five variables A, B, C, D, E, each of which can be True (T) or 
+False (F). For A^B to be true, we must have A=T and B=T.  C, D, and E can
+take any value.  There are 8 possible combinations for the values of C, D,
+and E.  Since any of these combinations, along with A=T and B=T, will make
+A^B true, there are 8 models for A^B.
+
+
+E2
+To make (B-->C') true, we must have (B=T, C=F) or (B=F, C=T) or (B=F, C=F).
+Each of A, D, and E can be T or F.  There are 8 combinations of (A,D,E).
+These 8 combinations can be combined with (B=T, C=F) to get 8 models for
+(B-->C'), another 8 models with (B=F, C=T), and 8 more models with
+(B=F, C=F).  There are a total of 3x8=24 models.
+
+
+E3
+Consider A=T, B=T, C=T, D=T, E=T.  With this model A^B is true but B-->C' 
+is false.  This is a counterexample to (A^B) |= (B-->C').
+
+
+E4
+a) Every model that makes P true makes (QvR) true
+
+b) Either "every model that makes P true also makes Q true" or
+ "every model that makes P true also makes R true"
+ 
+E5
+Let P, Q, R be:
+P: AvB
+Q: A
+R: B
+
+Now we can show that P |= (QvR) since (AvB) |= (AvB), but we can't show
+that P |= Q, nor can we show that P |= R.  Consider the following
+counterexample of P |= Q and P |= R:
+
+(Let C be true, D be true, and E be true. These variables are not used
+in the formulas P, Q, and R we have chosen and so don't matter.)
+
+When A is true and B is false, P is true, but R is not, thus this is
+a counterexample of P |= R.
+When A is false and B is true, P is true, but Q is not, thus this is
+a counterexample of P |= Q.
+
+We have shown that 4a is true, but 4b is not in this example, therefore
+4a and 4b are not necessarily the same.
+
+
+===============================================================================
+
+Section 1.2
+
+2 
+Modus ponens
+
+
+3 
+Simplification
+
+
+4 
+Hypothetical Syllogism
+
+
+5
+Let I,C be the following statements:
+I: The car was involved in the hit-and-run
+C: The paint was chipped
+
+We have the following hypotheses:
+I-->C, C'
+by modus tollens gives I'
+
+We can conclude that the car was not involved in the hit-and-run.
+
+
+6
+Let B, T, C be the following statements:
+B: The weather turns bad
+T: We will leave on time
+C: The flight may be cancelled
+
+We have the following hypotheses:
+BvT, B-->C
+
+No conclusion can be reached.
+
+
+8
+Let M, T, R be the following statements:
+M: The grass needs mowing
+T: The trees need trimming
+R: We need to take the leaves
+
+We have the following hypotheses:
+(a) M^T
+(b) M-->R
+then we have
+(c) M by (a) and simplification,
+(d) R by (b), (c), and modus ponens.
+
+We can then conclude that we need to rake the leaves.
+
+
+9
+ 1) A 		hyp (sim)
+ 2) B-->C	hyp (sim)
+ 3) B		hyp
+ 4) C		2,3,mp
+ 5) A^C		1,4,con
+ 
+
+12
+To prove A'^(B-->A)-->B' is valid:
+ 1) A'		hyp
+ 2) B-->A	hyp
+ 3) B'		1,2,mt
+
+
+16
+To prove [A-->(B-->C)]^(AvD')^B-->(D-->C) is valid:
+ 1) A-->(B-->C) 	hyp
+ 2) AvD'		hyp
+ 3) B			hyp
+ 4) D		 	hyp (from deduction method)	
+ 5) D'vA                2,comm
+ 6) D-->A		5,imp
+ 7) A			4,6,mp
+ 8) B-->C		1,7,mp
+ 9) C			3,8,mp
+
+19
+To prove [A-->(B-->C)]-->[B-->(A-->C)] is valid:
+ 1) A-->(B-->C)		hyp
+ 2) B			hyp (from deduction method)	
+ 3) A			hyp (from deduction method)	
+ 4) B-->C		1,3,mp
+ 5) C			2,4,mp
+ 
+20
+To prove (A^B)-->(A-->B')' is valid:
+ 1) A^B			hyp
+ 2) ((A^B)')'		1,dn
+ 3) (A'vB')'		2,De Morgan
+ 4) (A-->B')'		3,imp
+ 
+37
+To prove (Y-->Z')^(X'-->Y)^[Y-->(X-->W)]^(Y-->Z)-->(Y-->W)
+ 1) Y-->Z'		hyp
+ 2) X'-->Y		hyp
+ 3) Y-->(X-->W)		hyp
+ 4) Y-->Z		hyp
+ 5) Y			hyp (from deduction method)	
+ 6) X-->W		3,5,mp
+ 7) Z'			1,5,mp
+ 8) Y'			4,7,mt
+ 9) (X')'		2,8,mt
+ 10) X			10,dn
+ 11) W			6,10,mp
+
+or there is another way 
+ 1) Y-->Z'		hyp
+ 2) Y-->Z		hyp
+ 3) Y			hyp (from deduction method) 
+ 4) Z'			1,3,mp
+ 5) Z			2,3,mp
+ 6) W			4,5,inc
+
+47
+Let J, L, C, T be the following statements:
+J: Jose took the jewelry
+L: Mrs. Krasov lied
+C: A crime was committed
+T: Mr. Krasov was in town
+
+We have to show that
+[(JvL)-->C]^(T')^(C-->T)-->(J') is valid:
+ 1) (JvL)-->C		hyp
+ 2) T'			hyp
+ 3) C-->T		hyp
+ 4) C'			2,3,mt
+ 5) (JvL)'		1,4,mt
+ 6) J'^L'		5,De Morgan
+ 7) J'			6,sim
+ 
+Thus the argument is valid.
+===============================================================================

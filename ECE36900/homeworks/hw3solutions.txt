@@ -1,0 +1,365 @@
+
+               EE 369 Homework 3 Solutions (Sixth Edition)
+
+
+Section 1.3
+
+1) a. true  b.false  c. false  d. true
+
+2) e. false   f.true  g.true  h. false
+
+9) d. (\exists x) (D(x) ^ S(x) ^ R(x))
+   e. (\forall x) (D(x) --> S'(x) V R'(x) )
+   f. (\forall x) (D(x) ^ S(x) --> D(x)^R(x) )
+   g. (\forall x) (D(x) --> S'(x))
+   h. S(M) --> (\forall x)(D(x)-->S(x))
+   i. R(M) ^ R(T)
+   j. (\exists x) (D(x) ^ R(x))--> (\forall y)(D(y) --> S(y))
+
+
+15) c. \forall x \forall y ( P(x) ^ S(y,x) --> C(y) )
+    d. \forall x (F(x) ->(\exists y)(C(y) ^ S(x,y)))
+    e. \exists x P(x) ^ [(\exists y) C(y) ^ S(x,y)]'
+    f. \exists x \exists y \forall z \forall w  ( C(x)^F(y)^S(x,y) --> (
+C(z) ^ F(w)--> S(z,w) ))
+
+18) c. All women love only handsome men.
+    d. There is a handsome man who loves Kathy.
+    e. Some pretty woman loves only handsome men.
+    f. John loves all pretty women.
+
+24) a. Reordering consecutive quantifiers of the same type does not
+       change the meaning of a wff. Whether objects a and b make
+       A(a,b) true does not depend on which order we select a and b,
+       but only on the identity of a and b.
+
+    b. Reordering consecutive quantifiers of the same type does not
+       change the meaning of a wff. Whether objects a and b make
+       A(a,b) true does not depend on which order we select a and b,
+       but only on the identity of a and b.
+
+    d. If one-argument relation A is true of object a, then there exists
+       an object for which A is true (namely, object a).
+
+    e. If every object makes A false or B true, and every object makes A
+       true, then every object must make B true (since it doesn't make A
+false).
+
+
+25) b. Domain = {1,2}  P={(1,2),(2,1)}
+       This makes the right hand side false since there is no x such that
+       (x, 1) and (x,2) are in P(x,y)
+
+    c. Domain = {1,2}  P={1}, Q={1}
+
+    d. Domain = {1,2}  A={1},
+         (\forall x) \not A(x) is false, since A contains 1.
+	 [(\forall x) A(x)]' is true, since
+	     [(\forall x) A(x)] is false, since A contains 1.
+         So the two are not equivalent in this model.
+Section 1.4
+
+Decide what conclusion can be reached, and justify your answer
+
+1) All flowers are plants. Pansies are flowers.
+
+ The conclusion is that pansies are plants.
+ Proof steps:
+ F(x) represent the relation that x is a flower
+ P(x) represent the relation that x is a plant
+ Pansies is a constant symbol
+
+ 1. (\forall x) F(x) --> P(x)	hyp
+ 2. F(pansies)			hyp
+ 3. F(Pansies)-->P(Pansies)	1,ui
+ 4. P(Pansies)			2,3,mp
+
+4) Some flowers are red. Some flowers are purple. Pansies are flowers.
+
+No conclusion is possible. Just because pansies are flowers,it does not make
+them either red or purple.
+
+6)  Justify each step in the proof sequence for
+
+(\exists x)[P(x)-->Q(x)]-->[(\forall x)P(x)-->(\exists x)Q(x)]
+
+    1. (\exists x)[P(x)-->Q(x)]  hyp
+    2. P(a)-->Q(a)               1,ei
+    3. (\forall x)P(x)           deduction method hypothesis
+    4. P(a)                      3,ui
+    5. Q(a)                      2,4,mp
+    6. (\exists x)Q(x)           5,eg
+
+9) Consider the wff  (\forall y)(\exists x)Q(x,y)-->(\exists x)(\forall y)Q(x,y)
+
+   a. Find an interpretation to prove that this wff is not valid.
+
+      domain is the integers, Q(x,y) is "x<y"; for every y there is an x with x<y
+      but there is no single integer x that is less than every single integer y.
+
+
+   b. Find the flaw in the following proof of this wff.
+      1. (\forall y)(\exists x) Q(x,y)    hyp
+      2. (\exists x) Q(x,y)               1,ui
+      3. Q(a,y)                           2,ei
+      4. (\forall y) Q(a,y)               3,ug
+      5. (\exists x)(\forall y)Q(x,y)     4,eg
+
+
+
+      The use of ug at step 4 is illegal because step 3 was deduced by ei from
+      step 2 \exists x Q(x,y) in which y is a free variable.
+
+11) To prove:
+   (\forall x)P(x) ^ (\exists x)Q(x) --> (\exists x)[P(x) ^ Q(x)]
+
+   1. (\forall x)P(x)    hyp
+   2. (\exists x)Q(x)    hyp
+   3. Q(a)               2,ei
+   4. P(a)               1,ui
+   5. P(a) ^ Q(a)        3,4,con
+   6. (\exists x)(P(x)^Q(x))  5,eg
+
+16) (\exists x)[R(x)vS(x)]-->(\exists x)R(x) v (\exists x)S(x)
+
+    1.  (\exists x)(R(x) V S(x))                hyp
+    2.  R(a) V S(a)                             1,ei
+    3.  (R(a))''V S(a)                          2,dn
+    4.  (R(a))'-> S(a)                          3,imp
+    5.  ((\exists x)R(x))'                      ded. method hyp
+    6.  R(a)                                    ded. method hyp
+    7.  (\exists x) R(x)                        5,eg
+    8.  R(a) -> (\exists x) R(x)                6-7, ded. method hyp eliminated
+    9.  (R(a))'                                 5,8,mt
+    10.  S(a)                                   4,9,mp
+    11.  (\exists x)S(x)                        10,eg
+    12. (\exists x)R(x))'->(\exists x)S(x)      5-11, ded. method hyp eliminated
+    13. ((\exists x)R(x))'' V (\exists x)S(x)   12,imp
+    14. (\exists x)R(x) V (\exists x)S(x)       13,dn
+
+
+19) Prove that the wff is valid or give an interpretation where it is false
+
+  [(\forall x)P(x)-->(\forall x)Q(x)]-->(\forall x)[P(x)-->Q(x)]
+
+   Consider the domain is the integers, P(x) is "x<3" and Q(x) is "x<2"
+   (The left side is true because (\forall x)P(x) is false, but the right 
+    side is false.)
+
+
+28) Formulate a predicate logic argument and prove it.
+   a. All M are P.
+      All S are M.
+      Therefore all S are P.
+
+   (\forall x)(M(x)-->P(x)) ^ (\forall x)(S(x)-->M(x)) --> (\forall x)(S(x)-->P(x))
+    A proof sequence is:
+
+   1. (\forall x)(M(x)-->P(x))     hyp
+   2. (\forall x)(S(x)-->M(x))     hyp
+   3. M(x)-->P(x)                  1,ui
+   4. S(x)-->M(x)                  2,ui
+   5. S(x)-->P(x)                  3,4,hs
+   6. (\forall x)(S(x)-->P(x))     5,ug
+
+   
+   b. No M are P.
+      All S are M.
+      Therefore no S are P.
+
+   (\forall x)(M(x)-->P'(x)) ^ (\forall x)(S(x)-->M(x)) -->(\forall x)(S(x)-->P'(x))
+
+   1. (\forall x)(M(x)-->P'(x)) hyp
+   2. (\forall x)(S(x)-->M(x))  hyp
+   3. M(x)-->P'(x)              1,ui
+   4. S(x)-->M(x)               2,ui
+   5. S(x)-->P'(x)              3,4,hs
+   6. (\forall x)(S(x)-->P'(x)) 5,ug
+
+   c. All M are P.
+      Some S are M.
+      Therefore some S are P.
+
+   (\forall x)(M(x)-->P(x))^(\exists x)(S(x)^M(x))-->(\exists x)(S(x) ^ P(x))
+
+   1. (\forall x)(M(x)-->P(x))    hyp
+   2. (\exists x)(S(x)^M(x))      hyp
+   3. S(a) ^ M(a)                 2,ei
+   4. M(a)                        3,sim
+   5. M(a)-->P(a)                 1,ui
+   6. P(a)                        4,5,mp
+   7. S(a)                        3,sim
+   8. S(a) ^ P(a)                 6,7,con
+   9.(\exists x)(S(x) ^ P(x))     8,eg
+
+   d. No M are P.
+      Some S are M.
+      Therefore some S are not P 
+
+   (\forall x)(M(x)-->P'(x)) ^ (\exists x)(S(x)^M(x))-->(\exists x)(S(x)^P'(x))
+   
+   1. (\forall x)(M(x)-->P'(x))    hyp
+   2. (\exists x)(S(x)^M(x))       hyp
+   3. S(a)^M(a)                    2,ei
+   4. M(a)-->P'(a)                 1,ui
+   5. M(a)                         3,sim
+   6. P'(a)                        4,5,mp
+   7. S(a)                         3,sim
+   8. S(a) ^ P'(a)                 6,7,con
+   9. (\exists x)(S(x)^P'(x))      8,eg
+
+29) Prove that the argument is valid using predicate logic
+    Some plants are flowers. All flowers smell sweet. Therefore, some plants smell sweet.
+    P(x),F(x),S(x)
+
+   The argument is
+   (\exists x)[P(x)^F(x)]^ (\forall y)[F(y)-->S(y)]-->(\exists x)[P(x)^S(x)]
+
+   A proof sequence is:
+   1. (\exists x)[P(x)^F(x)]        hyp
+   2. (\forall y)[F(y)-->S(y)]      hyp
+   3. P(a)^F(a)                     1,ei
+   4. F(a)-->S(a)                   2,ui
+   5. F(a)                          3,sim
+   6. S(a)                          4,5,mp
+   7. P(a)                          3,sim
+   8. P(a)^S(a)                     6,7,con
+   9. (\exists x)[P(x)^S(x)]        8,eg
+
+
+31) There is an astronomer who is not nearsighted. Everyone who wears glasses is nearsighted. 
+    Everyone either wears glasses or wears contact lenses.Therefore some astronomer wears contact lenses.
+
+   The argument is
+   (\exists x)(A(x)^N'(x)) ^ (\forall x)(G(x)-->N(x))^(\forall x)(G(x) V C(x))
+   -->(\exists x)(A(x)^C(x))
+
+   A proof sequence is:
+   1. (\exists x)(A(x)^N'(x))   hyp 
+   2. A(a) ^ N'(a)              1,ei
+   3. (\forall x)(G(x)-->N(x))  hyp
+   4. G(a)-->N(a)               3,ui
+   5. N'(a)--> G'(a)            4,cont
+   6. N'(a)                     2,sim
+   7. G'(a)                     5,6,mp
+   8. (\forall x)(G(x)V(C(x))   hyp
+   9. G(a) V C(a)               8,ui
+   10. C(a)                     7,8,ds
+   11. A(a)                     2,sim
+   12. A(a)^C(a)                10,11,con
+   13. (\exists x)(A(x)^C(x))   12,eg
+
+
+35) Every ambassador speaks only to diplomats,and some ambassador speaks to someone.
+    Therefore there is a diplomat.
+
+   The argument is
+   (\forall x)(\forall y)((A(x)^S(x,y))-->D(y))
+       ^(\exists x)(\exists y)(A(x)^S(x,y))-->(\exists x)D(x)
+  
+   A proof sequence is:
+   1.(\forall x)(\forall y)((A(x)^S(x,y))-->D(y))  hyp
+   2.(\exists x)(\exists y)(A(x)^S(x,y))           hyp
+   3.(\exists y)(A(a)^S(a,y))                      2,ei
+   4.A(a)^S(a,b)                                   3,ei
+   5.(\forall y)((A(a)^S(a,y))-->D(y))             1,ui
+   6.(A(a)^S(a,b))-->D(b)                          5,ui
+   7.D(b)                                          4,6,mp
+   8.(\exists x) D(x)	                           7,eg
+
+
+E1. 
+Consider adding one new "proof rule" to our proof system, called "converse". This
+rule allows the conclusion P -> Q whenever we have a line Q -> P , for any formulas P
+and Q. You will need this rule once in the proofs for this question. Number each proof
+line you write in the different parts with new numbers so you can refer back between
+parts, constructing one long proof. In each part, show only the new line(s).
+
+a. What happens to our proof system with this rule added? Explain, mentioning
+entailment.
+
+Things become provable that are not entailed, in fact every formula becomes provable.  
+The proof system becomes unsound/incorrect because the new rule is unsound/incorrect.
+
+b. Use the deduction method (without using the new rule) to prove A -> A.
+
+A (temporary hypothesis) -- (1)
+A (trivially from 1) -- (2)
+A->A (Discharge the temporary hypothesis by 1, deduction method.) 
+
+
+Now to prove sub problems c, d, e and f.
+ 
+[A->A] (from part b) --- (1)
+[A->A] v [A ^ A']' (addition rule) -- (2)
+([A ^ A']') v [A -> A] (commutativity. Now we have c.) -- (3)
+[A ^ A'] -> [A -> A] (imp rule. Now we have d.) -- (4)
+[A -> A] -> [A ^ A'] (converse property. Now we have e.)  -- (5)
+[A ^ A'] (Using Modus Ponens on 1 and 5. This is a contradiction. 
+So adding the converse makes the proof system unsound, and it is 
+possible to prove a contradiction.)
+
+
+E2.
+Let D be the set {1, 2, 3}. Consider a predicate logic with one one-argument relation
+symbol P (x) and one two-argument relation symbol R(x, y), along with constants a and b.
+a. How many elements are there in D \times D?
+
+   D \times D has 9 elements since each element of the ordered pair can be chosen in 3 ways.
+
+b. Give a model with domain D in which \exists x R(x, a) is false.
+
+   a=1, b=1
+   R = {(1,2),(1,3)} or we can choose R = {} also.
+   P can be any subset of D.
+
+c. How many models are there with domain D for which \forall x \forall y (R(x, y))' is true? Explain.
+
+   There is only one way to choose R. That is to set R to be the empty
+   set. P can be chosen in 8 ways since every subset of D can be
+   considered as an example of P. There are 3 ways to set a and 3 ways
+   to set b. So the total number of models satisfying the above
+   condition is 8*3*3=72.
+
+d. Give a model refuting [\forall xP (x)] -> \exists y \exists x R(x, y).
+   P = {1,2,3}
+   R = {}
+   a=1, b=1.
+
+M1.  An example:
+
+     Domain={1,2,3}
+     Mike=1, Bill=2, John=3
+
+     Hits(x,y)={ (1,2),(2,3)}
+     Alive(x)={1,2,3}
+     Tall(x)={1,2}
+
+
+M2.  There are infinitely many predicate logic models, because there
+     are infinitely many possible domain sets.
+
+M3. The domain is {1}
+    Hence Hits(x,y) may contain (1,1) or may be empty;
+    Alive(x) may contain 1 or be empty;
+    Tall(x) may contain 1 or be empty;
+    There is only one choice for each constant.
+    Hence there are 2 * 2 * 2 * 1 * 1 * 1 =8 possible models.
+
+M4. a. P does not entail Q. To see this, consider the model:
+       domain = {1,2}
+       Mike = Bill = John = 1
+       Hits = {(1,1)}
+       Alive = Tall = {}
+    This model makes Hits(Mike,John) true, because (1,1) is in the
+    interpretation of Hits, and Mike = 1, John = 1.  But it does not
+    make \forall x \forall y Hits(x,y) true, since there are pairs of
+    domain objects that are not in the interpretation of Hits, for
+    instance the pair (1,2).
+
+    b. Q does entail P, because every model of
+          \forall x \forall y Hits(x,y)
+       is also a model of Hits(Mike,John).
+
+	   
+	   

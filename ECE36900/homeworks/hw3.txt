@@ -1,0 +1,86 @@
+EE 369 Homework 3 (Sixth Edition of text)
+
+==============================================================================
+REMINDER: Collaboration must end before writing begins (on each
+problem separately).  See the initial course information handout.
+==============================================================================
+
+Below, we use the abbreviations:
+' for "not", ^ for "and",  v for "or", --> for "implies", and |= for "entails"
+"\forall" for universal quantifiers, "\exists" for existential quantifiers
+"\times" for cartesian product symbol.
+
+In preparing your solution, if you wish to use a text file, please use these abbreviations.  If other
+non-text symbols come up, ask ee369@ecn how to abbreviate them or ask on piazza.
+
+Please read sections 1.3 and 1.4 (Sixth Edition) in the Gersting textbook
+
+All problems on this homework apply to course outcome 1.
+
+
+(see p. 189 (Sixth Edition) for definitions of the calligraphic font
+ Q, N, R, and Z used in a couple of the book problems below)
+
+
+From Section 1.3:
+ problems 1, [note: in 1c, X should be x]
+          2 (use the natural interpretation for <, >, and exponentiation),
+          9,
+          15,
+          18,
+          24 (skip c),
+          25 (skip a)
+
+From Section 1.4: problems 1, 4, 6, 9, 11, 16, 19, 28, 29, 31, 35
+(watch out: your textbook likes to use the same variable name more
+than once in a given wff...like having two local variables with the
+same name in different parts of one program. You must be careful to
+note which quantifier applies to each occurrence of the variable.)
+
+
+Additional problems on predicate logic models:
+
+    Consider the predicate logic language with three constants Mike, Bill,
+    and John, and three relations Hits(x,y), Tall(x), and Alive(x). I show
+    the variables after the relation name just to indicate how many
+    arguments the relation expects.
+
+M1. Show a predicate logic model for this language.
+M2. How many predicate logic models are there for this language?
+M3. How many predicate logic models are there for this language if you
+    consider only the domain {1}?
+M4. Let P be the formula Hits(Mike, John) and Q be the formula
+    (\forall x) (\forall y) Hits(x,y).
+
+    a. Does {P} entail Q?  If not, show a predicate logic model that is
+       a counter example. If so, expand the definition of "entails" to
+       say what "{P} entails Q" means without using the word "entails".
+
+    b. Does {Q} entail P?  If not, show a predicate logic model that is
+       a counter example. If so, expand the definition of "entails" to
+       say what "{Q} entails P" means without using the word "entails".
+
+Problems from past exams (These are problems 1 and 3 from the posted sample exam 1):
+
+E1.
+Consider adding one new "proof rule" to our proof system, called "converse". This
+rule allows the conclusion P -> Q whenever we have a line Q -> P , for any formulas P
+and Q. You will need this rule once in the proofs for this question. Number each proof
+line you write in the different parts with new numbers so you can refer back between
+parts, constructing one long proof. In each part, show only the new line(s).
+a. What happens to our proof system with this rule added? Explain, mentioning
+entailment.
+b. Formally prove A -> A using a line-by-line proof without using the
+new rule.
+c. Extend the part b proof to show ([A ^ A']') v [A -> A].
+d. Extend the part c proof to show [A ^ A'] -> [A -> A].
+e. Extend the part d proof to show [A -> A] -> [A ^ A'].
+f. Extend the proof from part e to a proof of A ^ A', a contradiction.
+
+E2.
+Let D be the set {1, 2, 3}. Consider a predicate logic with one one-argument relation
+symbol P (x) and one two-argument relation symbol R(x, y), along with constants a and b.
+a. How many elements are there in D \times D?
+b. Give a model with domain D in which \exists x R(x, a) is false.
+c. How many models are there with domain D for which \forall x \forall y (R(x, y))' is true? Explain.
+d. Give a model refuting [\forall xP (x)] -> \exists y \exists x R(x, y).

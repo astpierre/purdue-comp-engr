@@ -1,0 +1,58 @@
+
+			  EE 369 Homework 4
+
+==============================================================================
+REMINDER: Collaboration must end before writing begins (on each
+problem separately).  See the initial course information handout.
+==============================================================================
+
+READING:
+
+Please read sections 2.1 and 2.2 in the Gersting textbook
+
+OUTCOMES:
+
+The problems from section 2.1 and 2.2 apply to course outcome 2.
+
+THE ASSIGNMENT:
+
+Solve the following problems.   
+From Section 2.1: problems 2, 3, 13, 21, 26, 40, 50, 59
+From Section 2.2: problems 10, 16, 40, 43, 64, 70
+
+
+E1. Argue that the "strong induction principle" (the "second induction
+principle" in your book) follows from the principle of well ordering.
+(This is Section 3.1 problem 78 on p210 of the textbook. There is a 
+hint there.)
+
+E2. What is wrong with the following proof by strong induction:
+
+    We prove a^n = 1 for all n.  (Here, ^ represents exponentiation,
+                                  so "a^n" is the variable a to the n power)
+
+    Base case:  a^0 = 1 is true by definition.
+    Inductive case: assume a^m = 1 for all m such that 0 <= m <= k.
+        We must then use the assumption to show a^(k+1) = 1.
+        Observe that a^(k+1) = (a^k)(a^k) / (a^(k-1)).
+        But by our induction hypothesis, both a^k and a^(k-1) are 1.
+        So, a^(k+1) = (1)(1)/(1) which is 1, as desired.
+
+E3. Show that if a_1, a_2, ..., a_n are n distinct real numbers, then
+exactly n-1 multiplications are used to compute the product of these n
+numbers no matter how parentheses are inserted into their product.
+(Hint: use the 2nd principle of mathematical induction and consider
+the last multiplication done).
+
+
+
+
+
+
+
+
+
+
+
+
+

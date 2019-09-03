@@ -1,0 +1,552 @@
+
+
+ ECE 369 Homework #5 Solutions (Sixth Edition)
+
+
+Section 3.1
+-----------
+5) Describe each set by listing it's elements
+
+ a. { x |x \in N and x^2 - 5x +6 = 0}
+
+    {2,3}
+
+ b. {x |x\in R and x^2 = 7}
+
+    {\sqrt(7), - \sqrt(7)}
+
+ c. { x |x \in N and x^2 - 2x -8 = 0}
+
+    {4}     (note that -2 is not in N)
+
+9) What is the cardinality of each of the following sets:
+
+ a. S = {a,{a,{a}}}
+
+    2    the members are "a" and "{a,{a}}"
+
+ b. S = {{a},{{a}}}
+
+    2    the members are "{a}" and "{{a}}"
+
+ c. S = { \empty}
+
+    1    the member is \empty
+
+ d. S = {a,{\empty},\empty}
+
+    3    the members are "a", "{\empty}"and "\empty"
+  
+e. S = {\empty,{\empty,{\empty}},{\empty,{\empty,{\empty}}}}
+     
+    3    the members are "\empty", "{\empty,{\empty}}", and
+         "{\empty,{\empty,{\empty}}}"
+
+
+
+19) Prove that if A\subseteq B and B \subseteq C, then A \subseteq C
+
+    For any x \in A, because A \subseteq B, x \in B.
+    Because B \subseteq C, x \in C. Thus A \subseteq C.
+    
+39) Let
+
+     A = {2,4,5,6,8}
+     B = {1,4,5,9}
+     C = {x | x \in Z and 2 <= x <5}
+
+    be subsets of  S = {0,1,2,3,4,5,6,7,8,9}. Find
+
+ a. A \cup B
+
+ {1,2,4,5,6,8,9}
+
+ b. A \cap B
+
+ {4,5}
+  
+ c. A \cap C
+
+ {2,4}
+     
+ d. B \cup C
+
+ {1,2,3,4,5,9}
+
+ e. A - B   
+
+ {2,6,8}
+
+ f. A'
+
+ {0,1,3,7,9}
+  
+ g. A \cap A'
+
+ \empty
+   
+ h. (A \cap B)'
+
+ {0,1,2,3,6,7,8,9}
+  
+i. C-B
+
+   {2,3}
+
+ j. (C \cap B) \cup A'
+
+  {0,1,3,4,7,9}
+
+ k.(B-A)' \cap (A-B)
+
+  {2,6,8}
+
+
+ l. (C' \cup B)'
+
+  {2,3}
+
+ m. B x C
+
+ {(1,2),(1,3),(1,4),(4,2),(4,3),(4,4),(5,2),(5,3),(5,4),(9,2),(9,3),(9,4)}
+  
+66c) A,B,C are subsets of a set S. Prove the following set identity using the
+     basic set properties. State the dual of the identity.
+
+    (A \cup C) \cap [(A \cap B) \cup (C' \cap B)] = A \cap B
+
+
+
+      (A \cup C) \cap [(A \cap B) \cup (C' \cap B)]
+    = (A \cup C) \cap [(B \cap A) \cup (B\cap C')]   (1b: commutative \cap)
+    = (A \cup C) \cap [(B \cap (A \cup C')]          (3b: dist \cap over \cup)
+    = (A \cup C) \cap [(A \cup C') \cap B]           (1b: commutative \cap)
+    = [(A \cup C) \cap (A \cup C')] \cap B           (2b: associative \cap)
+    = [A \cup (C \cap C')] \cap B                    (3a: dist \cup over \cap)
+    = (A \cup \empty) \cap B                         (5b: complement for \cap)
+    =  A \cap B                                      (4a: identity for \cup)
+  
+The dual is
+(A \cap C) \cup [(A \cup B) \cap (C' \cup B)] = A \cup B
+
+83. Prove that the set Z X Z is denumerable.
+
+Solution:
+An enumeration of the set is shown by the path through the array
+
+
+
+(0,0)   (0,1)---(0,-1)  (0,2) --- ...
+  |    /       /        /      .
+  |   /       /        /      .
+  |  /       /        /      /
+(1,0)   (1,1)   (1,-1)  (1,2)
+       /        /       /
+      /        /       /
+     /        /       /
+(-1,0)  (-1,1)  (-1,-1) (-1,2)
+  |    /       /
+  |   /       /
+  |  /       /
+(2,0)   (2,1)   (2,-1)   (2,2)
+        /
+       /
+      /
+
+86. Use Cantor's diagonalization method to show that the set
+of all infinite strings of the letters {a,b} is not countable.
+
+
+Solution:
+
+ Assume that the set has an enumeration
+
+     s_11 s_12 s_13 s_14 ...
+     s_21 s_22 s_23 s_24 ...
+     s_31 s_32 s_33 s_34 ...
+     s_41 s_42 s_43 s_44 ...
+     .
+     .
+     .
+
+ where each s_ii is either a or b. Now construct an
+     infinite string s = s_1 s_2 s_3 s_4...  such that
+     s_i=a if s_ii=b, and s_i=b, otherwise. Then s differs
+     from every string in the enumeration, yet is a member
+     of the set. This is a contradiction, so the set is
+     uncountable.
+
+
+
+Section 3.2
+-----------
+
+
+23)  A new car can be ordered with a choice of 10 exterior colors;
+7 interior colors;automatic,3-speed or 5 speed transmission; with or
+without airconditioning; with or without power steering; and with or
+without the option package that contains the power door lock and the
+rear window defroster.How many different cars can be ordered?
+
+Solution:
+   (10)(7)(3)(2)(2)(2) = 1680
+
+
+
+24) In #23, how many different cars can be ordered if the option package
+comes only on a car with an automatic transmission?
+       
+
+
+Solution:
+  (10)(7)(1)(2)(2)(2) + (10)(7)(2)(2)(2)(1) = 1120
+
+
+Problems 31-34 concern the set of three digit numbers (between 100 and 999
+inclusive)
+
+33) How many are divisible by 4?
+
+Solution:
+	
+	There are 900 numbers between 100 and 999 inclusive.
+	Every 4th integer is divisible by 4. 
+	Thus 900/4=225. (If this division is not a whole number, which way 
+				it would round will depend on the endpoints. Since this 
+				is we would not have to worry about this.)
+
+	Alternatively,
+     (9)(5)(3)  //middle digit even,third digit 0,4,8
+   + (9)(5)(2)  //middle digit odd third digit 2 or 6
+     = 135 + 90 = 225.
+	 
+34) How many are divisible by 4 or 5?
+Solution:
+
+	Using the principle of inclusion and exclusion (introduced in the next sextion 3.3), 
+	the answer will be # divisible by 4  +  # divisible by 5 - # divisible by 20. 
+	= 900/4 + 900/5 - 900/20 = 225 + 180 - 45 = 360
+
+	Alternatively, 
+    225 (numbers divisble by 4) + (9)(5)(1)  //middle digit odd,third digit 0 (see q35 below)
+                                + (9)(10)(1) //third digit 5
+   = 225 + 45 + 90 = 360
+
+35) How many are divisible by 4 and 5?
+
+Solution:
+	
+	Divisible by 4 and 5 is the same as being divisible by 20.
+	
+	Thus 900/20=45.
+
+	Alternatively,
+    (9)(5)(1) //middle digit even,third digit 0
+     = 45
+
+36) How many are divisible by neither 4 nor 5?
+
+Solution:
+    900 - 360 =540.
+
+     
+   
+For #56 and #61, a hand consists of 1 card drawn from a
+standard 52-card deck with flowers on the back and 1 card
+drawn from a standard 52-card deck with birds on the back.
+
+58) How many hands consist of a pair of aces?
+
+Solution:
+   (4)(4) = 16
+
+63) How many hands have a face value of less than 5?
+
+Solution:
+   Face value less than 5 can occur in the disjoint ways
+   shown below:
+
+   flower face value       bird face value
+         1                   1,2,or 3
+         2                   1 or 2
+         3                     1
+
+ Each has (4)(4) ways of occurring so the total is (6)(16) =96.
+
+
+ 
+Section 3.3
+-----------
+
+5) In a group of 24 people who like rock, country, and classical music,
+14 like rock, 17 like classical, 11 like both rock and country, 9 like
+rock and classical, 13 like country and classical and 8 like country,
+rock and classical. How many like country?
+
+Solution:
+  24 = 14 + 17 + x - 11 - 9 - 13 + 8  //Use the principle of inclusion and exclusion
+  so x = 18
+
+
+8) Among a bank's 214 customers with a checkings or savings account,
+189 have checkings accounts, 73 have regular savings accounts, 114
+have money market savings accounts, and 69 have both checkings and
+regular savings accounts.  No customer is allowed to have both regular
+savings and money market savings accounts.
+         
+a) How many customers have both checking and money market savings
+accounts?
+     
+Solution:
+
+Let A = checking account set, B = regular savings set C =money market
+savings set
+
+Using 3-way inclusion/exclusion:
+
+|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C|
+                     + |A \cap B \cap C|
+so
+              214 = 189 + 73 + 114 - 69 - |A \cap C| - 0 + 0
+
+so |A \cap C| = 93.
+
+
+b) How many customers have a checking account but no savings account?
+
+Solution:
+ |A-(B \cup C)| = |A| - |A \cap(B \cup C)| by example 29
+                = |A| - |(A \cap B) \cup (A \cap C)|
+                = |A| - (|A \cap B| + |A \cap C|) by example 28  
+                            because (A \cap B) and (A \cap C) are disjoint
+               = 189-(69+93) = 27.
+
+
+17) How many cards must be drawn from a standard 52-card deck to guarantee
+2 cards of the same suit?
+
+Solution:
+    5 -- Use the pigeonhole principle with 4 suits as bins, 5 cards as items.
+
+
+Section 3.4
+-----------
+
+9) In how many different ways can you seat 11 men and 8 women in a row?
+
+Solution:
+  19!   (they are all distinct objects)
+
+
+ 
+11) In how many different ways can you seat 11 men and 8 women in a row if
+no 2 women are to sit together?
+                            
+     
+Solution:
+
+  11! C(12,8) 8! <---   arrange the women
+   |    |
+   |   select 8 of 12
+   |   slots between the
+   |   men to fill with
+   |   a woman each.
+   |
+ arrange the men
+
+
+#24 to #28 concern a 5 card hand taken from a standard 52 card deck.
+
+12) In how many different ways can you seat 11 men and 8  women around a
+circular table? (Only relative positions in the circle can be
+distinguished).
+  
+Solution:
+
+Seat one person in one chair anywhere in the circle--the position does
+not matter.  Choose seats for the remaining 18 people from the
+remaining 18 positions relative to the first person, which gives (18!).
+                            
+
+
+13) In how many different ways can you seat 11 men and 8  women around a
+circular table if no 2 women are to sit together?
+
+(Only relative positions in the circle can be distinguished).
+  
+Solution:
+Seat one man in one chair. Choose seats for the remaining 10 men in
+positions relative to the first man in 10! ways. Each woman must be
+seated to a man' s right giving 11 candidate locations for women out
+of which 8 must be chosen...in one of C(11,8) ways.  Then arrange the
+8 women in these 8 chosen locations, giving 8! arrangements of women.
+The answer is 10! C(11,8) 8!
+
+
+24) How many hands contain 4 queens?
+  
+Solution:
+
+  (1)(1)(1)(1) C(48,1) =48
+
+
+26)  How many hands have all diamonds?
+
+  C(13,5)  //select all 5 cards from the diamonds
+
+  
+27) How many hands contain cards from all 4 suits?
+
+ 4C(13,2)C(13,1)C(13,1)C(13,1)   //pick the suit that has 2 cards,select the
+                                 //two cards, then select the 1 from the
+                                 //remaining suits)
+
+
+28) How many hands consist of all face cards?  (jack, queen, and king are
+'face' cards)
+
+Solution:
+  C(12,5)  Select all 5 cards from the face cards
+  
+
+
+65) A bookstore displays a shelf of 5, 3, and 4 copies respectively of
+the top three bestsellers. How many distinguishable arrangements of
+these books are there if books with the same title are not
+distinguishable?
+
+Solution:
+
+     12!/(5!3!4!)  Using the method of example 57
+
+
+
+74) Eight identical antique pie safes are sold at a furniture auction to three bidders
+
+a) In how many ways can this be done?
+
+Solution:
+
+Set the safes in a row along with two partitions. There are C(10,2)
+ways to do this (choosing the 2 partition positions among the 10
+positions in the row). Hence the solution is C(10,2), or equivalently
+C(10,8).
+
+
+b) In how many ways can this be done if bidder A gets only 1 safe?
+
+Solution:
+  
+  C(8,1) //This is like part a, but with 7 safes and 2 bidders, as the   
+         //first safe and first partition are now fixed.
+
+
+
+83) a) A turtle begins at the upper left corner of an n x n grid and makes
+his way to the lower right corner. Along the way he can move only right or
+down.
+(See figure in the book) How many possible paths can the turtle take?
+(Hint: Each path can be described as a sequence of R (right) and D(down)
+moves )
+
+Solution:
+
+A path sequence has lenght 2n and is composed of n 'R's and n 'D's in
+any order.  There are C(2n,n) ways to select the positions for the n 'R's.
+
+b) Relate the answer in part (a) to the Catalan sequence of numbers.
+
+Solution:
+
+ C(2n,n) = (n+1)C(n)
+
+
+Section 3.6
+-----------
+
+1d) Expand the expression using the binomial theorem: (a-4)^4
+
+Solution:
+
+(a-4)^4 = C(4,0)a^4 + C(4,1)a^3(-4) + C(4,2)a^2(-4)^2 +C(4,3)a(-4)^3
+ + C(4,4)(-4)^4
+        = a^4 - 16a^3 + 96a^2 - 256a + 256
+
+5) Find the fifth term in (3a+2b)^7
+
+Solution:
+   C(7,4)(3a)^3(2b)^4 = 15120(a^3)(b^4)
+
+15) Prove that 
+    C(k,k) + C(k+1,k) + ... + C(n,k) = C(n+1,k+1) for 0<=k<=n
+   
+(hint: use induction on n for a fixed k and use pascal's formula)
+
+Solution:
+
+Basis: n=k: C(k,k) = C(k+1,k+1)  true because both = 1
+Assume for n=l, C(k,k) + C(k+1,k) + .. C(l,k) = C(l+1,k+1)
+Then for n=l+1,
+C(k,k) + ... C(l,k) + C(l+1,k) 
+= c(l+1,k+1) + C(l+1,k) by I.H.
+= C((l+1)+1,k+1) by Pascal's formula
+QED
+
+
+
+
+Extra Problems
+---------------
+
+
+E1. Suppose f is a function from finite domain D to finite range R, where
+    number of elements in D is larger than the number of elements in R.
+    Prove that f is not one-to-one.
+
+Solution: By definition, a function must map every element of the
+          domain to some element in the range. Let each element in the
+ range be a bin, and place an element of the domain in a
+          particular bin iff it maps to that element of the range.
+          Then by the pigeonhole principle, at least 2 elements of the
+          domain must map to 1 bin since |D| > |R| and both are
+          finite. Hence f cannot be one-to-one.
+
+
+E2. How many students from the 50 states must be enrolled at Purdue to
+    guarantee that at least 100 come from the same state?
+
+Solution: We have 50 bins, 1 for each state. We could place 1 student in
+          bin 1, 1 student in bin 2, and so on to bin 50. Then repeat this
+          process 98 times more to get 99 students in each bin. Now   
+          if a student is put into a bin there will be 100 students in
+          that bin. Hence the minimum enrollement must be 99*50 + 1 =
+          4951.  (Here, we have used the generalized pigeonhole principle)
+
+E3. Prove that at a party where there are at least 2 people, there are
+    2 people who know the same number of people there.
+
+Solution:
+
+We assume that "knows" is symmetric: i.e. if person A knows person B,
+then person B knows person A.
+
+Let n be the number of people present. Create a bin for each number in
+the range [0,n-1].  Place a person in a bin if that bin's number is
+the number of people the person knows at the party.  Note that we
+merely need to prove that two people are in the same bin.  But there
+are n bins and n people, so the pigeonhole principle does not
+immediately apply.
+
+So, first, consider the case where someone is placed in bin n-1. This
+means that this person knows everyone, and thus everyone knows this
+person.  This implies that noone can be placed in bin 0. Therefore,
+all n people are placed in one of the n-1 bins in [1,n-1] and thus, by
+the pigeonhole principle, two are in the same bin, concluding this
+case.
+
+It remains to show the result in the case where noone is placed in bin
+n-1.  But then all n people must be placed in the n-1 bins [0,n-2],   
+and thus, by the pigeonhole principle, two are in the same bin again.
+
+Q.E.D. 
+

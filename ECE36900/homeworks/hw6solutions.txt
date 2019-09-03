@@ -1,0 +1,958 @@
+ ECE 369 Homework #6 Solutions (Sixth Edition)
+
+
+Section 2.4
+-----------
+
+10) T(1)=1  T(2)=2 T(3)=3
+    T(n)= T(n-1)+2T(n-2)+3T(n-3)  n>3
+
+    Solution: 1, 2, 3, 10, 22
+
+12) Prove the property of Fibonacci numbers:  F(n)=5F(n-4)+3F(n-5) for
+n>=6
+
+ F(n) = F(n-2) + F(n-1)
+          = F(n-3) + F(n-4) + F(n-2) + F(n-3)
+          = 2F(n-3) + F(n-4) + F(n-2)
+          = 2[F(n-4) + F(n-5)] + F(n-4) + [F(n-3) + F(n-4)]
+          = 5F(n-4)+ 3F(n-5)
+
+
+17) Prove the property of the Fibonacci numbers for n>=1
+    F(2)+F(4)+....+F(2n)=F(2n+1)-1
+
+  n=1: F(2)=F(3)-1  or 1=2-1    (true)
+     Assume true for n=k: F(2)+ ... F(2k) = F(2k+1)-1
+     Show true for n=k+1: F(2)+ ... F(2(k+1)) = F(2(K+1)+1) -1
+
+     F(2)+....+F(2(k+1))
+   = F(2)+....F(2k)+F(2(k+1))
+   = F(2k+1)-1 + F(2(K+1))       inductive hypothesis
+   = F(2k+3) -1                  recurrence relation
+   = F(2(K+1)+1)-1
+
+
+Section 2.5
+-----------
+
+2. Solve the recurrence relation subject to the basis step:
+
+    F(1)=2
+    F(n)=2F(n-1) + 2^n for n>=2
+ 
+The recurrence relation matches Equation(6) with c=2 and g(n) = 2^n. From
+equation(8) the solution is 
+
+F(n) = 2^(n-1)(2) + \sum(i=2 to n) 2^(n-i)2^i = 2^n + \sum(i=2 to n) 2^n = n(2^n)
+
+3.  T(1)=1
+     T(n)=2T(n-1) + 1 for n>=2
+
+ The recurrence relation matches Equation(6) with c=2 and g(n) = 1. From
+equation(8) the solution is 
+
+T(n) = 2^(n-1)(1) + \sum(i=2 to n) 2^(n-i)(1) =  2^(n-1) + ...+2+1 = 2^n - 1
+
+8. Solve the recurrence relation subject to the basis step by using the 
+expand, guess, and verify approach.
+
+S(1)=1
+S(n)=nS(n-1)+n!
+
+S(n)=nS(n-1)+n!
+    =n[(n-1)S(n-2)+(n-1)!]+n!
+    =n(n-1)S(n-2)+n!+n!
+    =n(n-1)S(n-2)+2(n!)
+    =n(n-1)[(n-2)S(n-3)+(n-2)!]+2(n!)
+    =n(n-1)(n-2)S(n-3)+3(n!)
+
+We guess that 
+S(n)=n(n-1)...(3)(2)S(1)+(n-1)(n!)
+    =n(n!)
+
+We now need to verify that the guess is correct by mathematical induction.
+
+Base case: n=1.  S(n)=1(1!)=1.  (base case is correct).
+Assume that for n=k, S(k)=k(k!) (Induction hypothesis)
+We now need to show that for n=k+1, S(k+1)=(k+1)((k+1)!)
+
+S(k+1)=(k+1)S((k+1)-1)+(k+1)!
+      =(k+1)S(k)+(k+1)!
+      =(k+1)[k(k!)]+(k+1)!   (by induction hypothesis)
+      =k[(k+1)(k!)]+(k+1)!
+      =k((k+1)!)+(k+1)!
+      =(k+1)((k+1)!)
+as needed.
+
+
+
+21. T(1) = 5, T(2) = 11, T(n) = 5T(n-1)-6T(n-2) \forall n >= 3
+
+t^2 - 5t + 6 = (t-2)(t-3) = 0 has 2 roots.
+
+r1 = 2, r2 = 3.
+
+So, 
+
+T(1) = 5 = p + q
+T(2) = 11 = p*r1 + q*r2 = 2p + 3q.
+
+Thus we see, p = 4 and q = 1.
+
+T(n) = 4*2^(n-1) +3^(n-1)
+
+Let's check T(3) and T(4)
+ 	T(3) = 4*2^(3-1) + 3^(3-1) = 4*2^2 + 3^2 = 16 + 9 = 25
+	T(3) = 5T(3-1) - 6T(3-2) = 5T(2) - 6T(1) = 5*11 - 6*5 = 55-30 = 25
+And 
+	T(4) = 4*2^(4-1) + 3^(4-1) = 4*2^3 + 3^3 = 32 + 27 = 59
+	T(4) = 5T(4-1) - 6T(4-2) = 5T(3) - 6T(2) = 5*25 - 6*11 = 125 - 66 = 59
+
+For comparison, we studied a different method in class. 
+The answer is different but still provides a correct closed form expression.
+
+T(n) = alpha * r1^n + beta * r2^n
+
+T(1) = 2a + 3b = 5
+T(2) = a*2^2 + b*3^2 = 11
+
+Solving for a and b we get
+
+a = 2
+b = 1/3
+
+Let's check T(3) and T(4)
+	T(3) = 2 * 2^3 + (1/3) * 3^3 = 16 + 9 = 25
+And
+	T(4) = 2 * 2^4 + (1/3) * 3^4 = 32 + 27 = 59
+
+
+
+22. A(1) = 7, A(2) = 18, A(n) = 6A(n-1) - 8A(n-2) \forall n >= 3
+
+t^2 - 6t + 8 = (t-2)(t-4) = 0 has 2 roots.
+
+r1 = 2, r2 = 4
+
+So, 
+
+A(1) = 7 = p + q
+A(2) = 18 = p*r1 + q*r2 = 2p + 4q
+
+Thus we see, p = 5 and q = 2
+
+A(n) = 5*2^(n-1) + 2*4^(n-1)
+
+Let's check A(3) and A(4)
+ 	A(3) = 5*2^(3-1) + 2*4^(3-1) = 5*2^2 + 2*4^2 = 20 + 32 = 52
+	A(3) = 6A(3-1) - 8A(3-2) = 6A(2) - 8A(1) = 6*18 - 8*7 = 52
+And 
+	A(4) = 5*2^(4-1) + 2*4^(4-1) = 5*2^3 + 2*4^3 = 168
+	A(4) = 6A(4-1) - 8A(4-2) = 6A(3) - 8A(2) = 6*52 - 8*18 = 168
+
+For comparison, we studied a different method in class. 
+The answer is different but still provides a correct closed form expression.
+
+T(n) = alpha * r1^n + beta * r2^n
+
+T(1) = 2a + 4b = 7
+T(2) = a*2^2 + b*4^2 = 18
+
+Solving for a and b we get
+
+a = 5/2
+b = 1/2
+
+Let's check T(3) and T(4)
+	T(3) = (5/2) * 2^3 + (1/2) * 4^3 = 20 + 32 = 52
+And
+	T(4) = (5/2) * 2^4 + (1/2) * 4^4 = 40 + 128 = 168
+
+
+
+28. F(1) = -10, F(2) = 40, F(n) = -10F(n-1) - 25F(n-2) \forall n >= 3
+
+t^2 + 10t + 25 = 0 has a single repeated root
+
+r = -5
+
+F(1) = -10 = p
+F(2) = pr + qr = (-10)*(-5) + q*(-5) = 50 - 5q = 40
+
+So, 
+50 - 5q =	 40
+-5q	 =	-10
+q	 =	 2
+
+Thus we have p = -10, q = 2
+
+F(n) = (-10)(-5)^(n-1) + 2(n-1)(-5)^(n-1)
+
+Let's check F(3) and F(4)
+ 	F(3) = (-10)(-5)^(3-1) + 2(3-1)(-5)^(3-1) = (-10)(-5)^(2) + 2*2(-5)^(2) =  -250 + 100 = -150
+	F(3) = -10F(3-1) - 25F(3-2) = -10F(2)- 25F(1) = -10*40 - 25*(-10) = -150
+And 
+	F(4) = (-10)(-5)^(4-1) + 2(4-1)(-5)^(4-1) = (-10)(-5)^(3) + 2*3(-5)^(3) = 1250 + (-750) = 500
+	F(4) = -10F(4-1) - 25F(4-2) = -10F(3) - 25F(2) = (-10)(-150) - 25*40 = 1500 - 1000 = 500
+
+For comparison, we studied a different method in class. 
+The answer is different but still provides a correct closed form expression.
+
+T(n) = (a + n*b)*r^n
+
+T(1) = (a + 1*b)*(-5)^1 = -10
+T(2) = (a + 2*b)*(-5)^2 = 40
+
+Solving for a and b we get
+
+a = 12/5
+b = -2/5
+
+Let's check T(3) and T(4)
+	T(3) = (12/5 + 3*-2/5)*(-5)^3 = -150
+And
+	T(4) = (12/5 + 4*-2/5)*(-5)^4 = 500
+
+
+
+Section 2.6
+-----------
+
+15) In Selection Sort, the index of the maximum item in a list must be
+found. This requires comparisons between list elements. In an
+n-element (unsorted) list how many such comparisons are needed in the
+worst case to find the maximum element?  How many are needed in the
+average case?
+
+
+ n-1 compares are always needed --every element after the first must
+ be considered a potential new maximum.
+
+16) Define the basic operation as the comparison of list elements and
+ignoring the amount of work required to exchange list elements, write
+a recurrence relation for the amount of work done by selection sort
+on an n-element list.
+
+    C(1)=0 (no comparisons are required since a 1-element list is
+    always sorted) C(n)= (n-1)+C(n-1) (n-1 compares to find the
+    maximum element + # of compares to sort the list minus the last
+    element
+
+          for n>=2
+
+
+17) Solve the recurrence of (16).
+
+  This is a first order linear recurrence relation with constant
+  coefficients. By equation (8) of section 2.4. the solution is
+
+C(n) = 1^(n-1)(0) + \sum(i=2 to n)(1)^(n-i)(i-1) = (n-1)n/2 18)
+MergeSort requires comparing elements from each of two sorted lists to
+see what goes next into the combined sorted list.Given the following
+pairs of lists perform a merge and count the number of comparisons to
+merge the two lists into one.
+
+a. 6,8,9 and 1,4,5
+b. 1,5,8 and 2,3,4
+c. 0,2,3,4,7,10 and 1,8,9
+
+
+    a. the merged list is 1,4,5,6,8,9
+       3 comparisons - 6 vs 1,6 vs 4,6 vs 5
+
+    b. the merged list is 1,2,3,4,5,8
+       4 comparisons - 1 vs 2, 5 vs 2, 5 vs 3, 5 vs 4
+
+    c. the merged list is 0,1,2,3,4,7,8,9,10
+       8 comparisons
+
+19) When will the maximum number of comparisons take place while
+merging 2 sorted lists?  If the lengths of the lists are r and s, what
+is the maximum number of comparisons?
+
+The maximum number of comparisons takes place when the algorithm needs
+to compare the last element of the two lists against each other.  In
+this case every element that is added to the merged list except the
+last requires a comparison, so r+s-1 are done.
+
+20) Write a recurrence relation for the number of comparisons between
+list elements done by MergeSort in the worst case. Assume n=2^m.
+
+    C(1) = 0  ( a 1 element list is already sorted)
+    C(n) = 2C(n/2) + (n-1) for n=2^m n>=2
+
+    (C(n/2) comparisons are needed for each half, n-1 comparisons are
+    needed to merge the two sorted halves)
+
+21)  Solve the recurrence in (20).
+
+ This is in the form of equation (1) with c=2, and g(n)=n-1. By
+ equation (6) the solution is
+
+C(n) = 2^(log(n))(0) + \sum(for i=1 to log n) 2^[(logn)-i](2^i -1)
+     = nlogn - n +1
+
+22) Compare the worst case behaviour of Selection Sort and Merge Sort
+for n=4,8,16,32
+
+ For selection sort  C(n) = n(n-1)/2  For mergesort C(n) = n logn - n
+ +1
+
+        selection sort     mergesort
+
+n=4             6              5
+n=8            28             17
+n=16          120             49
+n=32          496            129
+
+
+Section 4.1
+-----------
+
+10) Let S={0,1,2,4,6} Test the following relations on S for
+reflexivity, symmetry, transitivity, and antisymmetry.
+
+a) \rho={(0,0),(1,1),(2,2),(4,4),(6,6),(0,1),(1,2),(2,4),(4,6)}
+
+Solution: reflexive,antisymmetric
+
+b) \rho={(0,1),(1,0),(2,4),(4,2),(4,6),(6,4)}
+
+Solution: symmetric
+   
+c) \rho={(0,1),(1,2),(0,2),(2,0),(2,1),(1,0),(0,0),(1,1),(2,2)}
+   
+Solution: symmetric, transitive
+
+d) \rho={(0,0),(1,1),(2,2),(4,4),(6,6),(4,6),(6,4)}
+
+Solution: reflexive, symmetric, transitive
+
+e) \rho=\empty
+   
+Solution: symmetric, antisymmetric, transitive
+
+17) Find the reflexive, symmetric and transitive closures of each of
+the relations in (8) above.
+
+Solution:
+
+a) reflexive closure = \rho itself
+   symmetric closure - add (1,0), (2,1), (4,2), (6,4)
+   transitive closure - add (0,2), (1,4), (2,6), (0,4), (0,6),
+  (1,6)
+
+b) reflexive closure - add (0,0), (1,1), (2,2), (4,4), (6,6)
+   symmetric closure - \rho itself
+   transitive closure - add (0,0), (1,1), (2,2), (2,6) (4,4),
+   (6,6), (6,2)
+
+c) reflexive closure - add (4,4), (6,6)
+   symmetric closure = transitive closure = \rho itself
+
+d) \rho is its own closure with respect to all three properties
+
+e) reflexive closure - add (0,0), (1,1), (2,2),  (4,4), (6,6)
+   symmetric closure = transitive closure = \rho itself
+
+
+20) Does it make sense to look for the closure of a relation with
+respect to the following properties? Why or why not?
+
+a) irreflexive property
+Solution: No- if the relation is irreflexive, it is its own
+irreflexive closure.  If the relation is not irreflexive, there
+must be some x \in S with (x,x) in the relation; extending the
+relation will not remove this pair,so no extension can
+be irreflexive.
+   
+b) asymmetric property
+   
+Solution: No- if the relation is asymmetric, it is its own asymmetric
+closure.
+If the relation is not asymmetric, there must be two pairs (x,y) and
+(y,x) or one pair (x,x) in the relation; extending the relation will
+not remove these pairs,so no extension can be asymmetric.
+
+
+24) Given the partial orderings in Exercise 20, name any least elements,
+minimal elements, greatest elements, and maximal elements.
+
+a. S= {a,b,c}  p={(a,a),(b,b),(c,c),(a,b),(b,c),(a,c)}
+
+Solution: a is minimal and least
+          c is maximal and greatest
+b. S= {a,b,c,d}  \rho={(a,a),(b,b),(c,c),(d,d),(a,b),(a,c)}
+
+Solution: a and d are minimal
+          b, c, d are maximal
+
+c. S={\empty,{a},{a,b},{c},{a,c},{b}} A p B <-> A \subseteq B
+
+Solution: \empty is minimal and least
+          {a,c} and {a,b} are maximal
+
+30e) Let \rho be a binary relation on a set S. Then a binary
+relation called the inverse of \rho, denoted \rho^-1 is defined
+x \rho^-1 y <-> y \rho x. Prove that if \rho is a transitive relation
+on a set S, then \rho^-1 is transitive.
+
+Solution : Let x \rho^-1 y and y \rho^-1 z. Then y \rho x and z \rho y. 
+By the transitivity of \rho , z \rho x and therefore x \rho^-1 z.
+
+40)
+
+a) Given the partition {1,2} and {3,4} of the set S={1,2,3,4}, list
+the ordered pairs in the corresponding equivalence relation.
+
+Solution: {(1,1),(2,2),(3,3),(4,4),(1,2),(2,1),(3,4),(4,3)}
+
+b) Given the partition {a,b,c} and {d,e} of the set S={a,b,c,d,e},
+list the ordered pairs in the corresponding equivalence relation.
+
+Solution: {(a,a),(b,b),(c,c),(d,d),(e,e),(a,b),(b,a),(a,c),(c,a),(b,c),
+(c,b),(d,e),(e,d)}
+
+43) Let S= N X N and \rho be a binary relation on S defined by
+(x,y) \rho (z,w) <-> x+y=w+z.
+Show that \rho is an equivalence relation on S and describe the
+resulting equivalence classes.
+
+Solution:
+
+Reflexive: (x,y) \rho (x,y) because x+y = x+y
+
+Symmetric: if (x,y) \rho (z,w) then x+y = z+w so z+w = x + y and
+(z,w) \rho (x,y)
+
+Transitive: if (x,y) \rho (z,w) and (z,w) \rho (s,t)
+then x+y = z+w and z+w = s+t so x+y = s+t and (x,y) \rho (s,t)
+
+The equivalence classes are sets of ordered pairs whose components
+add to the same value.
+
+46) Given two partitions \pi1 and \pi2 of a set S, \pi1 is a refinement
+of \pi2 if each block of \pi1 is a subset of a block of \pi2, Show
+that the refinement is a partial ordering on the set of all partitions 
+of S.
+
+Reflexive: \pi1 <= \pi1 because each block of \pi1 is a subset of
+itself due to reflexivity of set inclusion.
+
+Antisymmetry: Suppose that \pi1 is a refinement of \pi2 and \pi2 is a
+refinement of \pi1.  Then each block x in \pi1 is a subset of some
+block y in \pi2, and that block y in \pi2 is a subset of some block z
+in \pi1, by the definition of refinement. But x is thus a subset of z,
+and both are blocks in \pi1. This implies that x=z and then that
+x=y. Therefore, each block in \pi1 is also in \pi2, showing that \pi1
+and \pi2 are the same.  Thus the assumption that \pi is a refinement
+of \pi2 and \pi2 is a refinement of \pi1 implies that \pi1 =
+\pi2. Hence refinement is antisymmetric.
+
+Transitivity: Suppose that \pi1 is a refinement of \pi2 and \pi2 is a
+refinement of \pi3.  Let b be a block in \pi1. By the definition of
+refinement, b is a subset of a block c in \pi2, and again by the  
+definition, c is a subset of a block d in \pi3. But then b is a subset
+of d. Hence each b in \pi1 is a subset of a block in \pi3.  Hence
+refinement is transitive.
+
+54) Find the number of ways in which 5 different jobs can be assigned to
+3 identical processors so that each processor gets atleast one job.
+
+Solution:
+
+Counting ways of assigning 5 different jobs to 3 identical processors
+is just counting the size-3 partitions of 5 distinct objects. So,
+there are S(5,3) ways, referring back to problems 48 through 53.  The
+numbers 5 and 3 are small enough that S(5,3) can be computed by hand
+in terms of smaller values from Stirling's triangle, as in problem
+52.  Doing this yields S(5,3)=25.
+
+However, without looking at this more general solution or any previous
+unassigned problems, S(5,3) can be directly computed as follows.
+
+Note that there are only two patterns of partition possible:  
+     (a) One block of three objects and two single-object blocks
+or   (b) Two blocks of two objects and a single-object block.
+
+We can count the way to fill partitions in each pattern, being careful
+to divide to remove overcounting where there are duplicate block sizes.
+
+Pattern (a) (3,1,1) can be filled C(5,3)C(2,1)C(1,1) / P(2,2) ways,
+where the denominator results from the two different ways of counting
+any two single-object partitions that result.  i.e. if the jobs are A,
+B, C, D, and E, the partition {A,B,C}{D}{E} is the same as
+{A,B,C}{E}{D} and is counted both ways.  This expression evaluates to
+10 ways to fill pattern (a).
+
+Likewise pattern (b) (2,2,1) can be filled C(5,2)C(3,2)C(1,1) / P(2,2)
+ways, which evaluates to 15 ways.
+
+Totalling the ways to fill both patterns there are 10 + 15 = 25 ways
+to partition the jobs onto the identical processors.
+
+
+Section 4.4
+-----------
+
+2) See the figures on page 312. Which are functions? For those that
+are functions, which are onto? 
+Which are one-to-one?
+
+Solution:
+
+a) is a function, one-to-one but not onto
+b) is not a function
+c) is a one-to-one, onto function
+d) is an onto function but not one-to-one.
+
+10) Which of the following are functions from the domain to the 
+codomain given? Which functions are one-to-one?
+Which functions are onto? Describe the inverse function for 
+any bijective function.
+
+g) f: Z^2 --> N where f is defined by f(x,y) = x^2 + 2y^2.
+
+Solution: function. 
+f(x,y)=9 for (x,y)= (1,2) and (-1,-2), hence the function is 
+not one-to-one. Since no (x,y) \in Z X Z can map to f(x,y)=7, the 
+function is not onto. Since it is not one-one or onto, no inverse exists.
+
+h) f: N-->N where f is defined by f(x)= {x/2 if x is even;
+x+1 if x is odd}
+
+Solution: function , onto
+Since f(4)=2 and f(1)=2 the function is not one-to-one.
+
+i) g:R->R where g is defined by g(x) = 1/sqrt(x+1)
+
+Solution: not a function
+If x< -1, g(x) is not real, ie not in the codomain. Hence all elements
+of the domain do not map to the codomain.
+ 
+
+j) f: N->N where f is defined by f(x) = {x+1 if x is even; x-1 if 
+x is odd }
+
+
+Solution: bijection f^-1:N->N where f^-1 = {x+1 if x is even;
+ x-1 if x is odd }
+
+
+
+
+15) Let A={x,y} and let A* be the set of all strings of finite
+length made of symbols from A. A function f:A*->A* is defined as: 
+For s in A*, f(s) is the string obtained by writing the 
+characters of s in reverse order. Is s one-to-one? Prove or
+disprove. Is f onto? Prove or disprove.
+
+
+Solution:
+f is both one-to-one and onto. If  x=f(s1)=f(s2) then both s1
+and s2 are the reverse of x, and so s1=s2. 
+Hence f is one to one. Given any string s in A*
+let y be its reverse.Then f(y)=s, so f is onto.
+
+27d) Let S be a set and let A be a subset of S.The characteristic
+function of A is a function c_A:S->{0,1}
+with c_a(x)=1 exactly when x \in A.
+Is it true that for any set S and any subsets A and B of S, 
+c_(A \cup B) = c_A(x) + c_B(x)?
+
+Solution: No. Let S={1,2,3} A={1,2} B={2,3}. Then 
+c_(A \cup B)(2)=1 but c_A(2) + c_B(2)=1+1.
+
+
+32) The following functions map R to R. Give an equation for
+(f o g) and (g o f) in each case.
+a) f(x)=6x^3, g(x)=2x
+
+Solution: (g o f) = 12(x^3). (f o g) =48(x^3).
+
+b) f(x)=(x-1)/2, g(x)=4x^2.
+
+Solution: (g o f) = x^2 - 2x + 1 . (f o g) =(4(x^2)-1)/2
+
+36) Let f and g be bijections, f:S->T and g:T->U. Then f' and g'
+exist. Also, (g o f) is a bijection from S to U.
+Show that (g o f)' = (f' o g').
+
+Solution: 
+
+f':T->S, g':U->T, so (f' o g'):U->S. For any s \in S, let f(s)=t and
+g(t)=u. Then (f' o g') o (g o f)(s) = f'(g'(u))=f'(t)=s. Also for any
+u \in U, (g o f) o (f' o g')(u) = g(f(s)) = g(t)=u. 
+Then (f' o g') o (g o f) = i_S and (g o f) o (f' o g')=i_U, so
+f' o g' = (g o f)'.
+
+50)
+Prove that S(m,n) the number of ways to partition a set of m 
+elements into n blocks, is equal to 1/n! times the number of 
+onto functions from a set with m elements to a set with n elements.
+
+Solution:
+Each onto function f:M-->N determines a partition of M where the
+blocks are the elements of M that map to the same element of
+n. So, P_f = {B_n | n\in N} where B_n = {m \in M | f(m)=n}. For
+each partition of M, there are many onto functions that correspond
+to it in this manner.
+
+
+For a given onto function from a set with m elements to a set 
+with n elements, any permutation of the n images would give a 
+different onto function but would determine the same partition 
+of m objects into n blocks. Hence dividing the number of onto 
+functions by n!, the number of image permutations, will give S(m,n).
+
+
+61) Prove, by finding constants that satisfy the definition of 
+order of magnitude, that f=theta(g) if  f(x)=3x^3-7x and 
+g(x)=x^3/2.
+
+Solution: 
+For example, n_0=2,c_1=1,c_2=6.
+
+f(x)-g(x)=(5/2)(x^3)-7x=x[(5/2)(x^2)-7]>0 if x>=n_0.
+6g(x)-f(x)=3(x^3)-3(x^3)+7x>0 if x>=n_0.
+
+QED.
+
+62) Prove that log(x^2+3) is theta(log(x)).
+
+Solution:
+Let f(x)=log((x^2)+3) and g(x)=log(x).
+Pick n_0=9, c_1=1, c_2=3.
+f(x)-g(x)=log((x^2)+3)-log(x)=log(x+(3/x))>=0 if x>=n_0.
+3g(x)-f(x)=log(x^3)-log((x^2)+3)=log(x/(1+3/(x^2)))>=0 if x>=n_0, since
+3/(x^2) will be less than 1.
+
+QED.
+
+
+Section 8.1
+-----------
+
+5) Determine whether the following structures [S,.] are semigroups, 
+monoids,groups, or none of these. Name the identity element in any
+monoid or group structure.
+
+h) S={1,2,3,5,6,10,15,30}; x.y = least common multiple of x and y
+
+Solution: Monoid, i=1 , we cannot find an inverse for x \in S,
+          hence not a group
+
+i) S= N X N; (x_1,y_1).(x_2,y_2) = (x_1,y_2)
+
+Solution: Semigroup. No identity element exists.
+
+j) S = N X N; (x_1,y_1).(x_2,y_2) = (x_1 + x_2, y_1y_2);
+
+Solution: Monoid, i=(0,1). No inverse can be found.
+
+k) S=set of even integers. .=addition.
+
+Solution: Group; i=0.
+
+l) S=odd integers, .=addition
+
+Solution: Not a semigroup, S is not closed under .
+
+m) S=set of all polynomials in R[x] of degree \lesseq 3; .= polynomial 
+addition1
+
+Solution: Group, i= the 0 polynomial
+
+n) S=set of all polynomials in R[x] of degree \lesseq 3; .= polynomial 
+addition
+
+Solution: Not a semigroup, - S not closed under .
+
+o)
+
+   S = {  | 1 z | ; x \in Z } ;   . = matrix multiplication
+          | 0 1 |
+
+
+Solution: Group, i= | 1 0 |
+                    | 0 1 |
+
+
+p) S={1,2,3,4} ; . = .(mod 5)
+
+Solution: Group, i=1.
+
+q) S= R - {-1} ; x.y = x+y+xy
+
+Solution: Group, i=0.
+
+
+r) S= {f | f: N->N} ; . = function addition, that is
+(f+g)(x)= f(x) + g(x).
+
+Solution: Monoid, i = function mapping every x to 0.
+  
+
+19)  In any group [G,.] show that
+
+a) i' = i.
+
+Solution: i=i.i' (property of inverse)
+=i' (property of identity), hence i = i'.
+
+b)  (x')' = x for any x \in G.
+
+Solution: (x')'=i.(x')'=(x.x').(x')'
+=x.(x'.(x')') (associative property)
+=x.i
+=x
+so x=(x')'.
+
+
+22a) Let [S,.] be a monoid with identity i, and let x \in S.
+An element x_L' in S is a left inverse of x if x_L'.x=i.
+An element x_R' in S is a right inverse of x if x.x_R' = i.
+Show that if every element in a monoid [S,.] has both a left inverse
+and a right inverse, then [S,.] is a group.
+
+
+Solution:
+
+x_L' = x_L'.i = x_L'.(x.x_R') = (x_L'.x).x_R' = i.x_R' = x_R'
+so x_L' = x_R' and this element is x'. Therefore every element has an
+inverse, and [S,.] is a group.
+
+
+
+Additional Problems
+-------
+
+E1. The Lucas numbers are given by L(n) = L(n-1) + L(n-2) with L(0)=2,
+L(1)=1.
+
+    (a) Show that L(n) = F(n-1) + F(n+1) for n > 1 and F() the
+    Fibonacci nums
+    (b) Give an explicit formula for L(n)
+
+
+  a. Proof by method of strong induction:
+
+   Base case:  For n=2:
+               L(2) = L(1) + L(0) = 1 + 2 =3.
+               F(2-1) + F(2+1) = F(1) + F(3) = 1 + 2 = 3.
+               Hence L(2) = F(2-1) + F(2+1).
+
+  Assume that the statement holds for n = r  where 1< r <=k
+  ie L(r) = F(r-1) + F(r+1) for 1< r <=k
+
+  To show that L(k+1) = F(K) + F(k+2) :
+
+  By definition: L(k+1) = L(k) + L(k-1)
+                       = F(k-1) + F(K+1) + F(k-2) + F(k)   .. using
+                       the
+hypothesis
+                       = [F(k-1) + F(k-2)] + [F(k+1) +F(k)]
+                       = F(k) + F(K+2)        ..by definition of
+                       Fibonacci
+numbers.
+
+
+  b. L(n) = L(n-1) + L(n-2)
+     The characteristic equation is r^2 - r - 1 =0.  (same as for the
+fibonacci numbers!)
+
+     This has roots  r1= (1 + \sqrt(5))/2 and r2 = (1- \sqrt(5))/2 .
+
+     Hence L(n) = a1(r1^n) + a2(r2^n)
+
+     Using the initial conditions L(0)=2 and L(1) =1,
+     L(1) = 1 = a1(r1) + a2(r2)
+     L(0) = 2 = a1 + a2
+
+      Solving, a1= 1, a2 =1.
+
+     Hence L(n) = r1^n + r2^n, 
+        with r1= (1 + \sqrt(5))/2 and r2 = (1- \sqrt(5))/2 .
+
+E2. Find the solution to S(n) = 2S(n-1) + S(n-2) - 2S(n-3) for n>2,
+with
+    S(0) = 3, S(1) = 6, and S(2) = 0.
+    Hint: one root of the characteristic equation is 1.
+
+    The characteristic equation is r^3 -2(r^2) - r^1 +2 =0 with roots
+    r=1, r=2 and r=-1
+
+    Hence the solution has the form S(n) = a1(1^n) + a2(2^n) +
+    a3((-1)^n).
+
+   S(0) = 3 = a1 + a2 + a3.
+   S(1) = 6 = a1 + 2a2 -a3.
+   S(2) = 0 = a1 + 4a2 +a3.
+
+   Solving, a1=6, a2=-1 ,a3=-2.
+
+   Hence the solution is S(n) = 6 - 2^n -2((-1)^n).
+
+E3. Find the solution to S(n) = 6S(n-1) - 12S(n-2) + 8S(n-3) for n>2,
+    with S(0) = -5, S(1) = 4, and S(2) = 88.
+    Hint: one root of the characteristic equation is 2.
+
+    The characteristic equation is r^3 - 6r^2 + 12r - 8 = 0.
+    This can be factored as (r-2)^3 =0 .
+    There is a single root r=2 of multiplicity 3.
+
+    The solution has the form S(n) = [a1 + a2 n + a3 (n^2)](2^n).
+
+    S(0) = -5 = a1.
+    S(1) = 4  = (a1 + a2 + a3) 2  = 2a1 + 2a2 + 2a3 = -10 + 2a2 + 2a3.
+    S(2) = 88 = (a1 +2a2 + 4a3) 4 = 4a1 + 8a2 + 16a3 = -20 + 8a2 +
+    16a3.
+
+    Solving, a1 =-5, a2=1/2, a3=13/2
+
+    Hence the solution is S(n)= [-5 + n/2 + (13/2)(n^2)](2^n).
+
+E4. What is the general form of the solutions to a linear homogeneous
+    recurrence relation with constant coefficients if its
+    characteristic
+    equation has roots 1,1,1,1,-2,-2,-2,3,3,-4?
+
+    The general form is (a1 + a2*n + a3*(n^2) + a4*(n^3))(1^n) +
+                        (a5 + a6*n + a7*(n^2))((-2)^n) +
+                        (a8 + a9*n)(3^n) +
+                        a10*((-4)^n).
+
+E5. What is the general form of the particular solution of the linear
+    nonhomogeneous recurrence relation
+              S(n) = 6S(n-1) - 12S(n-2) + 8S(n-3) + g(n)
+    when:
+    (a) g(n) = n^2 ?
+    (b) g(n) = 2^n ?
+    (c) g(n) = n(2^n) ?
+    (d) g(n) = (-2)^n ?
+    (e) g(n) = (n^2)(2^n) ?
+
+    The characteristic equation for the associated homogeneous
+    relation
+    is r^3 - 6r^2 +12r -8 =0 with a single root r=2 of multiplicity 3.
+
+
+    (a) c1(n^2) +c2n +c3
+
+    (b) c0(n^3)(2^n)
+
+    (c) (n^3)(c1*n + c0)(2^n)
+
+    (d) c0(-2)^n
+
+    (e) (n^3)(c2*(n^2) + c1*n + c0)(2^n)
+
+E6. Find all solutions of the recurrence relation
+                 S(n) = -5S(n-1) - 6S(n-2) + 42(4^n).
+    Then find the solution with initial conditions S(1) = 56 and S(2)
+                 = 278.
+
+    The associated homogeneous recurrence relation is 
+                      S(n) = -5S(n-1) - 6S(n-2)
+    with characteristic equation r^2 + 5r +6 = 0,
+    which has roots r=-2 and r=-3.
+
+    This has a solution of the form a_h(n)= a1(-2)^n + a2(-3)^n.
+
+    The particular solution has the form c*(4^n).
+
+    Substituting this into the recurrence relation
+         c(4^n) = (-5)*[c*(4^(n-1))] - 6* c*(4^(n-2)) +42(4^n).
+                = (-5c/4)(4^n) - (6c/16)(4^n) +42(4^n).
+     ie  c = (-5c/4)-(6c/16) +42
+         which gives c = 16
+
+    Hence all solutions have the form S(n)= a1(-2)^n + a2(-3)^n +
+    16(4^n).
+
+    S(1) = 56 = a1(-2) + a2(-3) + 64
+    S(2) = 278 = a1(4) + a2(9) + 256
+
+    Solving, a1 = 1, and a2 = 2,
+
+    hence the solution is S(n) = ((-2)^n) + 2((-3)^n) + 16(4^n).
+
+
+
+E7. Determine whether each of the following are linear homogeneous
+recurrence relations with constant coefficients.  For each that is,
+determine its degree. For each that is not, say why not.
+    
+a)  S(n) = 5 S(n-3)
+
+    True. Degree = 3.
+  
+    
+b)  S(n) = nS(n-1) + S(n-2)
+
+    False. The coefficient n is not a constant.
+    
+c)  S(n) = S(n-1) + S(n-2)
+
+    True. Degree =2
+    
+d)  S(n) = S(n-1) + n
+     
+    False. This is not homogeneous.
+
+e)  S(n) = S(n-3) + 5S(n-4) + 6
+
+    False. This is not homogeneous.
+
+
+E8. Solve the following recurrence relations together with the initial
+    conditions given.  (5 points each part, here)
+     
+a)  S(n) = 2S(n-1) with S(0)=3   
+  
+    The characteristic equation is (r-2) = 0.  It has a single root
+    r=2.
+  
+    Hence the solution has the form S(n)= a*(2^n) for some constant a.
+    Since S(0) =3, we have 3=a*(2^0)   giving a=3
+     
+    Hence the solution is S(n) = 3*(2^n)
+               
+b)  S(n) = S(n-1) with S(0)=2
+ 
+    Since each term is equal to the previous for n>=0, and S(0)=2, we
+    have
+    S(n)=2.
+     
+c)   S(n) = 5S(n-1) - 6S(n-2) with S(0)=1 and S(1)=0 
+
+     The characteristic equation is  r^2-5r+6 =0.  this has roots r=2
+     and 
+r=3.
+     Hence the solution has the form S(n) = a*(2^n) + b*(3^n)  with
+     a,b 
+constants.
+
+     To find a and b:
+     S(0)=1  hence  1=a*(2^0) + b*(3^0)   --> 1 = a+b
+     S(1)=0  hence  0=a*(2^1) + b*(3^1)   --> 0 = 2a+3b
+     Solving, we get a=3 and b=-2
+  
+     Hence the solution is S(n) = 3*(2^n) - 2*(3^n)
+
+d)   S(n) = 4S(n-1) - 4S(n-2) with S(0)=6 and S(1)=8
+
+     The characteristic equation is r^2-4r + 4=0. This has one
+     repeated root,r=2, with multiplicity = 2 .
+
+     Hence the solution has the form S(n) = a*(2^n) + b*n*(2^n)
+ 
+     Since S(0)=6 we have  6 = a + b*0 = a  --> a=6
+    
+     Since S(1)=8 we have  8 = a*(2^1) + b*1*(2^1)  --> 8=6*2 + b*2
+     --> b=-2
+
+     Hence the solution is S(n) = 6*(2^n) - 2*n*(2^n)
+
+

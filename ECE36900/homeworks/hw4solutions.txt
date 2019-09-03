@@ -1,0 +1,238 @@
+               EE 369 Homework 4 Solutions (Sixth Edition)
+
+Section 2.1
+
+2. Given P-->Q then Q'-->P' is the contrapositive and Q-->P is the converse. The inverse is P'-->Q'. To which of 
+the other three is the inverse equivalent?
+ 
+   P'-->Q' is the contrapositive of the converse Q-->P, so the inverse and the converse are  
+   equivalent.
+
+3. Provide counterexamples:
+  a. Every geometric figure with 4 right angles is a square.
+     counterexample: A nonsquare rectangle.
+  b. If a real number is not positive,then it must be negative.
+     counterexample:  0
+  c. All people with red hair have green eyes or are tall.
+     counterexample:     a short,blue eyed person with red hair.
+      
+  d. All people with red hair have green eyes and are tall.
+    counterexample: a short person with red hair
+
+13. Prove that the sum of even integers is even..(do a proof by contradiction)
+
+Given n even integers x_1,x_2,...,x_n, assume that
+x_1+x_2+...+x_n=S is odd, then we know from the definition of odd and even
+numbers that
+x_1=2*k_1, x_2=2*k_2,...x_n=2*k_n for some integers k_1,k_2,...k_n,
+and S=2*k+1 for some integer k.
+We then have
+x_1+x_2+...+x_n=2(k_1+k_2+...+k_n)=S=2*k+1
+and we can get 2(k_1+k_2+...+k_n-k)=1, where k_1+k_2+...+k_n-k is some integer.
+This is a contradiction since 1 is not even.
+
+21. If a number x is positive, so is x+1. (do a proof by contraposition)
+  The contrapositive is: if x+1<=0  then x<=0. If x+1<=0, then x<=-1<0,so x<0 and therefore x<=0.
+
+
+26. If n is an even prime number, then n = 2. 
+    Assume not. Then there exists an even prime number p not equal to
+    2. Since p is even
+
+       p=2k  for some k>=1.
+    
+    Since p is not equal to 2, k>1.Thus both 2 and k divide p, contradicting p is prime.
+
+
+40. Prove that \sqrt(3) is irrational.
+
+
+ Assume that \sqrt(3) is rational. Then \sqrt(3) = p/q
+where p and q are integers q \noteq 0, and p and q have no 
+common factors (other than +1 or -1). If \sqrt(3) =p/q then
+3=p^2/q^2 or 3q^2=p^2. Then 3 divides p^2, so 3 divides p.
+Thus 3 is a factor of p or 9 is a factor of p^2, and the 
+equation 3q^2=p^2 can be written 3q^2=9*x or q^2=3*x. Then
+3 divides q^2 so 3 divides q. Therefore 3 is a common factor
+of p and q, a contradiction.
+
+50. Prove or disprove: The sum of any 3 consecutive integers is even.
+ Counterexample 2+3+4=9
+
+
+59. For every positive integer n, 2^n + 1 is prime.
+
+ Counterexample: 9=2^3+1 and 9=3*3 so is not prime.
+
+Section 2.2:
+
+10. 1^4+2^4+...+n^4 =  n(n+1)(2n+1)(3n^2+3n-1)/30
+
+   P(1): 1^4: 1(1+1)(2+1)(3+3-1)/30 =2.3.5/30=1 true
+     Assume P(k): 1^4 + 2^4 +... + k^4 = k(k+1)(2k+1)(3k^2+3k-1)/30
+     show P(k+1):  1^4 + 2^4 +... (k+1)^4
+                 = (k+1)(k+2)(2k+3)(3(k+1)^2 + 3(k+1) -1)/30
+                 = (K+1)(6k^4+39k^3+91k^2+89k+30)/30
+
+       1^4+2^4+..+ (k+1)^4     left side of P(k+1)
+       =k(k+1)(2k+1)(3k^2+3k-1)/30 +(k+1)^4   using P(k)
+       =(k+1)[k(2k+1)(3k^2+3k-1)/30 + (k+1)^3]
+       = (K+1)(6k^4+39k^3+91k^2+89k+30)/30   right side of P(k+1)
+
+
+16.  2+6+16+...+2.3^(n-1) = 3^n-1
+  
+   P(1): 2*3^0 = 3^1-1 or 2=3-1      true
+     Assume P(k): 2+6+18+....2*3^(k-1) = 3^k-1
+     show P(k+1): 2+6+18+....2*3^k  = 3^(k+1) -1
+
+     2+6+18+ ....+2*3^k       left side of P(k+1)
+     = 3^k-1+2*3^k           using P(k)
+     = 3*3^k-1                
+     = 3^(k+1) -1             rigth side of P(k+1)
+
+      
+
+40. a. Try to use induction to prove that 1+1/2+1/4 +..+1/2^n <2 for n>=1  
+What goes wrong? 
+   
+ P(1): 1+1/2<2             true
+     Assume P(k): 1+1/2+...+ 1/2^k <2
+     Show P(k+1): 1+1/2+...+1/2^(k+1) <2
+
+     1+1/2+...+1/2^(k+1)      left side of P(k+1)
+     = 1 +1/2 +... 1/2^k + 1/2^(k+1) 
+     < 2+ 1/2^(k+1)       using P(k)
+
+    but 2+1/2^(k+1)  is not less than 2
+
+ b. Prove that 1+1/2+1/4+...+1/2^n = 2- 1/2^n  for n>=1
+thus showing that 1+1/2+1/4 +..+1/2^n <2 for n>=1
+
+    P(1): 1+1/2 = 2-1/2   true
+
+   Assume P(k): 1+1/2+..+1/2^k = 2-1/2^k
+
+   Show P(k+1): 1+1/2+...+1/2^(k+1) = 2-1/2^(k+1)
+           1+1/2+..+1/2^k+1/2^(k+1)
+         = 2 - 1/2^k + 1/2^(k+1)    using P(k)
+         = 2- 1/2^(k+1)
+
+Since 2-1/2^n <2 for n>=1, we conclude that
+1+1/2+1/4 +..+1/2^n <2 for n>=1
+
+
+43. Prove that 3^2n + 7 is divisible by 8 for every positive integer n.
+    P(1): 3^2+7 = 9 +7 =16 and 8|16 true
+    Assume P(k): 8|3^2k+7 so 3^2k+7=8m for some integer m
+    We then have 3^2k=8m-7.
+    Show P(k+1): 8|3^2(k+1) +7
+ 
+     3^2(k+1) +7 = 3^(2k+2)+ 7 
+     = (8m-7)9 +7    using  P(k)
+     = 72m-56
+     = 8(9m-7) where 9m-7 is an integer, so 8|3^2(k+1) +7
+
+
+64. See the book for the problem statement.
+
+  P(1) is true. Assume P(k): in ANY set of k computers all have 
+the same manufacturer. Show p(k+1): in ANY set of K+1 computers, all have 
+the same manufacturer. Show P(k+1) : in ANY set of K+1 computers all have
+the same manufacturer.
+But this fails for k=1;  i.e. P(1)->P(2) fails.
+This is because implicitly we assume that there is at least one  
+computer in the intersection of the two different sets of computers
+in the induction step(with HAL and without HAL).  This is not true when
+k=1.
+
+
+70.  Prove that any amount of postage greater than or equal to  12 cents can be
+     built using only 4 and 5 cent stamps.
+ 
+    P(12) : 12= 4+4+4
+    P(13) : 13= 4+4+5
+    P(14) : 14= 5+5+4
+    P(15) : 15= 5+5+5
+
+Now assume P(r) is true for any r, 12<=r<=k, k>=15. 
+Consider P(k+1) 
+We know that (k+1)-4=k-3 cent postage can be built using only 4 and 5 cent
+stamps, for k>=15 (from induction hypothesis).  Using the combination of
+4 and 5 cent stamps for k-3, and add one 4-cent stamp, we form a combination
+of using 4 and 5 cent stamps only for the postage of k+1 cent. 
+
+
+E1. Argue that the "strong induction principle" (the "second induction
+principle" in your book) follows from the principle of well ordering.
+
+
+Assume that the principle of well ordering is valid.
+Let P be a property for which 
+
+1. P(1) is true
+
+2. (\forall k)[P(r) true for all r, 1<=r<=k ->P(k+1) true]
+
+ Let T be the subset of the positive integers defined by
+
+   T={t|P(t) is not true}
+
+We will show that T is the empty set.
+
+If T is a nonempty set then by the principle of well ordering T has a smallest
+element t_0. P(t_0) is not true; so by statement 1, t_0 \noteq 1. Also P(r)
+is true for all r, 1<=r<=t_0 -1. 
+From the second property we will then have P(t_0) is true, which leads to a
+contradiction.
+T is an empty set and therefore P(n) is true for all positive integers n.
+
+
+
+E2. What is wrong with the following proof by strong induction:
+
+    We prove a^n = 1 for all n.  (Here, ^ represents exponentiation,
+                                  so "a^n" is the variable a to the n power)
+
+    Base case:  a^0 = 1 is true by definition.
+    Inductive case: assume a^m = 1 for all m such that 0 <= m <= k.
+        We must then use the assumption to show a^(k+1) = 1.
+        Observe that a^(k+1) = (a^k)(a^k) / (a^(k-1)).
+        But by our induction hypothesis, both a^k and a^(k-1) are 1.
+        So, a^(k+1) = (1)(1)/(1) which is 1, as desired.
+
+
+The inductive case breaks down for k=0 .We have assumed that a^m = 1 is true for 0<=m.
+But for k=0, a^(k-1) is a^(-1) which is not known to be 1. Hence we cannot prove P(0) ->P(1)
+
+E3.Show that if a_1, a_2, ..., a_n are n distinct real numbers, then
+exactly n-1 multiplications are used to compute the product of these n
+numbers no matter how parentheses are inserted into their product.
+(Hint: use the 2nd principle of mathematical induction and consider
+the last multiplication done).
+
+  Base Case: For n=1, 0 multiplications are needed, hence P(1) is true.
+
+  
+  Induction Hypothesis: P(r) is true for 1<=r<=k
+  ie a_1,a_2... a_r, are r distinct real numbers
+  then r-1 multiplications are used to compute the product
+  of these k numbers irrespective of the parentheses placement.
+  
+  To prove P(k+1) is true: 
+We need to compute the product of a_1, a_2, ..., a_(k+1), k>=1.  Since there
+is more than one number here, there is always a last multiplication involved
+in any sequence of multiplication for this computation.  In this last 
+multiplication, we will compute the product of two numbers, which will be 
+either the product of some numbers in a_1, a_2, ..., a_(k+1), or will be
+one of a_1, a_2, ..., a_(k+1).  Assume the first number is x and the second
+y, where x is the product of i numbers in a_1, a_2, ..., a_(k+1), and y is
+the product of the other j numbers in a_1, a_2, ..., a_(k+1).  We will have
+1<=i<=k here, and we can say the product of a number will be the number
+itself (Base case). Note that 1<=j<=k also, and i+j=k+1.
+From the induction hypothesis, we need i-1 multiplication for computing x, and
+j-1 multiplication for computing y. We then need one more multiplication
+to calculate x*y.  So we need a total of (i-1)+(j-1)+1=(k+1)-1 multiplications.
+Since we didn't specify how the numbers should be picked for multiplications,
+we will always need (k+1)-1 for computing the product of these k+1 numbers
+no matter how parentheses are inserted into their product. 

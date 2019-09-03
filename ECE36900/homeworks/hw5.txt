@@ -1,0 +1,42 @@
+
+  EE 369 Homework 5
+
+==============================================================================
+REMINDER: Collaboration must be acknowledged and must end before
+writing begins (on each problem separately).  See the initial course
+information handout.
+==============================================================================
+
+       
+READING:
+
+Please read Sections 3.1, 3.2, 3.3, 3.4 and 3.6 in the Gersting textbook. 
+
+OUTCOMES:
+
+All problems apply to your course outcome 3 score.
+
+THE ASSIGNMENT:
+
+(in card problems where cards hold numerical values, an Ace is ONE)
+
+From Section 3.1: problems 5, 9, 19, 39j, 39k, 66c, 83, 86
+From Section 3.2: problems 23, 24, 33, 34, 35, 36, 58, 63
+From Section 3.3: problems 5, 8, 17
+From Section 3.4: problems 9, 11, 12, 13, 24, 26, 27, 28, 65, 74, 83
+From Section 3.6: problems 1d, 5, 15
+
+
+Extra required problems:
+
+E1. Suppose f is a function from finite domain D to finite range R, where
+    number of elements in D is larger than the number of elements in R.
+    Prove that f is not one-to-one.
+
+E2. How many students from the 50 states must be enrolled at Purdue to
+    guarantee that at least 100 come from the same state?
+
+E3. Prove that at a party where there are at least 2 people, there are
+    2 people who know the same number of people there.  (Assume that
+    "knows" is symmetric, so that A knows B if and only if B knows A.
+    Also assume that noone knows themselves.)

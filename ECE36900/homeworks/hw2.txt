@@ -1,0 +1,47 @@
+
+			  EE 369 Homework (Sixth Edition)
+
+==============================================================================
+REMINDER: Collaboration must end before writing begins (on each
+problem separately).  See the initial course information handout.
+==============================================================================
+
+Below, we use the abbreviations:   
+   ^ for "and",  v for "or", --> for "implies", |= for "entails", 
+   and P' for the negation of P.
+
+Please read sections 1.1 and 1.2 in the Gersting textbook
+(the section called "An Algorithm" on pp. 11-13 is optional.)
+
+(To get ahead begin reading section 1.3.)
+
+All problems apply to course outcome 1.
+
+(see p. 189 (Sixth Edition) for definitions of the calligraphic font
+ Q, N, R, and Z used in a couple of the book problems in Section 1.2)
+
+
+From Section 1.1: problems 10, 13, 17, 33, 37, 43
+From Section 1.2: problems 2, 3, 4, 5, 6, 8, 9, 12, 16, 19, 20, 37, 47
+
+
+Additional problems on entailment:
+
+Suppose we assume the logic has just 5 statement letters (i.e. Boolean
+variables): A, B, C, D, and E.
+
+E1. How many models are there for the formula A ^ B?
+E2. How many models are there for the formula B --> (not C)?
+E3. Show a model that is a counterexample to (A ^ B)  |=  (B --> (not C))?  
+
+E4. Expand the definition of entailment in the following two
+    statements, explaining without using "entails" what they mean:
+
+      a.  P  |=  (Q v R)
+      b.  either (P |= Q) or (P |= R) or both
+
+    Here, P, Q, and R are arbitrary formulas.
+
+E5. Prove that 4a and 4b are not necessarily the same by finding
+    formulas P, Q, and R for which one is true and the other is false.
+

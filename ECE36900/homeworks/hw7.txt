@@ -1,0 +1,35 @@
+                  	ECE 369 Homework 7 (Sixth Edition)
+
+
+Please read section 8.2 in the textbook.  
+
+All problems from this homework apply to outcome 6.
+
+From Section 8.2: problems 29, 30, 33,
+                          36(except c),
+                          43(hint: use Kleene's theorem)
+
+E1.Find a simple nondeterministic finite automaton accepting the
+   regular language (ab v aab v aba)*.
+
+E2.Convert the automaton you drew in problem E1 to a deterministic
+   finite automaton accepting the same language using the construction
+   shown in class.
+
+
+E3.Convert the following NFA into a regular expression by eliminating
+   state s2 and then state s1 using the technique shown in class.
+
+   M=(s0,S,I,F,f_S), where S={s0,s1,s2,f}, I={0,1}, F={f}, and
+
+   f_S(s0,0)=s1
+   f_S(s0,1)=s2
+   f_S(s1,1)=s1
+   f_S(s1,0)=s2
+   f_S(s2,0)=s1
+   f_S(s2,1)=s2
+   f_S(s2,\lambda)=f  \lambda is the empty string.
+
+
+
+

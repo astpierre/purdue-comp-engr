@@ -1,0 +1,30 @@
+
+			  EE 369 Homework (Sixth Edition)
+
+==============================================================================
+REMINDER: Collaboration must end before writing begins (on each
+problem separately).  See the initial course information handout.
+==============================================================================
+
+Please read section 2.4, 3.1, and p. 285-288 in the Gersting textbook
+
+(To get ahead begin reading sections 1.1 and 1.2, but the section
+called "An Algorithm" on pp. 11-13 is optional.)
+
+
+From Section 2.4, p. 144, please do problems 40, 41, 43, 45, 46, and 47.
+
+From Section 3.1: problems 2, 11, 63 (explain your answers), 89
+
+From Section 4.1: problems 3 , 5a, 5b, 5c 
+
+
+Also, please do this additional problem on recursive definition:
+
+E1. For your answer to problem 46, show how the semantics (meaning) of
+recursive definitions is applied to define the meaning of your
+definition as the union of infinitely many finite sets.  In
+particular, what are the finite sets that are unioned to give meaning
+to your definition?
+
+

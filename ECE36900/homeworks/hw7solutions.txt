@@ -1,0 +1,100 @@
+
+                       EE 369 Homework #7 Solutions (Sixth Edition)
+
+
+Section 8.2
+
+For #29,30, and 33, give a regular expression for the set recognized by the finite
+state machine shown in the figure.
+
+29)  Solution: 0*
+
+30)  Solution: 1*000*
+
+33)  Solution: (1 v 01)(01)*
+
+
+36) Give a regular expression for each of the following sets:
+
+a) set of all strings of 0s and 1s beginning with 0 and ending with 1.
+
+Solution: 0(0v1)*1
+
+b) set of all strings of 0s and 1s having an odd number of 0s.
+
+Solution: 1*0(1*01*0)*1*
+
+
+d) set of all strings of 0s and 1s containing at least 1 zero.
+
+Solution: (0 v 1)*0(0 v 1)*
+
+e) set of all strings of a's and b's where each a is followed by two b's.
+
+Solution: b*(abbb*)*
+
+f) set of all strings of 0s and 1s containing exactly 2 zeros.
+
+Solution: 1*01*01*
+
+43) Prove that if A is a regular set whose symbols come from the
+alphabet I, then I* - A is a regular set. (Hint: Use Kleene's theorem)
+
+Solution:
+Let M be a finite state machine recognizing A. (M exists by Kleene's
+theorem). Interchange final and nonfinal states of M to make a new machine M'.
+M' recognizes I*-A, so I*-A is regular by the other half of Kleene's theorem.
+
+
+E1. Find a simple nondeterministic finite automaton accepting the regular
+language (ab v aab v aba)*.
+
+M=(s0,S,I,F,R) where S={s0,s1,s2,s3}, I={a,b}, F={s0}
+R={(s0,a,s1),(s1,b,s0),(s1,a,s2),(s1,b,s3),(s2,b,s0),(s3,a,s0)} 
+
+E2. Convert the automaton you drew in problem E1 to a deterministic finite
+automaton accepting the same language using the construction shown in class.
+
+M=(s0,S,I,f_S,F) where S={{s0},{s1},{s2},{},{s0,s3},{s0,s1},{s1,s2}}, I={a,b},
+F={{s0},{s0,s1},{s0,s3}}
+f_S({},a)={}
+f_S({},b)={}
+f_S({s0},a)={s1}
+f_S({s0},b)={}
+f_S({s1},a)={s2}
+f_S({s1},b)={s0,s3}
+f_S({s2},a)={}
+f_S({s2},b)={s0}
+f_S({s0,s3},a)={s0,s1}
+f_S({s0,s3},b)={}
+f_S({s0,s1},a)={s1,s2}
+f_S({s0,s1},b)={s0,s3}
+f_S({s1,s2},a)={s2}
+f_S({s1,s2},b)={s0,s3}
+
+E3.Convert the following NFA into a regular expression by eliminating
+   state s2 and then state s1 using the technique shown in class.
+
+   M=(s0,S,I,F,f_S), where S={s0,s1,s2,f}, I={0,1}, F={f}, and
+
+   f_S(s0,0)=s1
+   f_S(s0,1)=s2
+   f_S(s1,1)=s1
+   f_S(s1,0)=s2
+   f_S(s2,0)=s1
+   f_S(s2,1)=s2
+   f_S(s2,\lambda)=f  \lambda is the empty string.
+
+Solution:
+
+Eliminating s2 we get
+f_S(s0,(0v1(1*)0))=s1
+f_S(s0,1(1*))=f
+f_S(s1,(1v0(1*)0))=s1
+f_S(s1,0(1*))=f
+
+Eliminating s1, we get
+f_S(s0,(1(1*)v ((0v1(1*)0)(1v0(1*)0)*(0(1*)))))=f.
+
+Hence the corresponding regular expression is
+1(1*)v [ (0 v 1(1*)0) (1v0(1*)0)* (0(1*))]
