@@ -1,10 +1,10 @@
 # Makefile
-TARGET = client
+TARGET = httpclient
 WARNING = -Wall -Wshadow --pedantic
 ERROR = -Wvla -Werror
 GCC = gcc -std=c99 -g $(WARNING) $(ERROR)
 
-SRCS =	client.c
+SRCS =	httpclient.astpier.c
 OBJS = 	$(SRCS:%.c=%.o)
 
 $(TARGET): $(OBJS)
@@ -14,11 +14,11 @@ $(TARGET): $(OBJS)
 	$(GCC) -c $*.c
 
 short: $(TARGET)
-	./client dtunes.ecn.purdue.edu 80 /ece463/lab1/path_short.txt > out_short.txt
+	./httpclient dtunes.ecn.purdue.edu 80 /ece463/lab1/path_short.txt > out_short.txt
 	diff -i -w out_short.txt tests/short.txt
 
 long: $(TARGET)
-	./client dtunes.ecn.purdue.edu 80 /ece463/lab1/path_very_long.txt > out_long.txt
+	./httpclient dtunes.ecn.purdue.edu 80 /ece463/lab1/path_very_long.txt > out_long.txt
 	diff -i -w out_long.txt tests/long.txt
 
 
