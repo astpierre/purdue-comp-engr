@@ -13,6 +13,7 @@
 #include <sys/socket.h>
 
 #define BUF_SIZE 2048
+#define h_addr h_addr_list[0]
 
 // Function declarations
 int GET(int socketfd, char * path);
