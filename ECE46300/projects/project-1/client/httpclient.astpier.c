@@ -11,7 +11,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#define BUF_SIZE 512
+#define BUF_SIZE 2048
 
 // Function declarations
 int GET(int socketfd, char * path);
@@ -60,7 +60,8 @@ int GET(int socketfd, char * path) {
 /* Main entrypoint method */
 int main(int argc, char *argv[]) {
   int sockfd = 0;             // Socket file descriptor
-  char buf[BUF_SIZE];         // Buffer for reading
+  char * buf;                 // Buffer for reading
+  buf = (char *)calloc(BUF_SIZE, sizeof(char)); // Init to 0
   char * nxt_file;            // Relative path to next file
   char * hostname = argv[1];  // Hostname
   int port = atoi(argv[2]);   // Port number
@@ -86,7 +87,8 @@ int main(int argc, char *argv[]) {
 
   char * substr;
   int flag = 0;
-  while (read(sockfd, buf, 511) > 1) { /* Find the file path in response. */
+  while (read(sockfd, buf, BUF_SIZE-1) > 1) { /* Find the file path in response. */
+    buf[BUF_SIZE-1] = '\0';
     if ((substr = strstr(buf, "\r\n\r\n")) != NULL) {
       flag = 1;
       nxt_file = (char *)calloc(strlen(substr)-4, sizeof(char));
@@ -94,8 +96,9 @@ int main(int argc, char *argv[]) {
         strcpy(nxt_file+i, substr+i+4);
       }
     }
-    printf("%s", buf);
-    memset(buf, 0, BUF_SIZE);
+
+    fprintf(stdout, "%s", buf);
+    bzero(buf, BUF_SIZE);
   }
   close(sockfd);
 
@@ -112,13 +115,15 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  while (read(sockfd, buf, 511) > 1) {
-    printf("%s", buf);
-    memset(buf, 0, BUF_SIZE);
+  while (read(sockfd, buf, BUF_SIZE-1) > 1) {
+    buf[BUF_SIZE-1] = '\0';
+    fprintf(stdout, "%s", buf);
+    bzero(buf, BUF_SIZE);
   }
 
   close(sockfd);
   free(nxt_file);
+  free(buf);
 
   return EXIT_SUCCESS;
 }

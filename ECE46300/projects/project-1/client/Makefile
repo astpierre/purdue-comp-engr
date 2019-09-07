@@ -13,8 +13,14 @@ $(TARGET): $(OBJS)
 .c.o:
 	$(GCC) -c $*.c
 
-run: $(TARGET)
-	./client dtunes.ecn.purdue.edu 80 /ece463/lab1/path_short.txt
+short: $(TARGET)
+	./client dtunes.ecn.purdue.edu 80 /ece463/lab1/path_short.txt > out_short.txt
+	diff -i -w out_short.txt tests/short.txt
+
+long: $(TARGET)
+	./client dtunes.ecn.purdue.edu 80 /ece463/lab1/path_very_long.txt > out_long.txt
+	diff -i -w out_long.txt tests/long.txt
+
 
 clean:
 	rm -f $(OBJS) $(TARGET)
