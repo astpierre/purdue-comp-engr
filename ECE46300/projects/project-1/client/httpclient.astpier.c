@@ -12,7 +12,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#define BUF_SIZE 2048
+#define BUF_SIZE 512
 #define h_addr h_addr_list[0]
 
 // Function declarations
@@ -89,6 +89,7 @@ int main(int argc, char *argv[]) {
 
   char * substr;
   int flag = 0;
+  int bytesRead = 0;
   while (read(sockfd, buf, BUF_SIZE-1) > 1) { /* Find the file path in response. */
     buf[BUF_SIZE-1] = '\0';
     if ((substr = strstr(buf, "\r\n\r\n")) != NULL) {
@@ -117,11 +118,15 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  while (read(sockfd, buf, BUF_SIZE-1) > 1) {
-    buf[BUF_SIZE-1] = '\0';
-    fprintf(stdout, "%s", buf);
+  do {
     bzero(buf, BUF_SIZE);
-  }
+
+    bytesRead = recv(sockfd, buf, BUF_SIZE - 1, 0);
+    if (bytesRead > 0)
+    {
+      printf("%s", buf);
+    }
+  } while (bytesRead > 0);
 
   close(sockfd);
   free(nxt_file);

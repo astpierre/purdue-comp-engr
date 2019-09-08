@@ -14,12 +14,10 @@ $(TARGET): $(OBJS)
 	$(GCC) -c $*.c
 
 short: $(TARGET)
-	./httpclient dtunes.ecn.purdue.edu 80 /ece463/lab1/path_short.txt > out_short.txt
-	diff -i -w out_short.txt tests/short.txt
+	./httpclient dtunes.ecn.purdue.edu 80 /ece463/lab1/path_short.txt
 
 long: $(TARGET)
-	./httpclient dtunes.ecn.purdue.edu 80 /ece463/lab1/path_very_long.txt > out_long.txt
-	diff -i -w out_long.txt tests/long.txt
+	./httpclient dtunes.ecn.purdue.edu 80 /ece463/lab1/path_very_long.txt
 
 
 clean:
