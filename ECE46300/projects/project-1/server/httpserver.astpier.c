@@ -13,124 +13,115 @@
 #include <sys/socket.h>
 
 #define BUF_SIZE 512
-#define h_addr h_addr_list[0]
+#define MAXMSG 512
+#define PORT 2091
 
-// Function declarations
-int GET(int socketfd, char * path);
-int open_sockfd(char * hostname, int port);
+int read_from_client(int filedes) {
+  char buffer[MAXMSG];
+  int nbytes;
 
-
-/* Opens + returns a socket file descriptor */
-int open_sockfd(char * hostname, int port) {
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  struct sockaddr_in serv_addr;
-  struct hostent * server;
-
-  if (sockfd < 0) {
-    perror("[open_sockfd] error opening socket");
-    exit(0);
+  nbytes = read(filedes, buffer, MAXMSG);
+  if (nbytes < 0) {
+    /* Read error. */
+    perror("read");
+    exit(EXIT_FAILURE);
   }
-
-  server = gethostbyname(hostname);
-  if (server == NULL) {
-    perror("[open_sockfd] error, no such host");
-    exit(0);
+  else if (nbytes == 0) return -1; /* End-of-file */
+  else {
+    /* Data read. */
+    fprintf(stderr, "Server: got message: `%s'\n", buffer);
+    return 0;
   }
-
-  bzero((char *) &serv_addr, sizeof(serv_addr));
-  serv_addr.sin_family = AF_INET;
-
-  bcopy((char *)server->h_addr, 
-        (char *)&serv_addr.sin_addr.s_addr,
-        server->h_length);
-  serv_addr.sin_port = htons(port);
-  if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-    return EXIT_FAILURE;
-  }
-  return sockfd;
-}
-
-
-/* Helper method to make a GET request to socket file descriptor */
-int GET(int socketfd, char * path) {
-  char req[1000] = {0};
-  sprintf(req, "GET %s HTTP/1.0\r\n\r\n", path);
-  return write(socketfd, req, strlen(req));
 }
 
 
 /* Main entrypoint method */
 int main(int argc, char *argv[]) {
-  int sockfd = 0;             // Socket file descriptor
-  char * buf;                 // Buffer for reading
-  buf = (char *)calloc(BUF_SIZE, sizeof(char)); // Init to 0
-  char * nxt_file;            // Relative path to next file
-  char * hostname = argv[1];  // Hostname
-  int port = atoi(argv[2]);   // Port number
-  char * rel_path = argv[3];  // Relative path to file
+  /* Use port 91 + 2000 = 2091 when testing on ECEgrid */
+  int port = atoi(argv[1]);   // Port number server runs/listens on
+
   
-  if (argc != 4) { /* Check for expected input */
-    perror("Usage: ./client <hostname> <port> <relative-path>\n");
+  if (argc != 2) { /* Check for expected input */
+    perror("Usage: ./httpserver <port>\n");
     return EXIT_FAILURE;
   }
 
-  /* Open the socket(ie. the file descriptor interface) */
-  sockfd = open_sockfd(hostname, port);
-  if (sockfd == EXIT_FAILURE) { /* Check failure */
-    perror("[main] Server refused or socket failed to connect 1/2.\n");
-    return EXIT_FAILURE;
-  }
-  
-  /* GET the path to file from server */
-  if (GET(sockfd, rel_path) == -1) {
-    perror("[main] Bad GET request.\n");
-    return EXIT_FAILURE;
+  /* 
+    When the file is successfully found by the server, send back an HTTP 200 
+    OK response as follows with the encrypted contents of the file specified in 
+    the HTTP absolute path 
+      ex.
+      HTTP/1.0 200 OK<CR><LF><CR><LF> 
+      <contents of encrypted file requested...>
+  */
+
+  /* 
+    When the file is not found by the server, send back a 404 not found HTTP response 
+      ex.
+      HTTP/1.0 404 Not Found<CR><LF><CR><LF>
+  */
+
+  /* 
+    When the file doesn’t have public read permission, send back a 403 
+    Forbidden HTTP response.
+      ex.
+      HTTP/1.0 403 Forbidden<CR><LF><CR><LF>
+  */
+  extern int make_socket(uint16_t port);
+  int sock;
+  fd_set active_fd_set, read_fd_set;
+  int i;
+  struct sockaddr_in clientname;
+  size_t size;
+
+  /* Create the socket and set it up to accept connections. */
+  sock = make_socket(PORT);
+  if (listen(sock, 1) < 0) {
+    perror("listen");
+    exit(EXIT_FAILURE);
   }
 
-  char * substr;
-  int flag = 0;
-  int bytesRead = 0;
-  while (read(sockfd, buf, BUF_SIZE-1) > 1) { /* Find the file path in response. */
-    buf[BUF_SIZE-1] = '\0';
-    if ((substr = strstr(buf, "\r\n\r\n")) != NULL) {
-      flag = 1;
-      nxt_file = (char *)calloc(strlen(substr)-4, sizeof(char));
-      for (int i=0; i < strlen(substr)-4; i++) {
-        strcpy(nxt_file+i, substr+i+4);
+  /* Initialize the set of active sockets. */
+  FD_ZERO(&active_fd_set);
+  FD_SET(sock, &active_fd_set);
+
+  while (1) {
+    /* Block until input arrives on one or more active sockets. */
+    read_fd_set = active_fd_set;
+    if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
+      perror("select");
+      exit(EXIT_FAILURE);
+    }
+
+    /* Service all the sockets with input pending. */
+    for (i = 0; i < FD_SETSIZE; ++i) {
+      if (FD_ISSET(i, &read_fd_set)) {
+        if (i == sock) {
+          /* Connection request on original socket. */
+          int new;
+          size = sizeof(clientname);
+          new = accept(sock,
+                       (struct sockaddr *)&clientname,
+                       &size);
+          if (new < 0) {
+            perror("accept");
+            exit(EXIT_FAILURE);
+          }
+          fprintf(stderr,
+                  "Server: connect from host %s, port %hd.\n",
+                  inet_ntoa(clientname.sin_addr),
+                  ntohs(clientname.sin_port));
+          FD_SET(new, &active_fd_set);
+        }
+        else {
+          /* Data arriving on an already-connected socket. */
+          if (read_from_client(i) < 0) {
+            close(i);
+            FD_CLR(i, &active_fd_set);
+          }
+        }
       }
     }
-
-    fprintf(stdout, "%s", buf);
-    bzero(buf, BUF_SIZE);
   }
-  close(sockfd);
-
-  /* Reconnect to socket */
-  sockfd = open_sockfd(hostname, port);
-  if (sockfd == EXIT_FAILURE) { /* Check failure */
-    perror("[main] Server refused or socket failed to connect 2/2.\n");
-    return EXIT_FAILURE;
-  }
-
-  /* GET the contents of file from server */
-  if (GET(sockfd, nxt_file) == -1) {
-    perror("[main] Bad GET request.\n");
-    return EXIT_FAILURE;
-  }
-
-  do {
-    bzero(buf, BUF_SIZE);
-
-    bytesRead = recv(sockfd, buf, BUF_SIZE - 1, 0);
-    if (bytesRead > 0)
-    {
-      printf("%s", buf);
-    }
-  } while (bytesRead > 0);
-
-  close(sockfd);
-  free(nxt_file);
-  free(buf);
-
-  return EXIT_SUCCESS;
+return EXIT_SUCCESS;
 }

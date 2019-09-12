@@ -14,7 +14,7 @@ $(TARGET): $(OBJS)
 	$(GCC) -c $*.c
 
 test: $(TARGET)
-	./httpserver 
+	./httpserver 2091
 
 clean:
 	rm -f $(OBJS) $(TARGET)
