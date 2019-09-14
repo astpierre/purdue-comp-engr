@@ -25,7 +25,9 @@ void handle_client(int fd);
 
 void handle_client(int fd) {
   char buf[MAXLINE];
-  char * path = NULL;
+  char * path = NULL, shift_char = NULL;
+  int shift_number = 0, i = 0, cyph = 0;
+  FILE * client_file = NULL;
   char forbidden_msg[] = "HTTP/1.0 403 Forbidden\r\n\r\n";
   char file_accessible_msg[] = "HTTP/1.0 200 OK\r\n\r\n";
   char not_found_msg[] = "HTTP/1.0 404 Not Found\r\n\r\n";
@@ -33,14 +35,43 @@ void handle_client(int fd) {
   read(fd, buf, MAXLINE);
   path = strtok(buf, " ");
   path = strtok(NULL, " ");
-  if (access(path, F_OK) != 0) {
-    write(fd, not_found_msg, strlen(not_found_msg));
-  } else if (access(path, R_OK) != 0) {
-    write(fd, forbidden_msg, strlen(forbidden_msg));
-  } else {
-    write(fd, file_accessible_msg, strlen(file_accessible_msg));
-  }
+  shift_char = strtok(NULL, " ");
+  shift_number = atoi(shift_char) % 26;
 
+  if (access(path, F_OK) != 0) { /* File not found --> :(  */
+    write(fd, not_found_msg, strlen(not_found_msg));
+  } else if (access(path, R_OK) != 0) { /* Don't have the perms --> :| */
+    write(fd, forbidden_msg, strlen(forbidden_msg));
+  } else { /* OK, perform encryption --> :) */
+    write(fd, file_accessible_msg, strlen(file_accessible_msg));
+    client_file = fopen(path, 'r');
+    while (!feof(client_file)) { 
+      bzero(buf, MAXLINE);
+      fread(buf, sizeof(char), MAXLINE-1, client_file);
+      
+      while(buf[i] != '\0' && i < strlen(buf)) { /* Iterate over file contents in buffer */
+        if (isalpha(buf[i])) { /* Only shift alphabet characters */
+          if ((int)buf[i] >= (int)'a' && (int)buf[i] <= (int)'z') {
+            cyph = (int)buf[i] + shift_number;
+            if (cyph > (int)'z') {
+              cyph = cyph - (int)'z' + (int)'a' - 1;
+            }
+            buf[i] = (char)cyph;
+          } else if ((int)buf[i] >= (int)'A' && (int)buf[i] <= (int)'Z') {
+            cyph = (int)buf[i] + shift_number;
+            if (cyph > (int)'Z') {
+              cyph = cyph - (int)'Z' + (int)'A' - 1;
+            }
+            buf[i] = (char)cyph;
+          }
+        }
+        i++;
+      }
+      i = 0;
+      write(fd, buf, strlen(buf));
+    }
+    fclose(client_file);
+  }
   return;
 }
 
