@@ -6,125 +6,99 @@
 #include <strings.h>
 #include <errno.h>
 #include <unistd.h>
+#include <ctype.h>
 
 /* Network */
 #include <netdb.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#define BUF_SIZE 512
-#define MAXMSG 512
-#define PORT 2091
+/* Macro's and defines */
+#define MAXLINE 512
+#define LISTENQ 8 /*maximum number of client connections */
 
-int read_from_client(int filedes) {
-  char buffer[MAXMSG];
-  int nbytes;
+/* Function declarations */
+int open_listenfd(int port);
+void handle_client(int fd);
 
-  nbytes = read(filedes, buffer, MAXMSG);
-  if (nbytes < 0) {
-    /* Read error. */
-    perror("read");
-    exit(EXIT_FAILURE);
+
+void handle_client(int fd) {
+  char buf[MAXLINE];
+  char * path = NULL;
+  char forbidden_msg[] = "HTTP/1.0 403 Forbidden\r\n\r\n";
+  char file_accessible_msg[] = "HTTP/1.0 200 OK\r\n\r\n";
+  char not_found_msg[] = "HTTP/1.0 404 Not Found\r\n\r\n";
+
+  read(fd, buf, MAXLINE);
+  path = strtok(buf, " ");
+  path = strtok(NULL, " ");
+  if (access(path, F_OK) != 0) {
+    write(fd, not_found_msg, strlen(not_found_msg));
+  } else if (access(path, R_OK) != 0) {
+    write(fd, forbidden_msg, strlen(forbidden_msg));
+  } else {
+    write(fd, file_accessible_msg, strlen(file_accessible_msg));
   }
-  else if (nbytes == 0) return -1; /* End-of-file */
-  else {
-    /* Data read. */
-    fprintf(stderr, "Server: got message: `%s'\n", buffer);
-    return 0;
-  }
+
+  return;
+}
+
+
+/* Opens server's listening file-descriptor */
+int open_listenfd(int port) {
+  int listenfd, optval = 1;
+  struct sockaddr_in serveraddr;
+
+  /* Create a socket descriptor */
+  if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    return -1;
+
+  /* Eliminates "Address already in use" error from bind. */
+  if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR,
+                 (const void *)&optval, sizeof(int)) < 0)
+  {  return -1;  }
+  
+  /* listenfd will be an endpoint for all requests to port for this host */
+  bzero((char *)&serveraddr, sizeof(serveraddr));
+  serveraddr.sin_family = AF_INET;
+  serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  serveraddr.sin_port = htons((unsigned short)port);
+  if (bind(listenfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) < 0)
+  {  return -1;  }
+
+  /* Make it a listening socket ready to accept connection requests */
+  if (listen(listenfd, LISTENQ) < 0) 
+  {  return -1;  }
+
+  return listenfd;
 }
 
 
 /* Main entrypoint method */
-int main(int argc, char *argv[]) {
+int main(int argc, char ** argv) {
   /* Use port 91 + 2000 = 2091 when testing on ECEgrid */
-  int port = atoi(argv[1]);   // Port number server runs/listens on
+  int port = atoi(argv[1]); // Port number server runs/listens on
+  int listenfd, connfd, clientlen;
+  struct sockaddr_in clientaddr;
+  char *haddrp;
 
-  
   if (argc != 2) { /* Check for expected input */
     perror("Usage: ./httpserver <port>\n");
     return EXIT_FAILURE;
   }
 
-  /* 
-    When the file is successfully found by the server, send back an HTTP 200 
-    OK response as follows with the encrypted contents of the file specified in 
-    the HTTP absolute path 
-      ex.
-      HTTP/1.0 200 OK<CR><LF><CR><LF> 
-      <contents of encrypted file requested...>
-  */
+  /* Open listening file-descriptor */
+  listenfd = open_listenfd(port);
 
-  /* 
-    When the file is not found by the server, send back a 404 not found HTTP response 
-      ex.
-      HTTP/1.0 404 Not Found<CR><LF><CR><LF>
-  */
-
-  /* 
-    When the file doesn’t have public read permission, send back a 403 
-    Forbidden HTTP response.
-      ex.
-      HTTP/1.0 403 Forbidden<CR><LF><CR><LF>
-  */
-  extern int make_socket(uint16_t port);
-  int sock;
-  fd_set active_fd_set, read_fd_set;
-  int i;
-  struct sockaddr_in clientname;
-  size_t size;
-
-  /* Create the socket and set it up to accept connections. */
-  sock = make_socket(PORT);
-  if (listen(sock, 1) < 0) {
-    perror("listen");
-    exit(EXIT_FAILURE);
-  }
-
-  /* Initialize the set of active sockets. */
-  FD_ZERO(&active_fd_set);
-  FD_SET(sock, &active_fd_set);
-
+  /* Start the server loop */
   while (1) {
-    /* Block until input arrives on one or more active sockets. */
-    read_fd_set = active_fd_set;
-    if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
-      perror("select");
-      exit(EXIT_FAILURE);
-    }
+    clientlen = sizeof(clientaddr);
+    connfd = accept(listenfd, (struct sockaddr *)&clientaddr, &clientlen);
 
-    /* Service all the sockets with input pending. */
-    for (i = 0; i < FD_SETSIZE; ++i) {
-      if (FD_ISSET(i, &read_fd_set)) {
-        if (i == sock) {
-          /* Connection request on original socket. */
-          int new;
-          size = sizeof(clientname);
-          new = accept(sock,
-                       (struct sockaddr *)&clientname,
-                       &size);
-          if (new < 0) {
-            perror("accept");
-            exit(EXIT_FAILURE);
-          }
-          fprintf(stderr,
-                  "Server: connect from host %s, port %hd.\n",
-                  inet_ntoa(clientname.sin_addr),
-                  ntohs(clientname.sin_port));
-          FD_SET(new, &active_fd_set);
-        }
-        else {
-          /* Data arriving on an already-connected socket. */
-          if (read_from_client(i) < 0) {
-            close(i);
-            FD_CLR(i, &active_fd_set);
-          }
-        }
-      }
-    }
+    handle_client(connfd);
+    close(connfd);
   }
-return EXIT_SUCCESS;
+
+  return EXIT_SUCCESS;
 }
-
-
-//
