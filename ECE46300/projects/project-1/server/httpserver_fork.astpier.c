@@ -48,7 +48,6 @@ void handle_client(int fd) {
     write(fd, forbidden_msg, strlen(forbidden_msg));
   } else { /* OK, perform encryption --> :) */
     write(fd, file_accessible_msg, strlen(file_accessible_msg));
-    sleep(5);
     client_file = fopen(path, "r");
     while (!feof(client_file)) { 
       bzero(buf, MAXLINE);
