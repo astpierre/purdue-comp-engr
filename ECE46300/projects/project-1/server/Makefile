@@ -1,7 +1,7 @@
 # Makefile
 TARGET = httpserver
 WARNING = -Wshadow --pedantic
-ERROR = -Wvla 
+ERROR = -Wall -Wvla 
 GCC = gcc -std=c99 -g $(WARNING) $(ERROR)
 
 SRCS =	httpserver_fork.astpier.c
