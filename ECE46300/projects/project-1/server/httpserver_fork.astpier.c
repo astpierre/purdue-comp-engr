@@ -22,7 +22,7 @@
 int open_listenfd(int port);
 void handle_client(int fd);
 
-
+/* Handle a client's request */
 void handle_client(int fd) {
   char buf[MAXLINE];
   char * path = NULL, shift_char = NULL;
@@ -53,14 +53,14 @@ void handle_client(int fd) {
         if (isalpha(buf[i])) { /* Only shift alphabet characters */
           if ((int)buf[i] >= (int)'a' && (int)buf[i] <= (int)'z') {
             cyph = (int)buf[i] + shift_number;
-            if (cyph > (int)'z') {
-              cyph = cyph - (int)'z' + (int)'a' - 1;
+            if (cyph < (unsigned int)'a') {
+              cyph = cyph + (unsigned int)'z' - (unsigned int)'a' + 1;
             }
             buf[i] = (char)cyph;
           } else if ((int)buf[i] >= (int)'A' && (int)buf[i] <= (int)'Z') {
             cyph = (int)buf[i] + shift_number;
-            if (cyph > (int)'Z') {
-              cyph = cyph - (int)'Z' + (int)'A' - 1;
+            if (cyph < (unsigned int)'A') {
+              cyph = cyph + (unsigned int)'z' - (unsigned int)'a' + 1;
             }
             buf[i] = (char)cyph;
           }
