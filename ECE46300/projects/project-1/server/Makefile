@@ -4,7 +4,7 @@ WARNING = -Wshadow --pedantic
 ERROR = -Wvla 
 GCC = gcc -std=c99 -g $(WARNING) $(ERROR)
 
-SRCS =	httpserver.astpier.c
+SRCS =	httpserver_fork.astpier.c
 OBJS = 	$(SRCS:%.c=%.o)
 
 $(TARGET): $(OBJS)

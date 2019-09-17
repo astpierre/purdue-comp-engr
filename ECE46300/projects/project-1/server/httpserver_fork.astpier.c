@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <signal.h>
 
 /* Network */
 #include <netdb.h>
@@ -15,24 +16,27 @@
 #include <sys/socket.h>
 
 /* Macro's and defines */
+#define _POSIX_SOURCE
 #define MAXLINE 512
 #define LISTENQ 8 /*maximum number of client connections */
 
 /* Function declarations */
+int kill(pid_t pid, int sig);
 int open_listenfd(int port);
 void handle_client(int fd);
 
 /* Handle a client's request */
 void handle_client(int fd) {
   char buf[MAXLINE];
-  char * path = NULL, shift_char = NULL;
+  char * path = NULL;
+  char * shift_char = NULL;
   int shift_number = 0, i = 0, cyph = 0;
   FILE * client_file = NULL;
   char forbidden_msg[] = "HTTP/1.0 403 Forbidden\r\n\r\n";
   char file_accessible_msg[] = "HTTP/1.0 200 OK\r\n\r\n";
   char not_found_msg[] = "HTTP/1.0 404 Not Found\r\n\r\n";
 
-  read(fd, buf, MAXLINE);
+  read(fd, buf, MAXLINE-1);
   path = strtok(buf, " ");
   path = strtok(NULL, " ");
   shift_char = strtok(NULL, " ");
@@ -44,7 +48,8 @@ void handle_client(int fd) {
     write(fd, forbidden_msg, strlen(forbidden_msg));
   } else { /* OK, perform encryption --> :) */
     write(fd, file_accessible_msg, strlen(file_accessible_msg));
-    client_file = fopen(path, 'r');
+    sleep(5);
+    client_file = fopen(path, "r");
     while (!feof(client_file)) { 
       bzero(buf, MAXLINE);
       fread(buf, sizeof(char), MAXLINE-1, client_file);
@@ -52,15 +57,15 @@ void handle_client(int fd) {
       while(buf[i] != '\0' && i < strlen(buf)) { /* Iterate over file contents in buffer */
         if (isalpha(buf[i])) { /* Only shift alphabet characters */
           if ((int)buf[i] >= (int)'a' && (int)buf[i] <= (int)'z') {
-            cyph = (int)buf[i] + shift_number;
-            if (cyph < (unsigned int)'a') {
-              cyph = cyph + (unsigned int)'z' - (unsigned int)'a' + 1;
+            cyph = (int)buf[i] - shift_number;
+            if (cyph < (int)'a') {
+              cyph = cyph + (int)'z' - (int)'a' + 1;
             }
             buf[i] = (char)cyph;
           } else if ((int)buf[i] >= (int)'A' && (int)buf[i] <= (int)'Z') {
-            cyph = (int)buf[i] + shift_number;
-            if (cyph < (unsigned int)'A') {
-              cyph = cyph + (unsigned int)'z' - (unsigned int)'a' + 1;
+            cyph = (int)buf[i] - shift_number;
+            if (cyph < (int)'A') {
+              cyph = cyph + (int)'z' - (int)'a' + 1;
             }
             buf[i] = (char)cyph;
           }
@@ -114,7 +119,7 @@ int main(int argc, char ** argv) {
   struct sockaddr_in clientaddr;
   int client_sock = 0;
   char * haddrp;
-  pid_t child_proc = NULL;
+  pid_t child_proc;
   char buf[MAXLINE];
 
   if (argc != 2) { /* Check for expected input */
@@ -128,13 +133,15 @@ int main(int argc, char ** argv) {
   /* Start the server loop */
   while (1) {
     clientlen = sizeof(clientaddr);
-    connfd = accept(listenfd, (struct sockaddr *)&clientaddr, &clientlen);
+    connfd = accept(listenfd, (struct sockaddr *)&clientaddr, (socklen_t *)&clientlen);
     if ((child_proc = fork()) == 0) { /* Child process (1/connection) */
       close(listenfd);
       handle_client(connfd);
+      close(connfd);
+      break;
     }
+    close(connfd);
   }
-  close(connfd);
 
   return EXIT_SUCCESS;
 }
