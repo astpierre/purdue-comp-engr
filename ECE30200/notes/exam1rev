@@ -126,16 +126,22 @@ Properties
     delta functions (useful for expected values)
         - review sifting property
         
-        
+
+Moments (expec, var)
+    E(X) = \sum x p_X(x)                      ~ discrete RV
+    E(X) = \integral -inf to +inf x*f_X(x)dx  ~ any RV
+    Var(X)  = 2nd central moments
+            = E[(X-\mu)^2] = E[X^2] - E[X]^2
+    Std(X) = sqrt(Var(X))
+    nth moment = E[X^n]
+
+Misc Tips:
+    \integral x^n dx == x^(n+1) / (n+1) + c
+
+    if g(x) == odd function
+        integral from -a to a of g(x)dx == 0
+
+        integral from a+5 to a+10 of g(x)dx --> try to use ch of vars
 
 
-
-
-    
-
-PDF (prob dens func)
-    
-
-moments (expec, var)
-    
 
