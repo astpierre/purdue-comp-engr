@@ -22,7 +22,7 @@
 
 /* Function declarations */
 int kill(pid_t pid, int sig);
-int open_listenfd(int port);
+int open_listenfd(int port, char * mode);
 void handle_client(int fd);
 
 /* Handle a client's request */
@@ -81,13 +81,21 @@ void handle_client(int fd) {
 
 
 /* Opens server's listening file-descriptor */
-int open_listenfd(int port) {
+int open_listenfd(int port, char * mode) {
   int listenfd, optval = 1;
   struct sockaddr_in serveraddr;
 
-  /* Create a socket descriptor */
-  if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    return -1;
+  switch(mode[0]) {
+    case 'T':
+      listenfd = socket(AF_INET, SOCK_STREAM, 0);
+      break;
+    case 'U':
+      listenfd = socket(AF_INET, SOCK_DGRAM, 0);
+      break;
+    default:
+      perror("Mode must be 'U', 'UDP', 'T', 'TCP'\n");
+      return -1;
+  }
 
   /* Eliminates "Address already in use" error from bind. */
   if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR,
@@ -102,9 +110,11 @@ int open_listenfd(int port) {
   if (bind(listenfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) < 0)
   {  return -1;  }
 
-  /* Make it a listening socket ready to accept connection requests */
-  if (listen(listenfd, LISTENQ) < 0) 
-  {  return -1;  }
+  if (mode[0] == 'T') {
+      /* Make it a listening socket ready to accept connection requests */
+      if (listen(listenfd, LISTENQ) < 0) 
+      {  return -1;  }
+  }
 
   return listenfd;
 }
@@ -114,48 +124,56 @@ int open_listenfd(int port) {
 int main(int argc, char ** argv) {
   int http_port = atoi(argv[1]); // Port number HTTP Caesar Cypher listens on
   int udp_port = atoi(argv[2]); // Port number UDP Ping Service listens on
-  int http_sockfd, udp_sockfd, connfd, clientlen;
+  int http_sockfd, udp_sockfd, connfd, clientlen, maxfd;
   struct sockaddr_in clientaddr;
   pid_t child_proc;
   fd_set active_fd_set, read_fd_set;
+  char buf[MAXLINE];
 
   if (argc != 3) { /* Check for expected input */
     perror("Usage: ./mult_service_server <HTTP-port> <UDP-port>\n");
     exit(1);
   }
 
-  /* Open listening file-descriptor */
+  /* Open listening file-descriptors */
   FD_ZERO(&active_fd_set);
-  http_sockfd = open_listenfd(http_port);
+  http_sockfd = open_listenfd(http_port, "TCP");
   FD_SET(http_sockfd, &active_fd_set);
-  udp_sockfd = open_listenfd(udp_port);
+  udp_sockfd = open_listenfd(udp_port, "UDP");
   FD_SET(udp_sockfd, &active_fd_set);
-
+  if (http_sockfd >= udp_sockfd) {
+    maxfd = http_sockfd + 1;
+  } else {
+    maxfd = udp_sockfd + 1;
+  }
 
   /* Start the server loop */
   while (1) {
     read_fd_set = active_fd_set;
-    if (select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
+    if (select(maxfd, &read_fd_set, NULL, NULL, NULL) < 0) {
         perror("select in main while loop");
         exit(EXIT_FAILURE);
     }
-    for(i=0; i < FD_SETSIZE; ++i) {
-        if (FD_ISSET(i, &read_fd_set)) {
 
-        }
-    }
-
-
-
-    clientlen = sizeof(clientaddr);
-    connfd = accept(listenfd, (struct sockaddr *)&clientaddr, (socklen_t *)&clientlen);
-    if ((child_proc = fork()) == 0) { /* Child process (1/connection) */
-      close(listenfd);
-      handle_client(connfd);
+    if (FD_ISSET(http_sockfd, &read_fd_set)) {
+      clientlen = sizeof(clientaddr);
+      connfd = accept(http_sockfd, (struct sockaddr *)&clientaddr, (socklen_t *)&clientlen);
+      if ((child_proc = fork()) == 0) { /* Child process (1/connection) */
+        close(http_sockfd);
+        handle_client(connfd);
+        close(connfd);
+        break;
+      }
       close(connfd);
-      break;
     }
-    close(connfd);
+
+    if (FD_ISSET(udp_sockfd, &read_fd_set)) {
+      clientlen = sizeof(clientaddr);
+      bzero(buf, MAXLINE);
+      printf("\nMessage from UDP client: ");
+      recvfrom(udp_sockfd, buf, MAXLINE-1, 0, (struct sockaddr *)&clientaddr, (socklen_t *)&clientlen);
+      puts(buf);
+    }
   }
 
   return EXIT_SUCCESS;
