@@ -1,7 +1,7 @@
 # Makefile
 TARGET = multi_service_server
-WARNING = -Wshadow --pedantic
-ERROR = -Wall -Wvla -Werror
+WARNING = -Wshadow #--pedantic
+ERROR = -Wall -Wvla #-Werror
 GCC = gcc -std=c99 -g $(WARNING) $(ERROR)
 
 SRCS =	multi_service_server.astpier.c

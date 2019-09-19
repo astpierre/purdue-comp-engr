@@ -14,6 +14,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 
 /* Macro's and defines */
 #define _POSIX_SOURCE
@@ -127,7 +128,8 @@ int main(int argc, char ** argv) {
   int http_sockfd, udp_sockfd, connfd, clientlen, maxfd;
   struct sockaddr_in clientaddr;
   pid_t child_proc;
-  fd_set active_fd_set, read_fd_set;
+  fd_set active_fd_set;
+  fd_set read_fd_set;
   char buf[MAXLINE];
 
   if (argc != 3) { /* Check for expected input */
