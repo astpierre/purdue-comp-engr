@@ -1,0 +1,141 @@
+Sunday, 9/22/19, 2-4pm, MSEE 239, office hours
+
+content: up to & including moments and their properties (Topic 2.3)
+
+Sets:    
+    Notation:
+        A = {0,2} // discrete set of 2 things
+        B = [0,2] // real interval between 0 and 2 (inclusive)
+        B = (0,2) // real interval between 0 and 2 (~inclusive)
+    
+    Operations + Combinations:
+        Union               // A\union B
+        Intersection        // A \intersects B
+        Complement          // A' or A^c
+        Commutative         
+        Distributive
+        Associative         
+        DeMorgan's Rule     // (A \union B)' == A' \intersects B'
+        DeMorgan's Rule     // (A \intersects B)' == A' \union B'
+
+    Partitions:
+        def: mutually exclusive, collectively exhaustive (know each)
+
+    Random Experiments:
+        Components: 
+            - Procedure
+            - Observation
+    
+        Sample space: all possible outcomes
+
+        Event: some possible outcomes
+
+    Problem solving steps:
+        1. what is the experiment
+        2. what is ss
+        3. event we care about
+
+
+Axioms + Corollaries:
+    P(A) >= 0
+    P(S) = 1
+    P(A') = 1 - P(A)
+    if A \intersects B = \nullset --> P(A \union B) = P(A) + P(B)
+    P(\nullset) = 0
+    Generally...
+        P(A \union B) = P(A) + P(B) - P(A \intersects B)
+    if A \subset B then P(B) >= P(A)
+
+    (review creating probability table)
+
+
+Conditional Probability
+    Def(s):
+        Theorem Total Prob  P(A|B) = P(A \intersects B) / P(B), if P(B) > 0
+        
+        Baye's Rule         P(B|A) = P(A|B)P(B) / P(A)
+            - allows you to flip things around
+
+
+Independence
+    P(B|A) = P(A) iff indep
+    P(A)P(B) = P(A \intersects B)
+    if A + B are independent unless P(A) == 0 or P(B) == 0
+    else disjoint if P(A \intersects B) = 0 --> P(A \union B) = P(A) + P(B)
+
+    if P(A|B) = P(A) then P(B|A) = P(B)
+
+    What would it take for 3 events to be independent?
+        all pairwise independence
+        mutually 3-way independent
+        P(A \intersects B \intersects C) == P(A)P(B)P(C)
+
+
+Sequential Experiments
+    - many cases, solvable using tree diagram
+    - rely on cond prob heavily
+    
+
+Random Variables
+    X(w) takes a random outcome and produces a number
+    events:
+        { X <= x }
+        { X = x }
+        { a <= x <= b }
+    1. the observation is a number
+    2. a function of the outcome
+    3. a function of another RV
+        Y = area, X = length
+        Y = X^2
+
+
+PMF (prob mass func)
+    repr = table or graph, remember the else
+    P(X = x) = p_X(x)
+
+CDF (cumul dens func)
+    F_X(x) = P(X <= x) (defined for all x)
+    P(a < x < b)
+    P(a <= x <= b) == P(a=x) + P(x=b) + P(a < x < b)
+    
+    ex. some cdf w/ disc. @a
+    P(X = a) == P(X = a+0.000...1) - P (X = a-0.000...1) // the height of jump
+
+    Computing probabilities:
+        P(a < X <= b) = F_X(b) - F_X(a)
+
+Properties
+    PMF
+        1. p_X(x) >= 0
+        2. \sum p_X(x) for all x == 1
+        3. P(B) = \sum p_X(x) for all x \in B
+
+    CDF
+        1. lim x->\infinity F_X(x) = 1
+        2. lim x->\negativeinfinity F_X(x) = 0
+        3. non-decreasing
+        4. continuous from the right
+            line->open dot->gap->closed dot->line == OK
+            line->closed dot->gap->open dot->line == NOT OK
+        5. P(X > x) = 1 - F_X(x)
+
+    PDF
+        1. f_X(x) >= 0, for all x
+        2. \integral from -\inf to +\inf
+
+    delta functions (useful for expected values)
+        - review sifting property
+        
+        
+
+
+
+
+    
+
+PDF (prob dens func)
+    
+
+moments (expec, var)
+    
+
