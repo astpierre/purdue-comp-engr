@@ -19,7 +19,7 @@
 /* Macro's and defines */
 #define _POSIX_SOURCE
 #define MAXLINE 512
-#define LISTENQ 8 /*maximum number of client connections */
+#define LISTENQ 12 /*maximum number of client connections */
 
 /* Function declarations */
 int open_listenfd(int port, char * mode);
@@ -127,10 +127,14 @@ int main(int argc, char ** argv) {
   int http_sockfd, udp_sockfd, connfd, clientlen, maxfd, n;
   struct sockaddr_in clientaddr;
   struct hostent * hp;
+  struct in_addr caddr;
   pid_t child_proc;
   fd_set active_fd_set;
   fd_set read_fd_set;
-  char buf[MAXLINE];
+  char * buf[MAXLINE];
+  char * token = NULL;
+  unsigned int seq = 0;
+  int i = 0;
 
   if (argc != 3) { /* Check for expected input */
     perror("Usage: ./mult_service_server <HTTP-port> <UDP-port>\n");
@@ -151,6 +155,7 @@ int main(int argc, char ** argv) {
 
   /* Start the server loop */
   while (1) {
+    seq = 0;
     read_fd_set = active_fd_set;
     if (select(maxfd, &read_fd_set, NULL, NULL, NULL) < 0) {
         perror("select in main while loop");
@@ -168,25 +173,35 @@ int main(int argc, char ** argv) {
       }
       close(connfd);
     
-    } else if (FD_ISSET(udp_sockfd, &read_fd_set)) {
+    } 
+    if (FD_ISSET(udp_sockfd, &read_fd_set)) {
+      token = NULL;
       clientlen = sizeof(clientaddr);
       bzero(buf, MAXLINE);
-      n = recvfrom(udp_sockfd, buf, MAXLINE-1, 0, (struct sockaddr *)&clientaddr, (socklen_t *)&clientlen);
+      n = recvfrom(udp_sockfd, buf, 512, 0, (struct sockaddr *)&clientaddr, (socklen_t *)&clientlen);
       if (n < 0) perror("ERR recvfrom in main.");
+      memcpy(&seq, buf+n-4, 4);
+      fprintf(stdout, "%d\n", seq);
+
+      return 0;
       
-      /*if ((hp = gethostbyaddr(  (const void *)&clientaddr.sin_addr.s_addr,
-                                sizeof(clientaddr.sin_addr.s_addr),
+      token = strtok(buf, " ");
+      
+      inet_aton(token, &caddr);
+      token = strtok(NULL, " ");
+      seq = atoi(token);
+
+      if ((hp = gethostbyaddr((const void *)&caddr,
+                                sizeof(caddr),
                                 AF_INET)) == NULL) {
           perror("ERR gethostbyaddr in main.");
-      }*/
-      //strcpy(buf, hp->h_name);
+      }
+      
+      snprintf(buf, MAXLINE-1, "%s %d", hp->h_name, seq+1);
 
       n = sendto(udp_sockfd, buf, MAXLINE-1, 0, (struct sockaddr *)&clientaddr, clientlen);
-      //printf("%s --> %s\t %d, %d\n", argv[1], hp->h_name, hp->h_length, hp->h_addrtype);
     }
   }
-  //close(http_sockfd);
-  //close(udp_sockfd);
 
   return EXIT_SUCCESS;
 }

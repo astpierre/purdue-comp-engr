@@ -1,6 +1,6 @@
 # Makefile
 TARGET = multi_service_server
-WARNING = -Wshadow #--pedantic
+WARNING = -Wshadow --pedantic
 ERROR = -Wall -Wvla #-Werror
 GCC = gcc -std=c99 -g $(WARNING) $(ERROR)
 
