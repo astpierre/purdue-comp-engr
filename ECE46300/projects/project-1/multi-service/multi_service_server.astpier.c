@@ -22,7 +22,6 @@
 #define LISTENQ 8 /*maximum number of client connections */
 
 /* Function declarations */
-int kill(pid_t pid, int sig);
 int open_listenfd(int port, char * mode);
 void handle_client(int fd);
 
@@ -125,8 +124,9 @@ int open_listenfd(int port, char * mode) {
 int main(int argc, char ** argv) {
   int http_port = atoi(argv[1]); // Port number HTTP Caesar Cypher listens on
   int udp_port = atoi(argv[2]); // Port number UDP Ping Service listens on
-  int http_sockfd, udp_sockfd, connfd, clientlen, maxfd;
+  int http_sockfd, udp_sockfd, connfd, clientlen, maxfd, n;
   struct sockaddr_in clientaddr;
+  struct hostent * hp;
   pid_t child_proc;
   fd_set active_fd_set;
   fd_set read_fd_set;
@@ -167,16 +167,26 @@ int main(int argc, char ** argv) {
         break;
       }
       close(connfd);
-    }
-
-    if (FD_ISSET(udp_sockfd, &read_fd_set)) {
+    
+    } else if (FD_ISSET(udp_sockfd, &read_fd_set)) {
       clientlen = sizeof(clientaddr);
       bzero(buf, MAXLINE);
-      printf("\nMessage from UDP client: ");
-      recvfrom(udp_sockfd, buf, MAXLINE-1, 0, (struct sockaddr *)&clientaddr, (socklen_t *)&clientlen);
-      puts(buf);
+      n = recvfrom(udp_sockfd, buf, MAXLINE-1, 0, (struct sockaddr *)&clientaddr, (socklen_t *)&clientlen);
+      if (n < 0) perror("ERR recvfrom in main.");
+      
+      /*if ((hp = gethostbyaddr(  (const void *)&clientaddr.sin_addr.s_addr,
+                                sizeof(clientaddr.sin_addr.s_addr),
+                                AF_INET)) == NULL) {
+          perror("ERR gethostbyaddr in main.");
+      }*/
+      //strcpy(buf, hp->h_name);
+
+      n = sendto(udp_sockfd, buf, MAXLINE-1, 0, (struct sockaddr *)&clientaddr, clientlen);
+      //printf("%s --> %s\t %d, %d\n", argv[1], hp->h_name, hp->h_length, hp->h_addrtype);
     }
   }
+  //close(http_sockfd);
+  //close(udp_sockfd);
 
   return EXIT_SUCCESS;
 }
