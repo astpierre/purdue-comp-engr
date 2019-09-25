@@ -10,7 +10,7 @@ class JobSeeker
   end
   
   def update(companyName, jobTitle, monthlyRate)
-    puts @name.ljust(10) + 'New Job: ' + companyName.ljust(10) + jobTitle.ljust(10) + '$' + monthlyRate.ljust(7)
+    puts @name.ljust(10) + 'New Job Match Received!  | ' + companyName.ljust(10) + jobTitle.ljust(35) + '$' + monthlyRate.to_s.ljust(7)
   end
 
   def to_s

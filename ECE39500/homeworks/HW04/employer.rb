@@ -9,6 +9,7 @@ class Employer
 
   def newJob(companyName, jobTitle, monthlyRate)
     @jobOpenings << [companyName, jobTitle, monthlyRate]
+    puts "Employer: #{companyName} " + 'adding job opening  | ' + companyName.ljust(10) + jobTitle.ljust(35) + '$' + monthlyRate.to_s.ljust(7)
     changed
     notify_observers(companyName, jobTitle, monthlyRate)
   end
