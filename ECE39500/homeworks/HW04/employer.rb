@@ -1,18 +1,22 @@
-class Animal
-  @move_behavior
-  @talk_behavior
+require "observer"
 
-  def initialize(move_behavior, talk_behavior)
-    @move_behavior = move_behavior
-    @talk_behavior = talk_behavior
+class Employer
+  include Observable
+
+  def initialize
+    @jobOpenings = []
   end
 
-  def performMove
-    @move_behavior.move()
+  def newJob(companyName, jobTitle, monthlyRate)
+    @jobOpenings << [companyName, jobTitle, monthlyRate]
+    changed
+    notify_observers(companyName, jobTitle, monthlyRate)
   end
 
-  def performTalk
-    @talk_behavior.talk()
+  def to_s
+    @jobOpenings.each do |j|
+      text = "Job: #{j}"
+      puts text
+    end
   end
-
 end
