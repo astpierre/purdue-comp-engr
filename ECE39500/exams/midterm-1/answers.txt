@@ -1,0 +1,12 @@
+2. To change one of the behaviors of a Duck, I would create another class that implemented the desired modification to the existing behavior and then wrap the Duck class by this modified decorator class.
+
+3. Would need to create a new strategy implementation that added Mocha during the coffee creation algorithm.
+
+4.
+    - Ducks have behavioral characteristics
+    - each behavior is similar and static (not composed ie. no quack + squeak)
+
+5.
+    - Coffee is a very personalized object
+    - a decorator pattern allows for a more a-la-carte method of creating varients
+    - strategy method would be better if coffees only were made in specific ways
