@@ -1,0 +1,8 @@
+*
+!.gitignore
+!*.py
+!*.bash
+!*.dat
+!README
+!DataFolder/maps/**
+!DataFolder/circuits/**

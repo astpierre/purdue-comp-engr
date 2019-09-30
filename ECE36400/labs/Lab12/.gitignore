@@ -1,0 +1,8 @@
+*
+!.gitignore
+!Morphing.py
+!MorphingApp.py
+!MorphingGUI.ui
+!MorphingGUI.py
+!README
+!.txt
