@@ -13,14 +13,23 @@ require_relative 'floatswim'
 
 
 def main
-    plain_duck = Duck.new(FlyBehavior.new(), QuackBehavior.new(), SwimBehavior.new())
-    living_duck = Duck.new(FlyWithWings.new(), QuackQuack.new(), PaddleSwim.new())
-    rubber_duck = Duck.new(NoFly.new(), SqueakSqueak.new(), FloatSwim.new())
+    plain_duck = Duck.new(fly_behavior: FlyBehavior.new(), 
+                          quack_behavior: QuackBehavior.new(), 
+                          swim_behavior: SwimBehavior.new(),
+                          name: "Plain Duck")
+    living_duck = Duck.new(fly_behavior: FlyWithWings.new(), 
+                           quack_behavior: QuackQuack.new(), 
+                           swim_behavior: PaddleSwim.new(),
+                          name: "Living Duck")
+    rubber_duck = Duck.new(quack_behavior: SqueakSqueak.new(), 
+                           swim_behavior: FloatSwim.new(),
+                          name: "Rubber Duck")
+    dogtoy_duck = Duck.new(quack_behavior: SqueakSqueak.new(), name: "DogToy")
 
-    puts "Plain Duck: " + plain_duck.fly + ' ' + plain_duck.quack + ' ' + plain_duck.swim
-    puts "Living Duck: " + living_duck.fly + ' ' + living_duck.quack + ' ' + living_duck.swim
-    puts "Rubber Duck: " + rubber_duck.fly + ' ' + rubber_duck.quack + ' ' + rubber_duck.swim
-
+    plain_duck.do_your_thing
+    living_duck.do_your_thing
+    rubber_duck.do_your_thing
+    dogtoy_duck.do_your_thing
 end
 
 main
