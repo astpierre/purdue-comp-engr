@@ -1,0 +1,9 @@
+Static casts
+    When static casting student to faculty or faculty to student, compile
+    time errors occurred. I was able to compile the void pointer assignment
+    to student, but a segmentation fault occurred at run time.
+Dynamic casts
+    When dynamic casting student to faculty or faculty to student, run
+    time errors occurred (segmentation faults). I was unable to compile the
+    void pointer assignment to student because the source (v) was not a
+    pointer to class.

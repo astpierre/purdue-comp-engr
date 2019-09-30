@@ -1,0 +1,19 @@
+Line                        Output
+GPS* gps = new GPS(3);      Created new GPS, observer array size = 3
+
+Map* map = new Map(gps);    Nothing
+
+Alarm* alarm1 = new Alarm(gps, 1, 0.0, 0.0, 0.9);   Nothing
+
+Alarm* alarm2 = new Alarm(gps, 2, 1.0, 1.0, 1.0);   Nothing
+
+Alarm* alarm3 = new Alarm(gps, 3, 5.0, 5.0, 1.0);   idx=3=size=3
+
+gps->update(1.0, 1.0);      new map location: (1, 1)
+                            Alarm1 sounded! Moved 1.41421 meters
+                            Alarm3 sounded! Moved 5.65685 meters
+
+gps->update(4.0, 4.0);      new map location: (4, 4)
+                            Alarm1 sounded! Moved 5.65685 meters
+                            Alarm2 sounded! Moved 4.24264 meters
+                            Alarm3 sounded! Moved 1.41421 meters

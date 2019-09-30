@@ -1,0 +1,140 @@
+Objects:
+    • An object can be a "concrete and tangible" entity that can be
+    • separated from other objects by unique properties
+    • An object can be abstract and does not have to be tangible
+    • An object can contain other object
+    Properties of objects:
+        1. unique identity:
+            • This is often the address of the object in memory, or a 32-bit
+              identity assigned by the programming language run-time
+        2. attributes:
+            • These are variables that are declared to be part of the class.
+            • These variables may be visible outside the class, or private to
+              the class. OO languages provide ways to do this.
+        3. behavior (actions/methods):
+            • These are functions that are associated with the object that
+              can operate on the attributes or variables of the object.
+Classes:
+    • A class describes the commonalities of similar objects
+    • A class describes both the attributes and the behavior
+    • A class is a specification of a new type in the language
+    • Objects are created by creating an instance of a class, i.e., by
+      instantiation
+
+ISA implies inheritance
+HASA implies declaration of an attribute of the kind of object
+
+What happens if a derived class and a base class both define method m()?
+    If a class Derived inherits from a class Base, where base declares
+    and defines a method (function) m()
+        - Derived can redefine m() to act like it wants (overriding)
+        - Allows us to use the desired functionality from the Base class
+          and redefine functionality that doesn't suit our purposes
+    |======================================================================|
+    | Base            Derived             Called on           Executed?    |
+    | ====            =======             =========           =========    |
+    | impl M          impl M              Base                Base M       |
+    | impl M          impl M              Derived             Derived M    |
+    | impl M          !impl M             Base                Base M       |
+    | impl M          !impl M             Derived             Base M       |
+    | !impl M         impl M              Base                ERROR        |
+    | !impl M         impl M              Derived             Derived M    |
+    | !impl M         !impl M             Base                ERROR        |
+    | !impl M         !impl M             Derived             ERROR        |
+    |======================================================================|
+
+//----------------------------------------------------------------
+// BASE CLASS  | DERIVED CLASS | DERIVED CLASS |  DERIVED CLASS  |
+//----------------------------------------------------------------
+//             |  PUBLIC MODE  | PRIVATE MODE  | PROTECTED MODE  | <-- inher-
+//----------------------------------------------------------------     itance
+// Private     | Not inherited | Not inherited | Not inherited   |     modes
+// Protected   | Protected     | Private       | Protected       |
+// Public      | Public        | Private       | Protected       |
+//----------------------------------------------------------------
+
+
+=====================================================================
+class Base {
+public:
+    Base(){ cout << "Base" << endl; }
+    ~Base(){ cout << "~Base" << endl; }
+};
+class Derived : public Base {
+public:
+    Derived(){ cout << "Derived" << endl; }
+    ~Derived(){ cout << "~Derived" << endl; }
+};
+
+int main(void) {
+    Derived d;
+    return 0;
+}
+
+Order of print statements:
+    1. Base is constructed
+    2. Derived is constructed
+    3. Derived is destroyed
+    4. Base is destroyed
+
+=====================================================================
+
+What function is called???
+    Let the function call be p->f(args)
+    p is a pointer to a B object
+    Let the type of the object p points to to be a D object
+    Let f(args') be the function that matches f(args) and is
+     visible in B
+
+    if(f(args') is not private && is not static) {
+        if(f(args') is virtual in class B) {
+            Find the position k of f(args') in B's VFT
+            Call f(args') through position k of D's VFT
+        } else {
+            Call B's f(args')
+        }
+    } else {
+        Call B's f(args')
+    }
+=====================================================================
+
+Function overloading example
+class Base {
+public:
+    void fun(int x){ std::cout << "int x" << std::endl; }
+    void fun(double x){ std::cout << "double x" << std::endl; }
+}
+
+=====================================================================
+
+Operator overloading example
+class Complex {
+private: int real, imag;
+public:
+    Complex(int r = 0, int i = 0) : real(r), imag(i) {}
+    Complex operator + (Complex const &obj) {
+        Complex res;
+        res.real = real + obj.real;
+        res.imag = imag + obj.imag;
+        return res;
+    }
+    void show() { cout << real << " + i" << imag << endl; }
+};
+int main() {
+    Complex c1(1,3), c2(2,5);
+    Complex c3 = c1 + c2;
+    c3.show(); // output is 3 + i8
+    return 0;
+}
+
+=====================================================================
+
+Function call through pointers...
+T1 * p = new T2(args); // T2 extends, directly or indirectly T1
+p->foo(args);
+// 1. Class T1 is examined, if there is not a function in-scope that
+//    matches, possibly with conversions, foo(args) there is an error
+// 2. If the matching function is not virtual, then T1 class
+//    foo(args) is called
+// 3. Else, if the matching function is virtual, the function in the
+//    T2 VFT in the slot for foo(args) is called.

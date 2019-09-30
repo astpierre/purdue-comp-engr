@@ -1,0 +1,7 @@
+Building:
+    bazel build ...
+Running targets:
+    bazel run //src/main:main
+    bazel run //test:unit-tests
+Cleaning:
+    bazel clean

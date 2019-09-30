@@ -1,0 +1,13 @@
+Q01) C B: 0
+Q02) C B: 1
+     C D: 0
+Q03) C B: 2
+Q04) C B: 3
+     C D: 1
+Q05) ~Base: 2
+Q06) D D: 1
+Q07) ~Base: 3
+Q08) ~Base: 3
+Q09) D D: 1
+Q10) ~Base: 3
+     ~Base: 2
