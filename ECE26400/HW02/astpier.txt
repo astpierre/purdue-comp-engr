@@ -1,0 +1,34 @@
+gcc -std=c99 -g -Wall -Wshadow --pedantic -Wvla -Werror  -DTEST_SWAP -DTEST_SORT -c main.c 
+gcc -std=c99 -g -Wall -Wshadow --pedantic -Wvla -Werror  -DTEST_SWAP -DTEST_SORT -c sort.c 
+gcc -std=c99 -g -Wall -Wshadow --pedantic -Wvla -Werror  -DTEST_SWAP -DTEST_SORT main.o sort.o -o sort
+./sort inputs/test1 > output1
+diff output1 expected/expected1
+Test Passed
+./sort inputs/test2 > output2
+diff output2 expected/expected2
+Test Passed
+./sort inputs/test3 > output3
+diff output3 expected/expected3
+Test Passed
+./sort inputs/test4 > output4
+diff output4 expected/expected4
+Test Passed
+./sort inputs/test5 > output5
+diff output5 expected/expected5
+Test Passed
+./sort inputs/test6 > output6
+diff output6 expected/expected6
+Test Passed
+./sort inputs/test7 > output7
+diff output7 expected/expected7
+Test Passed
+./sort inputs/test8 > output8
+diff output8 expected/expected8
+Test Passed
+./sort inputs/test9 > output9
+diff output9 expected/expected9
+Test Passed
+./sort inputs/test10 > output10
+diff output10 expected/expected10
+Test Passed
+Grade is = 100

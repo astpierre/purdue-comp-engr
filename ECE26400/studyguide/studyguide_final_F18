@@ -1,0 +1,35 @@
+Compress a File
+The file can be compressed once the code book has been created. The compressed file must include the code book because it is required to decode the file. The code book is dependent on the characters, and the frequencies of the characters, within the file, and thus each code book is unique to a given file. Thus, a compressed file has two parts: a header that represents the code book and the data immediately after the code book. The code can be expressed in different ways as long as the compression program and the decompression program agree to the format. This book uses the following way to express the code book:
+    1. The tree is traversed using post-order traversal. As explained earlier, in-order traversal cannot distinguish different shapes of binary trees. Thus, in-order traversal cannot be used.
+    2. When encountering a leaf node, ’1’ is printed before printing the character. This ’1’is a “command” for describing the tree.
+    3. When encountering a non-leaf node, one ’0’ is printed. This is the other “command”. Commands can be either 1 or 0. Remember, the non-leaf node is encountered after visiting both the left sub-tree and the right sub-tree...this is what a post-order traversal means.
+    4. One 0 is added after visiting the root. After that, a new line ’\n’ is added.
+Fig. 24.11 shows several examples that express the code trees using this format. Note that if ’\n’ appears in an article, then it is a leaf node in the code tree, and the node is expressed as 1’\n’. This method can also handle ’1’ and ’0’ in the article. They become 11 and 10.
+
+    expression for code tree: 1a1b00
+                                                (   )
+                                                /   \
+                                            ( a )    ( b )
+    expression for code tree: 1a1b1c000
+                                                (   )
+                                                /   \
+                                            ( a )    (   )
+                                                     /   \
+                                                ( b )     ( c )
+    expression for code tree: 1a1b01c1d000
+                                                (   )
+                                                /   \
+                                             ( )     ( )
+                                             / \     / \
+                                           (a) (b) (c) (d)
+    expression for code tree: 1a1b01c1d000
+                                                (   )
+                                                /   \
+                                             ( )     ( )
+                                             / \     / \
+                                           (a) (b) (c) ( )
+                                                       / \
+                                                     (d) (e)
+
+The number of 1's is the same as the number of leaf nodes
+The number of 0's is 1+#(non-leaf nodes)

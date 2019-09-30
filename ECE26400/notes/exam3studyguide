@@ -1,0 +1,2239 @@
+/****************** Modify this file at specified place ***********************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "hw12.h"
+/****************** DO NOT Modify this file above this line *******************/
+#ifdef TEST_MAIN
+int main(int argc, char **argv)
+{
+    // If argc != 4 then return EXIT_FAILURE
+    if(argc != 4) return EXIT_FAILURE;
+
+	// argv[1] - length of linked list
+    int length = (int)strtol(argv[1],NULL,10);
+
+	// argv[2] - value of k as mentioned in josephus algorithm
+    int k = (int)strtol(argv[2],NULL,10);
+
+	// argv[3] - value of elemDivisible
+    int elemDivisible = (int)strtol(argv[3],NULL,10);
+
+	// Create head node
+    Node * head = NULL;
+    head = CreateNode(length-1);
+
+	// Create Linked list of length length
+    LinkedListCreate(&head, length-2);
+    
+	// Run josephus
+    Josephus(&head, k, elemDivisible);
+
+	// Free the head node
+    free(head);
+
+	return EXIT_SUCCESS;
+}
+#endif
+/************* DO NOT Modify this file **********************/
+#ifndef HW12_H
+#define HW12_H
+
+typedef struct listnode
+{
+    struct listnode * next;
+    int value;
+} Node;
+
+
+
+Node * CreateNode(int val);
+void LinkedListCreate(Node ** head,int length);
+void LinkedListPrint(Node * head);
+
+void Josephus(Node ** head, int k, int elemDivisible);
+
+
+#endif
+/****************** Modify this file at specified place *************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include "hw12.h"
+
+#ifdef LINKEDLIST
+// Do not modify the below program, we are using ifdef block for
+// ease of grading. Please include this flag in your Makefile
+void LinkedListPrint(Node * head)
+{
+	Node *temp = head;
+	while(temp!=NULL)
+	{
+		if(temp->next!=NULL) printf("%d,",temp->value);
+		else printf("%d",temp->value);	
+		temp=temp->next;
+	}
+	printf("\n");
+}
+#endif
+
+/********** Do Not modify the file above this line, you should modify below ***********/
+#ifdef TEST_CREATENODE
+// CreateNode
+//  Returns a node after alloc. memory and initializing values
+Node * CreateNode(int value)
+{
+	// Allocate memory for the new Node * + check for fail
+    Node * newNode = malloc(sizeof(Node));
+    if(newNode == NULL) return NULL;
+	
+    // Create Node * with the value as 'value'
+    newNode->value=value;
+
+    // Set next pointer to NULL
+    newNode->next=NULL;
+
+    // Return the newly created node
+    return newNode;
+}
+
+
+// DeleteNode
+//  Updates a list after removing a specific node with value 
+void DeleteNode(Node ** head, int v)
+{
+    // If nothing in list, do nothing
+    if(*head==NULL) return;
+
+    // Store head
+    Node * temp = *head;
+
+    // If the node we are looking for is at very first node
+    if((temp->value) == v)
+    {
+        // Update the head and free the temp Node
+        *head = temp->next;
+        free(temp);
+        return;
+    }
+
+    // Traverse! Break when reach node right before target
+    while(((temp->next)!=NULL) && (((temp->next)->value) != v))
+    {  temp = temp->next;  }
+
+    // Check if we 'over-traversed'
+    if((temp->next) == NULL) return;
+
+    // Save the pointer to the next of node to be deleted
+    Node * newNext = temp->next->next;
+
+    // Unlink the node from linked list
+    free(temp->next);
+
+    // Append the rest of the list using pointer to the next of deleted node
+    temp->next = newNext;
+    
+    return;
+}
+#endif
+
+#ifdef TEST_LINKEDLISTCREATE
+// LinkedListInsert
+//  Inserts a new node in the ll at the begining
+void LinkedListInsert(Node ** head, int v)
+{
+    Node * newNode = CreateNode(v);
+    newNode->next = *head;
+    *head = newNode;
+}
+
+// LinkedListCreate
+//  Creates a ll of variable length with values set to indices
+void LinkedListCreate(Node ** head, int length)
+{
+	// Check if length is not negative
+    if(length < 0) return;
+
+	// Create linked list of length as 'length'
+    for(; length>=0; --length){  LinkedListInsert(head,length);  }
+}
+#endif
+
+#ifdef TEST_JOSEPHUS
+// 1. head: the head of the singly linkedlist.
+// 2. k : this variable will be used for counting if count = k, the element will be out.
+// 3. elemDivisible : this variable will be used for printing. When the number of
+//    remaining nodes in linked list is divisible by elemDivisible then you should 
+//    print the remaining LinkedList with print functin provided to you.
+// CountNodes
+//  Returns the number of nodes in a linked list
+int CountNodes(Node * head)
+{
+    int nodes = 0;
+    while(head != NULL)
+    {
+        head=head->next;
+        nodes++;
+    }
+    return nodes;
+}
+
+// SearchNodes
+//  Returns 1 if element exists in list, 0 if not found
+int SearchNodes(Node * head, int v)
+{
+    Node * ptr = head;
+    while(ptr != NULL)
+    {
+        if((ptr->value) == v) return 1;
+        ptr = ptr->next;
+    }
+    // Only reached if not fount
+    return 0;
+}
+
+// Josephus
+//  Solves the Josephus problem 
+void Josephus(Node ** head, int k, int elemDivisible)
+{
+    // Initialize some parameters
+    int ctr=1;
+    int origCount=CountNodes(*head);
+    int count_alive=origCount;
+    int i=0;
+
+    // Begin killing ship-mates
+    while(count_alive>1)
+    {
+        count_alive=CountNodes(*head);
+        for(i=0;i<origCount;i++)
+        {
+            count_alive=CountNodes(*head);
+            if(ctr==k+1)
+            {
+                if(SearchNodes(*head, i) == 1)
+                {
+                    DeleteNode(head,i);
+                    count_alive=CountNodes(*head);
+                    if(count_alive%elemDivisible == 0)
+                    {  LinkedListPrint(*head);  }
+                    ctr=1;
+                }
+            }
+            else if(SearchNodes(*head, i) == 1) ctr++;
+        }
+    }
+}
+#endif
+/****************** Modify this file at specified place *************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "hw13.h"
+/****************** DO NOT Modify this file above this line *************************/
+#ifdef TEST_MAIN
+int countFromFile(char * file_name)
+{
+    FILE * fptr = fopen(file_name, "r");
+    if(fptr==NULL) return EXIT_FAILURE;
+    int value=0;
+    int count=0;
+    while(fscanf(fptr,"%d",&value)==1) count++;
+    fclose(fptr);
+    return count;
+}
+
+void fillArray(int * arr, int count, char * file_name)
+{
+    FILE * fptr = fopen(file_name, "r");
+    if(fptr==NULL) return;
+    int ind=0;
+    while(ind<count)
+    {
+        if(fscanf(fptr,"%d",&arr[ind])!=1)
+        {  fclose(fptr); free(arr);  }
+        ind++;
+    }
+    fclose(fptr);
+}
+
+void DeleteList(Node ** head)
+{
+    Node * current = *head;
+    Node * next = NULL;
+    while(current!=NULL)
+    {
+        next=current->next;
+        free(current);
+        current=next;
+    }
+    *head=NULL;
+}
+int main(int argc, char **argv)
+{
+	// If argc is less than 2 then, return EXIT_FAILURE
+    if(argc!=2) return EXIT_FAILURE;
+
+    // argv[1] - location of input values
+    FILE * finput = fopen(argv[1],"r");
+
+	// Check for fopen fail
+    if(finput==NULL) return EXIT_FAILURE;
+
+    // Count number of integers in file
+    int count = countFromFile(argv[1]);
+    
+	// Allocate memory to store the numbers
+    int * arr = malloc(sizeof(int)*count);
+    if(arr==NULL){  fclose(finput); return EXIT_FAILURE;  }
+
+    // Read the file and store contents in array
+    fillArray(arr,count,argv[1]);
+	
+    // Create head node to store the head of the linked list
+    Node * head = NULL;
+    //head = CreateNode((int)NULL);
+
+	// Call function to create the rest of the linked list, w values of array
+    LinkedListCreate(&head,count,arr);
+
+	// Divide is a function to break the lists into smaller sublists
+    Divide(&head);
+
+    // Cleanup
+    free(arr);
+    fclose(finput);
+	return EXIT_SUCCESS;
+}
+
+#endif
+//DO NOT MODIFY THIS FILE
+
+#ifndef HW13_H
+#define HW13_H
+
+typedef struct ListNode
+{
+	struct ListNode * next;
+	int value;
+} Node;
+
+
+Node * CreateNode(int val);
+void LinkedListCreate(Node * * source, int len, int* arr);
+void LinkedListPrint(Node * * source);
+void Divide(Node** source);
+void SpiltList(Node* source, Node** head1, Node** head2);
+
+#endif
+/****************** Modify this file at specified place *************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include "hw13.h"
+
+#ifdef LINKEDLIST
+// Do not modify this function, we are using this within ifdef block for
+// ease of grading.
+void LinkedListPrint(Node * * source)
+{
+	Node *temp = * source;
+	while(temp!=NULL)
+	{
+		if(temp->next!=NULL)
+		{  printf("%d,",temp->value);  }
+		else
+		{  printf("%d",temp->value);  }
+		temp=temp->next;
+	}
+	printf("\n");
+}
+#endif
+/********** Do Not modify the file above this line, you can modify below ******/
+#ifdef TEST_CREATENODE
+Node * CreateNode(int val)
+{
+    // Allocate mem for the new Node * + check for mem fail
+    Node * newNode = malloc(sizeof(Node));
+
+    // Create Node * with the value as "val"
+    newNode->value=val;
+
+    // Set next pointer to NULL
+    newNode->next=NULL;
+
+    // Return the newly create node
+    return newNode;
+}
+
+void DeleteNode(Node ** head, int v)
+{
+    // If nothing in list, do nothing
+    if(*head==NULL) return;
+
+    // Store the head
+    Node * temp = *head;
+
+    // If the new node we are looking for is at the very first node
+    if((temp->value) == v)
+    {
+        // Update the head and free temp node
+        *head = temp->next;
+        free(temp);
+        return;
+    }
+
+    // Traverse! Break when reach node right before target
+    while(((temp->next)!=NULL) && (((temp->next)->value)!=v))
+    {  temp=temp->next;  }
+
+    // Check if we over traversed...
+    if((temp->next)==NULL) return;
+
+    // Save the pointer to the next of node to be deleted
+    Node * newNext = temp->next->next;
+
+    // Unlink the node from the linked list
+    free(temp->next);
+
+    // Append the rest of the list using pointer to the next of deleted
+    temp->next = newNext;
+
+    return;
+}
+#endif
+
+#ifdef TEST_LINKEDLISTCREATE
+void LinkedListInsert(Node ** head, int v)
+{
+    Node * newNode = CreateNode(v);
+    newNode->next=*head;
+    *head=newNode;
+}
+
+void LinkedListCreate(Node ** source, int len, int* arr)
+{
+    // Check if length is non-negative
+    if(len<0) return;
+
+    // Create linkedlist of length 'len'
+    for(; len>0; len--){  LinkedListInsert(source,arr[len-1]);  }
+}
+
+#endif
+
+#ifdef TEST_SPLIT
+int CountNodes(Node * head)
+{
+    int nodes = 0;
+    while(head != NULL)
+    {  head=head->next; nodes++;  }
+    return nodes;
+}
+
+void SplitList(Node* source, Node** head1, Node** head2) 
+{
+    // Create two nodes for traversing
+    Node * slow;
+    Node * fast;
+
+    // Concept: when fast==NULL, slow will point right before midpoint
+    slow = source;
+    fast = source->next;
+
+    while(fast!=NULL)
+    {
+        fast=fast->next;
+        if(fast!=NULL)
+        {  slow=slow->next; fast=fast->next;  }
+    }
+
+    // Slow is now the point right before the midpoint at the list
+    *head1 = source;
+    *head2 = slow->next;
+
+    // Add the terminating value for slow pointer
+    slow->next = NULL;
+
+    return;
+} 
+#endif
+
+
+#ifdef TEST_DIV
+void Divide(Node ** source) 
+{ 
+	// Declare a node, to hold the current head of source list
+    Node * h = *source;
+
+	// Declare nodes, to hold the two the heads of the two sub-lists
+    Node * s1_h = NULL;
+    Node * s2_h = NULL;
+
+	// Check for the base case -- length 0 or 1
+    if((CountNodes(h)==1) || (CountNodes(h)==0)) 
+    {  free(h); return;  }
+	  
+	// Use SpiltList(...) to partition the list into sub lists
+    SplitList(h,&s1_h,&s2_h);
+
+    // Show newly created sublists
+    LinkedListPrint(&s1_h);
+    LinkedListPrint(&s2_h);
+
+    // Recursively divide both sub-lists to find their respective mid-points
+    Divide(&s1_h);
+    Divide(&s2_h); 
+}
+#endif
+/****************** Modify this file at specified place *************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "hw14.h"
+
+
+#ifdef LINKEDLIST
+// Do not modify this function, we are using this within ifdef block for
+// ease of grading.
+void LinkedListPrint(Node * * source)
+{
+	Node *temp = * source;
+	while(temp!=NULL)
+	{
+		if(temp->next!=NULL)
+		{  printf("%d,",temp->value);  }
+		else
+		{  printf("%d",temp->value);  }
+		temp=temp->next;
+	}
+	printf("\n");
+}
+#endif
+
+/****************** DO NOT Modify this file above this line *************************/
+#ifdef TEST_MAIN
+int countFromFile(char * file_name)
+{
+    FILE * fptr = fopen(file_name, "r");
+    if(fptr==NULL) return EXIT_FAILURE;
+    int value=0;
+    int count=0;
+    while(fscanf(fptr,"%d",&value)==1) count++;
+    fclose(fptr);
+    return count;
+}
+
+void fillArray(int * arr, int count, char * file_name)
+{
+    FILE * fptr = fopen(file_name, "r");
+    if(fptr==NULL) return;
+    int ind=0;
+    while(ind<count)
+    {
+        if(fscanf(fptr,"%d",&arr[ind])!=1)
+        {  fclose(fptr); free(arr);  }
+        ind++;
+    }
+    fclose(fptr);
+}
+
+void DeleteList(Node ** head)
+{
+    Node * current = *head;
+    Node * next = NULL;
+    while(current!=NULL)
+    {
+        next=current->next;
+        free(current);
+        current=next;
+    }
+    *head=NULL;
+}
+int main(int argc, char **argv)
+{
+	// If argc is less than 2 then, return EXIT_FAILURE
+    if(argc!=2) return EXIT_FAILURE;
+
+    // argv[1] - location of input values
+    FILE * finput = fopen(argv[1],"r");
+
+	// Check for fopen fail
+    if(finput==NULL) return EXIT_FAILURE;
+
+    // Count number of integers in file
+    int count = countFromFile(argv[1]);
+    
+	// Allocate memory to store the numbers
+    int * arr = malloc(sizeof(int)*count);
+    if(arr==NULL){  fclose(finput); return EXIT_FAILURE;  }
+
+    // Read the file and store contents in array
+    fillArray(arr,count,argv[1]);
+	
+    // Create head node to store the head of the linked list
+    Node * head = NULL;
+    //head = CreateNode((int)NULL);
+
+	// Call function to create the rest of the linked list, w values of array
+    LinkedListCreate(&head,count,arr);
+
+	// Call MergerSort() function for final output
+    MergeSort(&head);
+
+    // Print the linked list using provided function
+    LinkedListPrint(&head);
+
+    // Cleanup
+    free(arr);
+    free(head);
+    fclose(finput);
+    return EXIT_SUCCESS;
+}
+#endif
+//DO NOT MODIFY THIS FILE
+
+#ifndef HW14_H
+#define HW14_H
+
+typedef struct ListNode
+{
+	struct ListNode * next;
+	int value;
+} Node;
+
+
+Node * CreateNode(int val);
+void LinkedListCreate(Node * * source, int len, int* arr);
+void LinkedListPrint(Node ** head);
+void MergeSort(Node** source); 
+Node* Merge(Node* upper, Node* lower); 
+void SpiltList(Node* source, Node** head1, Node** head2);
+
+#endif
+/****************** Modify this file at specified place *************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include "hw14.h"
+/********** Do Not modify the file above this line, you can modify below ***********/
+#ifdef TEST_CREATENODE
+Node * CreateNode(int val)
+{
+    // Allocate mem for the new Node * + check for mem fail
+    Node * newNode = malloc(sizeof(Node));
+
+    // Create Node * with the value as "val"
+    newNode->value=val;
+
+    // Set next pointer to NULL
+    newNode->next=NULL;
+
+    // Return the newly create node
+    return newNode;
+}
+void DeleteNode(Node ** head, int v)
+{
+    // If nothing in list, do nothing
+    if(*head==NULL) return;
+
+    // Store the head
+    Node * temp = *head;
+
+    // If the new node we are looking for is at the very first node
+    if((temp->value) == v)
+    {
+        // Update the head and free temp node
+        *head = temp->next;
+        free(temp);
+        return;
+    }
+
+    // Traverse! Break when reach node right before target
+    while(((temp->next)!=NULL) && (((temp->next)->value)!=v))
+    {  temp=temp->next;  }
+
+    // Check if we over traversed...
+    if((temp->next)==NULL) return;
+
+    // Save the pointer to the next of node to be deleted
+    Node * newNext = temp->next->next;
+
+    // Unlink the node from the linked list
+    free(temp->next);
+
+    // Append the rest of the list using pointer to the next of deleted
+    temp->next = newNext;
+
+    return;
+}
+#endif
+
+#ifdef TEST_LINKEDLISTCREATE
+void LinkedListInsert(Node ** head, int v)
+{
+    Node * newNode = CreateNode(v);
+    newNode->next=*head;
+    *head=newNode;
+}
+
+void LinkedListCreate(Node ** source, int len, int* arr)
+{
+    // Check if length is non-negative
+    if(len<0) return;
+
+    // Create linkedlist of length 'len'
+    for(; len>0; len--){  LinkedListInsert(source,arr[len-1]);  }
+}
+#endif
+
+
+#ifdef TEST_SPLIT
+int CountNodes(Node * head)
+{
+    int nodes = 0;
+    while(head != NULL)
+    {  head=head->next; nodes++;  }
+    return nodes;
+}
+
+void SplitList(Node* source, Node** head1, Node** head2) 
+{
+    // Create two nodes for traversing
+    Node * slow;
+    Node * fast;
+
+    // Concept: when fast==NULL, slow will point right before midpoint
+    slow = source;
+    fast = source->next;
+
+    while(fast!=NULL)
+    {
+        fast=fast->next;
+        if(fast!=NULL)
+        {  slow=slow->next; fast=fast->next;  }
+    }
+
+    // Slow is now the point right before the midpoint at the list
+    *head1 = source;
+    *head2 = slow->next;
+
+    // Add the terminating value for slow pointer
+    slow->next = NULL;
+
+    return;
+} 
+#endif
+
+#ifdef TEST_MERGE
+Node* Merge(Node* upper, Node* lower) 
+{ 
+    // Create a node to be the pointer to the sorted values
+    Node * sortedMerging = NULL;
+
+	// Check for the base cases. (When either sub-list is NULL)
+    if(upper==NULL) return lower;
+    else if(lower==NULL) return upper;
+  
+	// Pick the larger between upper and lower, and recurse
+    if(upper->value <= lower->value)
+    {
+        sortedMerging = upper;
+        sortedMerging->next = Merge(upper->next,lower);
+    }
+    else
+    {
+        sortedMerging = lower;
+        sortedMerging->next = Merge(upper,lower->next);
+    }
+	
+    // Return the merged array
+    return sortedMerging;
+} 
+#endif
+
+#ifdef TEST_SORT
+// source is the head of the list to for which MergeSort is to be performed.
+void MergeSort(Node** source) 
+{ 
+	// Declare a node, to hold the current head of source list
+    Node * h = *source;
+
+	// Declare nodes, to hold the two the heads of the two sub-lists
+    Node * s1_h = NULL;
+    Node * s2_h = NULL;
+
+	// Check for the base case -- length 0 or 1
+    if((CountNodes(h)==1) || (CountNodes(h)==0)) 
+    {  return;  }
+	  
+	// Use SpiltList(...) to partition the list into sub lists
+    SplitList(h,&s1_h,&s2_h);
+
+	// Recursively sort the sub-lists by calling MergeSort() on the upper and lower sub-lists
+    MergeSort(&s1_h);
+    MergeSort(&s2_h);
+
+    // Merge the two sorted lists together, using the Merge()
+    * source = Merge(s1_h, s2_h);
+} 
+#endif
+
+/****************** Modify this file at specified place ***********************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "hw15.h"
+/****************** DO NOT Modify this file above this line *******************/
+
+#ifdef TEST_MAIN
+int main(int argc, char **argv)
+{
+    // Check for the right number of input arguments
+    if(argc!=2) return EXIT_FAILURE;
+	
+    // Create head node to store the head of the LL
+    Node * head = NULL;
+
+    // Call function to create the rest of the LL, w the values of arr
+    LinkedListCreate(&head, argv[1]);
+
+	// Remove all duplicates in the linked list created above
+    RemoveDuplicate(head);
+
+    // Cleanup the LL and return success!
+    Node * current = head;
+    while(current!=NULL)
+    {
+        head = current->next;
+        free(current);
+        current=head;
+    } 
+	free(head);
+    return EXIT_SUCCESS;
+}
+#endif
+//DO NOT MODIFY THIS FILE
+
+#ifndef HW15_H
+#define HW15_H
+
+typedef struct listnode 
+{
+	struct listnode * next;
+	int value;
+} Node;
+
+Node * CreateNode(int val);
+void LinkedListCreate(Node ** head, char* name);
+void LinkedListPrint(Node * head);
+void RemoveDuplicate(Node * headRef);
+#endif
+/****************** Modify this file at specified place ***********************/
+#include <stdio.h>
+#include <stdlib.h>
+#include "hw15.h"
+
+#ifdef LINKEDLIST
+// Do not modify this function.
+void LinkedListPrint(Node * head)
+{
+	Node *temp = head;
+	while(temp!=NULL)
+	{
+		if(temp->next!=NULL)
+		{  printf("%d,",temp->value);  }
+		else
+		{  printf("%d\n",temp->value);  }
+		temp=temp->next;
+	}
+}
+#endif
+
+/********** Do Not modify the file above this line, you can modify below ******/
+#ifdef TEST_CREATENODE
+// Reverse a linked list, returning nothing
+void LinkedListReverse(Node ** head)
+{
+    Node * prev = NULL;
+    Node * current = *head;
+    Node * next = NULL;
+    while(current != NULL)
+    {
+        // Copy the next node
+        next = current->next;
+        // Reverse the current node's pointer
+        current->next = prev;
+        // Move pointers by 1 position
+        prev = current;
+        current = next;
+    }
+    *head = prev;
+}
+
+// Create, init, and return a new Node with value val
+Node * CreateNode(int val)
+{
+    // Allocate mem for the new Node + check for mem fail
+    Node * newNode = malloc(sizeof(Node));
+
+    // Create Node with value "val"
+    newNode->value = val;
+
+    // Set next pointer to NULL
+    newNode->next = NULL;
+
+    // Return the newly created node
+    return newNode;
+}
+#endif
+
+#ifdef TEST_LINKEDLISTCREATE
+// Count the number of integers in a given file
+int countFromFile(char * file_name)
+{
+    FILE * fptr = fopen(file_name, "r");
+    if(fptr==NULL) return EXIT_FAILURE;
+    int value=0,count=0;
+    while(fscanf(fptr, "%d", &value)==1) count++;
+    fclose(fptr);
+    return count;
+}
+
+// Insert value v at the beginning of the LL
+void LinkedListInsert(Node ** head, int v)
+{
+    Node * newNode = CreateNode(v);
+    newNode->next = *head;
+    *head = newNode;
+}
+
+// Create a linked list with values given in file located at path "name"
+void LinkedListCreate(Node ** head, char* name)
+{
+    // Variable declaration
+    int ind=0;
+    int tmp;
+
+    // We are given a string corresponding to a file with input data
+    // Lets open it
+    FILE * finput = fopen(name,"r");
+
+    // Check fail...
+    if(finput==NULL) return;
+
+    // Lets get a count of items in this file
+    int count = countFromFile(name);
+
+    // Lets create the LL by inserting each of these values one at a time
+    while(ind<count)
+    {
+        if(fscanf(finput,"%d",&tmp) != 1) fclose(finput);
+        LinkedListInsert(head,tmp);
+        ind++;
+    }
+
+    // Flip the LL around
+    LinkedListReverse(head);
+    fclose(finput);
+}
+#endif
+
+#ifdef TEST_REMOVED
+void DeleteNextNode(Node ** head, int val)
+{
+    // If nothing in list, do nothing
+    if(*head==NULL) return;
+
+    // Store the head
+    Node * temp = *head;
+    Node * newNext = NULL;
+
+    // If the node we are looking for is at the very first node
+    if(temp->value == val)
+    {
+        *head = temp->next;
+        free(temp);
+        return;
+    }
+
+    // Traverse! Break when reach node right before target
+    while(((temp->next) != NULL) && (temp->next->value != val))
+    {  temp = temp->next;  }
+     
+    // Check if we over-traversed...
+    if((temp->next) == NULL) return; 
+
+    // Save the pointer to the next of the node to be deleted
+    newNext = temp->next->next;
+
+    // Unlink the node from the LL
+    free(temp->next);
+
+    // Append the rest of the list using pointer to the next of deleted
+    temp->next = newNext;
+}
+
+// This function returns 1 if a value exists in any LL, returns 0 else
+int LinkedListExists(Node * head, int val)
+{
+    Node * temp = head;
+    while(temp != NULL)
+    {
+        if(temp->value == val) return 1;
+        temp=temp->next;
+    }
+    return 0;
+}
+
+// This function will delete the entire linked list and free memory
+void LinkedListDestroy(Node ** head)
+{
+    Node * current = *head;
+    while(current!=NULL)
+    {
+        *head = current->next;
+        free(current);
+        current=*head;
+    }
+}
+// This function will remove repetitions of a linked list value
+void RemoveDuplicate(Node * headRef)
+{
+    // Declare some pointers
+    Node * prevSeenHead = NULL;
+    Node * tempHead = headRef;
+    Node * buildingHead = NULL;
+
+    while(tempHead->next != NULL)
+    {
+        if(LinkedListExists(prevSeenHead,tempHead->value))
+        {  
+            /* DONT INSERT THIS NODE */
+            // Increment the original list
+            tempHead = tempHead->next;
+        }
+        else
+        {  
+            // Append the previously seen list
+            LinkedListInsert(&prevSeenHead, tempHead->value);
+            // Append the originals list
+            LinkedListInsert(&buildingHead, tempHead->value);
+            // Increment the original list
+            tempHead = tempHead->next;
+        }
+    }
+
+    // Take care of that last node...
+    if(!LinkedListExists(prevSeenHead,tempHead->value)) 
+    {  LinkedListInsert(&buildingHead, tempHead->value);  }
+
+    // Reverse the list
+    LinkedListReverse(&buildingHead);
+
+    // Set the head  == the temp LL
+    headRef = buildingHead;
+    
+    // Print the linked list after all repetitions have been removed
+    LinkedListPrint(headRef);
+
+    // Free the helper linked lists
+    LinkedListDestroy(&buildingHead);
+    LinkedListDestroy(&prevSeenHead);
+    free(prevSeenHead);
+    free(buildingHead);
+}
+#endif
+/****************** Modify this file at specified place ***********************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "hw16.h"
+
+
+#ifdef PRINT_FUN
+// Print function for tn1 contained in tn2
+void PrintTn1ContainedTn2 (bool tn1_contained_tn2, bool tn2_contained_tn1)
+{
+	if (tn1_contained_tn2)
+		printf("tree1 is contained in tree2\n");
+	else
+		printf("tree1 is not contained in tree2\n");
+
+	if (tn2_contained_tn1)
+		printf("tree2 is contained in tree1\n");
+	else
+		printf("tree2 is not contained in tree1\n");
+
+	if (tn1_contained_tn2 && tn2_contained_tn1)
+		printf("tree1 and tree2 are mutually contained.\n");
+	else
+		printf("tree1 and tree2 are not mutually contained.\n");
+}
+#endif
+
+
+/****************** DO NOT Modify this file above this line *******************/
+#ifdef TEST_MAIN
+int main(int argc, char **argv)
+{
+    // Check input arguments
+    if(argc != 3) return EXIT_FAILURE;
+
+    // Create 2 binary trees from input args
+    treeNode * tn1 = BinaryTreeCreate(argv[1]);
+    treeNode * tn2 = BinaryTreeCreate(argv[2]);
+
+    // Check relationship between the two trees
+    //  1. Check if tn1 is contained in tn2
+    //  2. Check is tn2 is contained in tn1
+    //  3. Pass the results to the print function given
+    PrintTn1ContainedTn2(isContained(tn2,tn1), isContained(tn1,tn2));
+
+    // Free all memory and return success
+    FreeBinaryTree(tn1);
+    FreeBinaryTree(tn2);
+	return EXIT_SUCCESS;
+}
+#endif
+// Do not modify this file
+// do not submit this file
+#ifndef BINARYTREE_H
+#define BINARYTREE_H
+#include <stdio.h>
+#include <stdlib.h>
+struct tNode
+{
+	struct tNode * rightChild;
+	struct tNode * leftChild;
+	int value;
+};
+
+typedef struct tNode treeNode;
+
+treeNode * CreateTree(int *array, int index, int length);
+treeNode* BinaryTreeCreate(char *filename);
+
+void BinaryTreePreOrderPrint(treeNode* tn);
+void BinaryTreeInOrderPrint(treeNode* tn);
+void BinaryTreePostOrderPrint(treeNode *tn);
+void BinaryTreePrint(treeNode* tn);
+
+#endif
+/** DO NOT Modify this file **/
+#include "binarytree.h"
+// prints the input binary tree in pre-order, in-order and post-order respectively
+void BinaryTreePrint(treeNode* tn)
+{
+	printf("Pre Order print of the Tree is: \n");
+	BinaryTreePreOrderPrint(tn);
+	printf("\nIn Order print of the Tree is: \n");
+	BinaryTreeInOrderPrint(tn);
+	printf("\nPost Order print of the Tree is: \n");
+	BinaryTreePostOrderPrint(tn);
+	printf("\n");
+}
+
+// print the tree in pre order fashion
+void BinaryTreePreOrderPrint(treeNode* tn)
+{
+	if(tn == NULL) return;
+	printf("%d ",tn->value );
+	BinaryTreePreOrderPrint(tn->leftChild);
+	BinaryTreePreOrderPrint(tn->rightChild);
+}
+
+// print the tree in in order fashion
+void BinaryTreeInOrderPrint(treeNode* tn)
+{
+	if(tn == NULL) return;
+	BinaryTreeInOrderPrint(tn->leftChild);
+	printf("%d ",tn->value );
+	BinaryTreeInOrderPrint(tn->rightChild);
+}
+
+// print the tree in post order fashion
+void BinaryTreePostOrderPrint(treeNode *tn)
+{
+	if(tn == NULL) return;
+	BinaryTreePostOrderPrint(tn->leftChild);
+	BinaryTreePostOrderPrint(tn->rightChild);
+	printf("%d ",tn->value );
+}
+
+// function below creates as single node of a tree
+
+treeNode * CreateTree(int *array, int index, int length)
+{
+	if(index >= length)
+  {
+    return NULL;
+  }
+	treeNode *newNode ;
+
+	newNode = malloc(sizeof(treeNode));
+	if (newNode == NULL)
+	{
+		//memory allocation failed
+		return NULL;
+	}
+	newNode->value = array[index];
+	if (newNode == NULL)
+	{
+	        return NULL;
+	}
+	newNode->leftChild = CreateTree(array, 2*index+1, length);
+	newNode->rightChild = CreateTree(array, 2*index+2, length);
+	return newNode;
+}
+
+
+// The function below creates the full binary tree
+treeNode *BinaryTreeCreate(char *filename)
+{
+	// creating a full binary tree based on the height
+	FILE *fptr = fopen(filename,"r");
+	if(fptr == NULL)
+	{
+		return NULL;
+	}
+	int value, len = 0;
+	while (fscanf(fptr, "%d", & value) == 1)
+	{
+		len++;
+	}
+  int *array = malloc(sizeof(int)* len);
+  if(array == NULL)
+  {
+    fclose(fptr);
+    return NULL;
+  }
+	fseek(fptr,0,SEEK_SET);
+  len = 0;
+  while (fscanf(fptr, "%d", & value) == 1)
+	{
+    array[len] = value;
+		len++;
+	}
+  fclose(fptr);
+	treeNode *root = CreateTree(array, 0 , len);
+
+	free(array);
+	return root;
+}
+//DO NOT MODIFY THIS FILE
+
+#ifndef HW16_H
+#define HW16_H
+#include <stdbool.h>
+#include "binarytree.h"
+
+void FreeBinaryTree(treeNode *root);
+treeNode* search(treeNode * tn, int value);
+
+bool isSubTree(treeNode* haystack, treeNode *needle);
+bool isContained(treeNode * haystack, treeNode * needle);
+
+// Print function for the assignment
+void PrintTn1ContainedTn2 (bool tn1_contained_tn2, bool tn2_contained_tn1);
+
+
+
+
+#endif
+/****************** Modify this file at specified place ***********************/
+#include <stdio.h>
+#include <stdlib.h>
+#include "hw16.h"
+
+
+/******** Do Not modify the file above this line, you can modify below ********/
+
+#ifdef TEST_FREETREE
+// FreeBinaryTree
+//  This function frees up the memory from the root node
+void FreeBinaryTree(treeNode *root)
+{
+    if(root == NULL) return;
+    FreeBinaryTree(root->leftChild);
+    FreeBinaryTree(root->rightChild);
+    free(root);
+}
+#endif
+
+#ifdef TEST_SEARCH
+// search
+//  This function rec searches for given value in a tree returns node w val
+treeNode * search(treeNode * tn, int value)
+{
+    treeNode * tmpNode = NULL;
+    // Cannot find
+    if(tn == NULL) return NULL;
+
+    // If found return the respective node
+    if(tn->value == value) return tn;
+
+    tmpNode = search(tn->leftChild,value);
+    if(tmpNode != NULL) return tmpNode;
+    tmpNode = search(tn->rightChild,value);
+    if(tmpNode != NULL) return tmpNode;
+    return NULL;
+}
+#endif
+
+
+#ifdef TEST_SUBTREE
+// isSubTree
+//  This function checks if 'needle' is subtree of 'haystack'
+bool isSubTree(treeNode * haystack, treeNode * needle)
+{
+    // Base case checks
+    if(needle == NULL) return true;
+    if(haystack == NULL) return false;
+
+    // Checking if all the values of 'needle' are in 'haystack'
+    if(haystack->value == needle->value)
+    {
+        return  ( 
+                isSubTree(haystack->leftChild,needle->leftChild) &&
+                isSubTree(haystack->rightChild,needle->rightChild)
+                );
+    }
+    return false;
+}
+#endif
+
+
+#ifdef TEST_CONTAINED
+bool isContained(treeNode * haystack, treeNode * needle)
+{
+    // Search for the part of haystack where root of needle starts
+    treeNode * tmpHS = NULL;
+    tmpHS = search(haystack, needle->value);
+    if(tmpHS == NULL) return false;
+
+    // Return the result of helper function
+    return(isSubTree(tmpHS,needle));
+}
+#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "bst.h"
+
+#ifdef TEST_MAIN
+// Destroys a binary tree
+void treeDestroy(treeNode * tn)
+{
+    if(tn == NULL) return;
+    treeDestroy(tn->leftChild);
+    treeDestroy(tn->rightChild);
+    free(tn);
+}
+
+// Count the number of integers in a given file
+int countFromFile(char * file_name)
+{
+    FILE * fptr = fopen(file_name, "r");
+    if(fptr==NULL) return EXIT_FAILURE;
+    int value=0, count=1;
+    while(fscanf(fptr,"%d",&value)==1) count++;
+    fclose(fptr);
+    return count;
+}
+
+// Fill an array with count integers from a file
+void fillArray(int * arr, int count, char * file_name)
+{
+    FILE * fptr = fopen(file_name, "r");
+    if(fptr==NULL) return;
+    int ind=0;
+    while(ind<count)
+    {
+        if(fscanf(fptr,"%d",&arr[ind]) != 1)
+        {  fclose(fptr); free(arr);  }
+        ind++;
+    }
+    fclose(fptr);
+}
+
+// Return the last entry in a file to a location * val
+void getLastEntry(int * val, int count, char * file_name)
+{
+    FILE * fptr = fopen(file_name, "r");
+    if(fptr==NULL) return;
+    int ind=0;
+    while(ind<count)
+    {
+        if(fscanf(fptr,"%d",&val[0]) != 1)
+        {  fclose(fptr); free(val);  }
+        ind++;
+    }
+    fclose(fptr);
+}
+
+// Main entrance point for program
+int main(int argc, char **argv)
+{
+    // Check input arguments
+    if(argc != 2) return EXIT_FAILURE;
+
+    // Count the number of integers in the input file
+    int count = countFromFile(argv[1]);
+    
+    // Fill an array with all the integers (except the last one)
+    int * arr = malloc(sizeof(int)*(count-1));
+    if(arr==NULL) return EXIT_FAILURE;
+    fillArray(arr,count-1,argv[1]);
+
+    // The last entry is the search query
+    int * search_query = malloc(sizeof(int)*1);
+    if(arr==NULL) return EXIT_FAILURE;
+    getLastEntry(search_query,1,argv[1]);
+
+    // Create a binary search tree from the numbers in input file
+    treeNode * t = CreateBST(arr,arr[0],0,count-2);
+
+    // Print the tree in IN-ORDER fasion
+    BinaryTreeInOrderPrint(t);
+
+    // Compute the distance of the 'search_query' node
+    FindDistance(t, search_query[0], 0);
+    //if(distance == -1) PrintDistance(-1);
+
+    // Print the distance of the node from the root node
+    //PrintDistance(distance);
+
+    // Free all memory
+    treeDestroy(t);
+    free(arr);
+    free(search_query);
+    return EXIT_SUCCESS; 
+}
+#endif
+////******** DO NOT MODIFY THIS FILE *********////
+
+
+#ifndef BINARYTREE_H
+#define BINARYTREE_H
+#include <stdio.h>
+#include <stdlib.h>
+struct tNode
+{
+	struct tNode * rightChild;
+	struct tNode * leftChild;
+	int value;
+} ;
+
+typedef struct tNode treeNode;
+
+treeNode * CreateBST(int *array,int root, int start, int end);
+int FindDistance(treeNode* tn, int value, int distance);
+void PrintDistance(int distance);
+
+void BinaryTreePreOrderPrint(treeNode* tn);
+void BinaryTreeInOrderPrint(treeNode* tn);
+void BinaryTreePostOrderPrint(treeNode *tn);
+void BinaryTreePrint(treeNode* tn);
+#endif
+
+#include "bst.h"
+///***** DO NOT MODIFY THIS FUNCTION ******/////
+#ifdef TEST_PRINT
+void PrintDistance(int distance)
+{
+
+    printf("\n%d\n",distance);
+
+}
+///***** DO NOT MODIFY THIS FUNCTION ******/////
+void BinaryTreePrint(treeNode* tn)
+{
+        printf("Pre Order print of the Tree is: \n");
+        BinaryTreePreOrderPrint(tn);
+        printf("\nIn Order print of the Tree is: \n");
+        BinaryTreeInOrderPrint(tn);
+        printf("\nPost Order print of the Tree is: \n");
+        BinaryTreePostOrderPrint(tn);
+        printf("\n");
+}
+///***** DO NOT MODIFY THIS FUNCTION ******/////
+// print the tree in pre order fashion
+void BinaryTreePreOrderPrint(treeNode* tn)
+{
+        if(tn == NULL)
+                return;
+        printf("%d ",tn->value );
+        BinaryTreePreOrderPrint(tn->leftChild);
+        BinaryTreePreOrderPrint(tn->rightChild);
+}
+///***** DO NOT MODIFY THIS FUNCTION ******/////
+// print the tree in in order fashion
+void BinaryTreeInOrderPrint(treeNode* tn)
+{
+        if(tn == NULL)
+                return;
+        BinaryTreeInOrderPrint(tn->leftChild);
+        printf("%d ",tn->value );
+        BinaryTreeInOrderPrint(tn->rightChild);
+}
+///***** DO NOT MODIFY THIS FUNCTION ******/////
+// print the tree in post order fashion
+void BinaryTreePostOrderPrint(treeNode *tn)
+{
+        if(tn == NULL)
+                return;
+        BinaryTreePostOrderPrint(tn->leftChild);
+        BinaryTreePostOrderPrint(tn->rightChild);
+        printf("%d ",tn->value );
+}
+#endif
+
+// Calculates dist of a node from the root
+//  Given: tree and value to search
+#ifdef TEST_DIST
+treeNode * search(treeNode * tn, int val, int d)
+{
+    treeNode * tmpNode = NULL;
+    // cannot find
+    if(tn == NULL) return NULL;
+    if(tn->value == val)
+    {  PrintDistance(d); return tmpNode;  }
+    tmpNode = search(tn->leftChild,val,d+1);
+    if(tmpNode != NULL) return tmpNode;
+    //{  PrintDistance(d); return tmpNode;  }
+    tmpNode = search(tn->rightChild,val,d+1);
+    if(tmpNode != NULL) return tmpNode;
+    //{  PrintDistance(d); return tmpNode;  }
+    return NULL;
+}
+/*int DistanceHelper(treeNode * tn, int val, int d)
+{
+    // IF SEARCH !IN TREE: return EXIT_FAILURE
+    if(tn == NULL) return -1;
+    // IF SEARCH FOUND: RETURN DISTANCE
+    if(tn->value == val) return d;
+    // ELSE: SEARCH LEFT, CHECK IF RETURN VAL > -1
+    int check_L = DistanceHelper(tn->leftChild,val,d+1);
+    if(check_L != -1) return check_L;
+    // ELSE: SEARCH RIGHT, CHECK IF RETURN VAL > -1
+    int check_R = DistanceHelper(tn->rightChild,val,d+1);
+    return check_R;
+    
+    //return d;
+}*/
+int FindDistance(treeNode * t, int search_query, int distance)
+{
+    // Search for the value in the haystack
+    treeNode * tmpHS = NULL;
+    tmpHS = search(t,search_query,0);
+    if(tmpHS == NULL) PrintDistance(-1);
+    return 0;
+}
+#endif
+
+#ifdef TEST_CREATEBST
+// Constructs a new TreeNode
+static treeNode * ConstructTreeNode(int value)
+{
+    treeNode * newNode;
+    newNode = malloc(sizeof(treeNode));
+    newNode->leftChild = NULL;
+    newNode->rightChild = NULL;
+    newNode->value = value;
+    return newNode;
+}
+
+// Inserts a value in BST as a new node
+treeNode * InsertBST(treeNode * tn, int value)
+{
+    if(tn == NULL) 
+    {
+        // Create a new node
+        return ConstructTreeNode(value);
+    }
+
+    // Do not insert same value twice
+    if(tn->value == value) return tn;
+    // If value < node
+    if(tn->value > value) tn->leftChild = InsertBST(tn->leftChild, value);
+    else if(tn->value < value) tn->rightChild = InsertBST(tn->rightChild, value);
+    return tn;
+}
+
+// Creates a BST based on array
+treeNode * CreateBST(int * a,int root, int start, int end)
+{
+    // Create a new node, alloc mem, assign val of root
+    treeNode * newNode = ConstructTreeNode(root);
+
+    // Insert the rest of the nodes into the BST
+    for(int i=1; i<end; i++) newNode = InsertBST(newNode, a[i]);
+    
+    return newNode;
+}
+#endif
+/******************************************************************************
+ * FILENAME: 
+ * WRITTEN BY:
+ * LAST MODIFIED: 
+ * ***************************************************************************/
+
+/**************************************
+ * FILE OPENING/CLOSING 
+ * ***********************************/
+FILE * fptr;
+fptr = fopen(filename, "r"); 	// r = read, w = write, a = append
+fclose(fptr); 					// Closing file
+
+/**************************************
+ * STREAM
+ * ***********************************/
+
+do {
+	int ch;
+	ch = fgetc(fptr);
+	// ...
+} while (ch != EOF);			// Will not work if char ch... needs int
+
+/* OR */
+while (!feof(fptr))
+{
+	// ...
+}
+
+/**************************************
+ * ASCII to INT CONV.
+ * ***********************************/
+// ex1. reading char by char '1234'
+// 1 = '1' - '0'
+// ex2. using fscanf
+int x;
+fscanf(fptr, "%d", &x);
+// x will be 1234 (number)
+
+
+/**************************************
+ * Heap Memory 
+ * ***********************************/
+char * ptr;
+ptr = malloc(sizeof(char)*numElem);
+// * 1. creates ptr in stack mem
+// * 2. heap mem returns start value of address in heap
+// * 3. ptr's value stores an address (heap)
+
+// Alternate method
+ptr = malloc(sizeof(*ptr)*numElem);
+
+
+
+
+/******************************************************************************
+ * FILENAME:
+ * WRITTEN BY:
+ * LAST MODIFIED:
+ * ***************************************************************************/
+
+/**************************************
+ * QSORT
+ * ***********************************/
+qsort(void *base, size_t nmemb, size_t size, int (*compare));
+&arr[k] = &arr[0] + k * sizeof(element);
+// Transitivity means... (a>b), (b>c) --> (a>c)
+
+/**************************************
+ * COMPARISSON FUNCTION
+ * ***********************************/
+// void * --> address (don't know the type)
+// 1. convert the type
+// 2. retrieve their values
+// 3. compare
+
+/**************************************
+ * RECURSION
+ * ***********************************/
+//          YOU
+//    FATHER    MOTHER
+//
+//    1. repeating problem
+
+
+/******************************************************************************
+ * FILENAME:        "october_2.c" 
+ * WRITTEN BY:      Andrew St. Pierre
+ * LAST MODIFIED:   Tuesday, October 2, 2018
+ * ***************************************************************************/
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// ===============
+// strlen() usage
+// ===============
+int strlen(char * s)
+{
+    // iterates through array until null terminator '\0'
+    int len = 0;
+    while(s != '\0')
+    {
+        s++;
+        len++;
+    }
+    return len;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// ===============
+// strcpy() usage
+// ===============
+void use_strcpy(void)
+{
+    char * name2;
+    // NOTE: + 1 to the strlen to account for '\0'
+    name2 = malloc(sizeof(char)*(strlen("Colleen")+1);
+    strcpy(name2, "Colleen");
+    for(int i=0; i<strlen("Colleen"); i++)
+    {  printf("%c",name2[i]);  }
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// COMMON MISTAKES ===========================================================
+// 1. do not have enough space because strlen() does not count '\0'
+// 2. strdup() forget to free
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// =======================
+// Other string functions 
+// =======================
+// strstr()     => finds the first occur of substr needle in str haystack
+// strrstr()    => does strstr, but starts searching reverse orders
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// Example use of strstr()
+char * p = strstr(str1, str2);
+if(p != NULL) p++;
+p = strstr(p,str2);
+return NULL;
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// NOTE: buffer overflow attack, first computer virus
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+// C's minimum unit is a byte (8-bits)
+//   one bit => either 0 or 1
+// read / write at least one byte
+// ===========================================================================
+//  ie. R-G-B colors for one pixel
+//      RED         GREEN       BLUE
+//      1-byte      1-byte      1-byte
+//
+//      EACH PIXEL == 24-bits, or 3 bytes
+//      post-compression... a pixel can be just 8-bits
+//
+//             BITMASKING:
+//       RED                  GREEN                BLUE
+//      |8|7|6|5|4|3|2|1|0|  |8|7|6|5|4|3|2|1|0|  |8|7|6|5|4|3|2|1|0| 
+//      |1|1|1|0|0|0|0|0|0|  |1|1|1|0|0|0|0|0|0|  |1|1|1|0|0|0|0|0|0| 
+//      |8|7|6|0|0|0|0|0|0|  |8|7|6|0|0|0|0|0|0|  |8|7|6|0|0|0|0|0|0| 
+//
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+
+
+
+
+
+
+
+//=============================================================================
+//== FILENAME:          "october_4.c"
+//== WRITTEN BY:        Andrew St. Pierre
+//== LAST MODIFIED:     Thursday, October 4, 2018
+//=============================================================================
+
+//===========================
+//== CONVERTING NUMBER BASES
+//===========================
+//
+// Decimal (base-10) to any base N system
+//   1. Divide the decimal number by the value of the new base
+//   2. Get the remainder from step 1 as the rightmost digit (LSB) of new num
+//   3. Divide the quotient of the previous divide by the neew base
+//   4. Record the remainder from step 3 as the next rightmost digt of new num
+//   N. Repeat steps 3,4 until the quotient becomes zero in step 3
+//   5. The last remainder thus obtained is the MSB of new based num
+//
+//  Example:
+//      Convert 4_BASE(10) to base 2 (binary).
+//       STEP:                          NEW NUMBER:
+//       4/2=2, remainder 0             __0
+//       2/2=1, remainder 0             _00
+//       1/2=0, remainder 1             100
+//      RESULT: 0x100
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//===========================
+//== BIT MASKING (colors)
+//===========================
+// Sign bit is the left most bit in a binary number. 
+//  If sign bit == 1, number assumes negative value
+//  Else, number assumes positive value
+ 
+// NOTE: must use unsigned char when completing assignment 10
+ 
+// Bit masking:
+//  mask:           |1|1|0|0| |0|0|0|0| 
+//  oneyte:         |x|y|a|b| |c|d|e|f| 
+//  first2bits:     |x|y|0|0| |0|0|0|0| 
+unsigned char onebyte;
+fread(&onebyte, 1, 1, fptr);
+unsigned char mask = 0xc0;
+unsigned char first2bits = onebyte & mask;
+
+// IMAGE MODIFICATION OF COLORS (FILTERS)
+//  ---------------------------------------------------------
+//  R                   G                   B
+//  |0|0|0|0|0|0|0|0|   |0|0|0|0|0|0|0|0|   |0|0|0|0|0|0|0|0| 
+unsigned char red;
+unsigned char green;
+unsigned char blue;
+// read from file
+unsigned char mask = 0xc0;
+unsigned char red2bits = red & mask;
+unsigned char green2bits = green & mask;
+unsigned char blue2bits = blue & mask;
+
+// shift bits right, ex. |1|1|0|0|0|0|0|0| => |0|0|1|1|0|0|0|0| 
+green2bits >>= 2;   // green2bits = green2bits >> 2;
+
+//  |A|B|0|0|0|0|0|0| red2bits
+//  |0|0|C|D|0|0|0|0| green2bits
+//  |0|0|0|0|E|F|0|0| blue2bits
+//  |0|0|0|0|0|0|G|H| secondred2bits
+unsigned char newbyte = red2bits | green2bits | blue2bits | secondred2bits;
+//  |A|B|C|D|E|F|G|H| newbyte
+
+// common mistake:
+unsigned char mask = 0x80;                  // |1|0|0|0|0|0|0|0|
+unsigned char firstbit = 0xFF&mask;         // |1|0|0|0|0|0|0|0|
+if (firstbit == 1) { /* WILL NEVER REACH HERE BECAUSE BYTE == 128 */ }
+// should use: if(firstbit != 0) because then the first bit MUST (recall mask)
+
+//===========================
+//== IMAGE MANIPULATION
+//===========================
+// BMP IMAGE STRUCTURE:
+// ------------------------------------
+// header       -> metadata (size,w,h,bits,etc)
+// ------------------------------------
+// data pixel   -> 
+
+// When working with a BMP image, first scan the header for information
+// about how to handle this image. (size, colors, etc)
+// THEN, scan the data. (2 passes (at least))
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//=============================================================================
+//== FILENAME:          "october_11.c"
+//== WRITTEN BY:        Andrew St. Pierre 
+//== LAST MODIFIED:     11/10/2018 13:35:55
+//=============================================================================
+
+//===========================
+//== THE WHY
+//===========================
+// GOOD READ: End-to-End Arguments in System Design
+// LINK: "http://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf"
+
+// Why C? Because... It is the #4 most popular programming language and many 
+// of the other languages are based on it... ex. C# or C++
+
+
+//===========================
+//== BITWISE OPERATION 
+//===========================
+// Compression-> lossless compression 
+//  Why? prevent waste in network usage
+//  How? encode in ASCII (8-bits per letter)
+//      In english, which letters appear most often?
+//          a,e,i,o,u
+//      In english, which letters appear less often?
+//          z,q,x
+//      Make common cases faster. Make rare cases correct.
+//      Use few bits for common characters. Use more bits for rare.
+//      GOAL: use fewer bits
+//  ex.      
+//        0/  \1        So, 0->a, 100->c, 101->d, 110->q 111->x
+//        a    \
+//          0/   \1
+//          /     \
+//        0/ \1 0/ \1
+//        c  d  q   x
+
+//===========================
+//== Image processing (pg 385) 
+//===========================
+//  __________
+//  | HEADER |  <= how many bytes to read, run check using checkHeaderValid()
+//  |--------|
+//  |        |  
+//  |  DATA  |   
+//  |        |  - Why read header and data seperately? Because the header tells
+//  |        |    us how much data to read. 2 seperate fread()'s'
+//  |________|
+
+// Debugging programs dealing with images/bmp
+//  To read a file as hexadecimal or bits, use:
+//      $   xxd -b | less
+//      $   xxd  | less
+
+
+//===========================
+//== Dynamic Structures 
+//===========================
+// concept: allocate memory when needed
+//          release memory when no longer needed
+// characteristics: 
+//  1. fixed numer
+//  2. after program starts
+//  3. you never know the size
+
+typedef struct listnode
+{
+    struct listnode * next;
+    data; // self refering
+    // ...
+} Node;
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//=============================================================================
+//== FILENAME:          "october_18.c"
+//== WRITTEN BY:        Andrew St. Pierre
+//== LAST MODIFIED:     18/10/2018 14:03:32
+//=============================================================================
+
+//===========================
+//== Linked Lists
+//===========================
+// Inserting at the beginning of linked list
+// Option 1:
+Node * List_insert(Node * h, int v)
+{
+    // ...
+}
+
+Node * head = NULL;
+head = List_insert(head,264);
+// Option 2:
+void List_insert(Node ** h, int v)
+{
+    Node * p = malloc();
+    p->next = *h;
+    *h=p;
+}
+Node * head = NULL;
+List_insert(&head,264);
+
+// Insert at end of linked list
+Node * List_insert2(Node * h, int n)
+{
+    Node * p = malloc();
+    p->value = v;
+    p->next = NULL;
+
+    // If empty...
+    if(h==NULL) return p;
+    Node * q = h;
+    
+    // Traversing the linked list
+    while((q->next) != NULL) q = q->next;
+    
+    // q is the last node now
+    q->next = p;
+
+    // Return the head
+    return h;
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Inserting in a sorted linked list
+if((v<(h->value))) // New node at beginning
+{
+    p->next = h;
+    return p;
+}
+Node * r = h->next;
+while((r != NULL) && ((r->value)<v)) 
+{  r = r->next; q = q->next  }
+// q is the node before p
+q->next = p;
+p->next = r;
+return h;
+
+// Searching a linked list
+Node * List_search(Node * h, v)
+{
+    // Search the list for value v
+    // If found, return the pointer of the node
+    // If not, return NULL
+    // If u appears multiple times, return the first
+
+    // Note: h is a second node pointer that does not change head
+    //       only changes the pointer location of h
+    while((h != NULL) && ((h->value) != v)) h=h->next;
+
+    return h;
+}
+
+// How are we going to use this? 
+Node * head = NULL;
+Node * p;
+// By creating another pointer p, you will not lose the list
+p = List_search(head, 264);
+
+// How about deleting from a Linked List?
+Node * List_delete(Node * h, v)
+{
+    // If noting in list, do nothing, return
+    if(h == NULL) return NULL;
+
+    // If the node is the very first node case
+    if((h->value) == v)
+    {  Node * p = h->next; free(h); return p;  }
+
+    // Normal case
+    Node * q = h;
+    Node * r = h->next;
+
+    // Traversing
+    while((r != NULL) && ((r->value) != v))
+    {
+        q = q->next;
+        r = r->next;
+    }
+
+    if(r == NULL) return h;
+
+    // Order is important here
+    // will get segmentation fault
+    q->next = r->next;
+    free(r);
+
+    return h;
+}
+
+
+
+
+
+
+
+    
+
+
+    return;
+}
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//=============================================================================
+//== FILENAME:          "october_25.c"
+//== WRITTEN BY:        Andrew St. Pierre 
+//== LAST MODIFIED:     25/10/2018 13:44:00
+//=============================================================================
+
+// ----------------------------------------------------------------------------
+//===========================
+//== Doubly-linked Lists 
+//===========================
+typedef struct listnode
+{
+    struct listnode * next;
+    struct listnode * previous;
+    int data;
+    // ... <more-associated-values>
+} Node;
+// DOUBLY LINKED LISTS:
+//  HEAD --> |_| <--> |_| <-- TAIL 
+Node * p;
+Node * q; 
+// Advantage of doubly linked lists:
+if(p==(q->next))
+{  q == p->prev;  }
+
+// Not a huge advange... why?
+//  If you are performing a search on LL, no avoiding long traversals...
+//  So, what is the solution??? Binary trees
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//===========================
+//== Binary trees 
+//===========================
+typedef struct treenode
+{
+    struct treenode * left;
+    struct treenode * right;
+    int data;
+    // ...
+} TNode;
+// ----------------------------------------------------------------------------
+// Keep track of root node, giving us access to rest of data
+treenode * root = NULL;
+/*  BALANCED TREE:
+                ---         2^0 = 1
+               /   \        2^1 = 2
+              / \  / \      2^2 = 4
+             /\ /\/\ /\     2^3 = 8
+*/
+// For m nodes, height=log_2(m)
+//   Binary search tree has a property where all nodes to left of 'd' are
+//   less than 'd'. And 'd' is less than 'd3'
+// ----------------------------------------------------------------------------
+// Binary search trees:
+//     |= root (has no parent)
+//    / \
+//   P   Z
+//  /\   /\
+// Q       <-- Q is P's "left-child" and called a "leaf"
+// 
+// P is called Q's "ancestor" if P is Q's parent or X is Q's ancestor and
+// P is X's parent... i.e. has inheritance property.
+// Root has no parent
+// Leaf has no child
+// ----------------------------------------------------------------------------
+// Binary search trees (cont.)
+//  - each node has a key
+//  - keys must be totally ordered
+//      |_ Totally ordered set S where a and b are members in the set,
+//         and a>b, or a==b, or a<b
+//  - wrong if for each node, key of the left chile is less than key
+//    of the node or less than key of right child (not necesarilly a b.s.t.)
+//  Inserting numbers in a binary search tree...
+//      ex. 23,17,36,4,18,42,9,15,82
+//          
+//          23
+//        /    \
+//       17    36  
+//      /  \     \
+//     4   18    42
+//      \          \
+//       9         82
+//        \
+//        15
+
+// Create a tree node and initialize values
+TNode * TreeNodeCreate(v)
+{
+    TNode * p;
+    p = malloc(sizeof(TNode));
+    p->left=NULL;
+    p->right=NULL;
+    p->value=v;
+    return p;
+}
+
+// Insert a node w. value v in binary search tree root r
+TNode * TreeInsert(TNode * r, int v)
+{
+    // If tree is empty (exit condition)
+    if(r==NULL) return TreeNodeCreate(v);
+
+    // If value same as root, do not insert again
+    if((r->value)==v) return r;
+
+    // If not same... insert with recursion
+    if((r->value) < v) r->right = TreeInsert(r->right,v);
+    else r->left = TreeInsert(r->left,v);
+}
+
+// example
+TNode * root = NULL;
+root = TreeInsert(root,23);
+root = TreeInsert(root,17);
+//  NULL  -->  23  -->     23    
+//                        /
+//                       17
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//=============================================================================
+//== FILENAME:          "notebook"
+//== WRITTEN BY:        Andrew St. Pierre
+//== LAST MODIFIED:     13/11/2018 13:41:33
+//=============================================================================
+
+//===========================
+//== Clustering Data
+//===========================
+
+    Recall k-means clustering...
+        1. how to choose k
+        2. outliers
+        3. how to start
+        4. long time to converge
+        5. sensitive to points at boundary
+        6. points in different groups may be 
+           closer than points in the same group
+        
+        ... many weaknesses
+
+    Alternative method for clustering data: 
+    ======================
+    Hierarchial Clustering
+    ======================
+        suppose some data: 
+            .   .    ..         ..  .
+            ..   ...        . ...   .
+        
+        pairwise distance:
+            -> find the smallest -> siblings of a
+                binary tree
+        create a distance table:
+            A   B   C   D   E   F   G
+        A | O   x
+        B | x   O
+        C |         O
+        D |             O
+        E |                 O
+        F |                     O
+        G |                         O
+          x = distance(A->B) <=IS SAME=> distance(B->A)
+            = (x_1-y_1)^2 + (x_2-y_2)^2 + ... + (x_n-y_n)^2
+
+        O- node     ---->               /----\
+       / \                             /      \
+      A   B                           / \    / \
+                                     /   \  G   \
+                                    /     \      H
+                                   / \     \
+                                  /   \     \
+                                 /\    \   / \
+                                /  \   |  /\  \
+                               A    B  C  D E  F
+
+         => If data is very scattered, tree will be very tall
+            b/c there is few clusters
+         
+         => Only leaf nodes contain data
+            Non-leaf nodes have no data 'Null'
+         
+         => Even the slightest change in distance will change 
+            horizontal distance... too sensitive
+            Only vertical distance is an accurate indicator of
+            relations
+
+    
+//=============================================================================
+//== WRITTEN BY:        Andrew St. Pierre
+//== LAST MODIFIED:     15/11/2018 13:36:33
+//=============================================================================
+
+// EXAM REVIEW CLASS
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Number of trees: 1
+Number of trees: 2
+Number of trees: 5
+Number of trees: 14
+Number of trees: 42
+Number of trees: 132
+Number of trees: 429
+Number of trees: 1430
+Number of trees: 4862
+Number of trees: 16796

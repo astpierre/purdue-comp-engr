@@ -1,0 +1,51 @@
+Partitioning 1...
+Total partitions= 0
+Partitioning 2...
+2
+Total partitions= 1
+Partitioning 3...
+Total partitions= 0
+Partitioning 4...
+2 + 2
+4
+Total partitions= 2
+Partitioning 5...
+Total partitions= 0
+Partitioning 6...
+2 + 2 + 2
+2 + 4
+4 + 2
+6
+Total partitions= 4
+Partitioning 7...
+Total partitions= 0
+Partitioning 8...
+2 + 2 + 2 + 2
+2 + 2 + 4
+2 + 4 + 2
+2 + 6
+4 + 2 + 2
+4 + 4
+6 + 2
+8
+Total partitions= 8
+Partitioning 9...
+Total partitions= 0
+Partitioning 10...
+2 + 2 + 2 + 2 + 2
+2 + 2 + 2 + 4
+2 + 2 + 4 + 2
+2 + 2 + 6
+2 + 4 + 2 + 2
+2 + 4 + 4
+2 + 6 + 2
+2 + 8
+4 + 2 + 2 + 2
+4 + 2 + 4
+4 + 4 + 2
+4 + 6
+6 + 2 + 2
+6 + 4
+8 + 2
+10
+Total partitions= 16
