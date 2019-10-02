@@ -1,0 +1,159 @@
+Network Performance
+  Bandwidth: # bits / second
+  Propagation Delay: min time it would take to transmit a bit accros
+                     due to speed of light
+
+  Message Transfer Time (Message Latency / Delay)
+    Answer check: if #bits large, bandwidth becomes important
+                  else if #bits small, propdelay becomes important
+    
+    MTT = PropDelay + TransmissionTime + Queuing
+      PropDelay => Distance / Speed-of-light
+      TransmissionTime => Size / Bandwidth
+    
+    ex. 1000Km, 2.8*10^8m/s, 512Kbps, 100bytes
+      Tx: (100*8)/(512*10^3)sec = 1.56ms
+      PD: (1000*10^3)/(2.8*10^8)sec = 3.57
+      Notes:
+        Around 1.56ms -> last bit out of sender
+        Around 3.57ms -> first bit reaches receiver
+        Around 5.13ms -> last bit reaches receiver
+    
+  Bandwidth-Delay Product
+    -> How many bits fit in the pipe?
+    -> How much data can be tx b4 1st bit received
+    = (Bandwidth)*(PropDelay) = #bits
+
+  Round-Trip-Time
+    For hw, 2*propDelay
+    Strictly, minimum RTT = 2*propDelay
+      RTT = 2 * PacketLatency
+
+  Bandwidth-Delay
+    = BW * PropDelay
+
+
+Network Architecture
+  Multiplexing/Demultiplexing
+    |-> sharing system resource among multiple users
+    |-> Packet Switching
+     |= data sent as formatted bit-seq's (packets) {HEADER|DATA|TRAILER}
+     |= implemented at Network Layer (connectionless)
+    |-> Circuit Switching
+     |= circuit establishment, data transfer, circuit termination (time division)
+     |= implemented at Physical Layer (connection oriented)
+     |= Time Div Multplxng: time divided into frames and frames divided into slots
+
+Layered Protocol Arch
+  Application Layer:
+  Transport Layer:
+  Network Layer:
+  Data Link Layer:
+
+Ethernet
+  > Most successfull LAN technology
+  > Pros: easy to manage / inexpensive
+
+  Terms
+    Multiple Access Network
+      > set of nodes send and recv frames over shared link
+    Carrier-Sense Multiple Access with Collision Detection (CSMA/CD)
+      > MA => multiple access
+      > CS => carrier sense
+      > CD => collision detection
+
+  Frame Format
+    [ {PREAMBLE} {DEST} {SRC} {TYPE} {DATA} {PAD} {CRC} ]
+    Preamble: marks beginning of frame + clock sync (8 bytes)
+    Source: 48-bit IEEE MAC address
+    Dest: 48-bit IEEE MAC address
+    Type: demultiplexing field, what network layer (3) should receive this packet
+    Data: min=46bytes, max=1500bytes
+    CRC: cyclic redundency check (error checking)
+
+  Collision Domain
+    Data tx by host reaches all other hosts
+    All hosts on same Ethernet segment are in same CD (also true if separated by hubs/repeaters)
+
+  CSMA/CD Algorithm
+    1. sense for carrier
+    2. if carrier present, wait till carrier ends
+    3. send packet and sense for collision
+    4. if no collision detected, consider packet delivered
+    5. otherwise, abort immediately, perform exponential back-off, and send packet again
+      - start to send at a random time picked from an interval
+      - length of interval increases w/ every re-transmission
+
+LAN Interconnects
+  Bridges: connect multiple IEEE 802 LANs at layer 2
+    Transparent bridges
+      > forwarding of frames
+        |> maintains fwd'ng DB with <MAC, PORT, AGE> entries
+        |> "A machine with MAC address lies in direction of the PORT # 
+            from the bridge. The entry is AGE time units old."
+        a MAC frame arrives on port 8000...
+          1. Search if MAC addr of dest is listed for various bridge ports
+            if found: fwd frame on appropriate port
+            else: flood the frame (ie. send the frame on all ports (except 8000))
+
+      > learning of addresses
+        |> the fwd'ng DB could be set statically (=static routing)
+        |> the SRC field of a frame that arrives on a port tells which hosts
+           can be reached from that port
+        For each fram received, the bridge stores the SRC + PORT fields in the fwd'ng DB
+        All entries are deleted after some time
+
+        ex. <SRC=A, DEST=F>, <SRC=C, DEST=A>, <SRC=E, DEST=C>
+
+                [bridge X]          [bridge Y]
+            port1      port2      port1     port2
+              |          |          |         |
+            {LAN-1}   {---- LAN-2 ----}    {LAN-3}
+            |     |       |        |        |   |
+            a     b       c        d        e   f
+
+
+      > spanning tree algorithm
+        |> eliminates the looping problem
+        |> Configuration Bridge Protocol Data Unit
+          {ROOT}                the bridge w/ lowest ID
+          {ROOT_PORT}           bridge port identifying nxt hop to {ROOT}
+          {ROOT_PATH_COST}      #hops from each bridge to {ROOT} 
+          {DESIGNATED_BRIDGE}   bridge for LAN providing min cost path to root
+          {DESIGNATED_PORT}     if a bridge is {DESIGNATED_BRIDGE} for a LAN,
+                                the appropriate port is the designated port
+          
+          a. elect 1x bridge as {ROOT}
+          b. calc the distance of the shortest path to {ROOT}
+          c. each LAN can determine {DESIGNATED_BRIDGE}
+          d. each bridge can determine {ROOT_PORT}
+          e. if a bridge is {DESIGNATED_BRIDGE} for LAN, respective port is {DESIGNATED_PORT}
+          f. disable all ports which are neither {ROOT_PORT}s nor {DESIGNATED_PORT}s
+
+        1. Determine {ROOT}
+        2. Determine {ROOT_PORT} on all other bridges
+        3. Determine {DESIGNATED_PORT} on each LAN
+
+Why is there a minimum frame size?
+  |> you should be able to hear a collision signal from somebody else 
+      (dont finish before anyone has a chance to signal collision)
+
+I/O Multiplexing w/ Select
+  > Allows the process to instruct kernel to wait for one of multiple events to occur
+  > Wakes up process if specific event occurs
+
+  int main(int argc, char ** argv) {
+    ...
+      while(1) {
+        FD_ZERO(&rfds);
+        FD_SET(socketfd1, &rfds);
+        FD_SET(socketfd2, &rfds);
+        maxfd = max(socketfd1, socketfd2) + 1;
+        retval = select(maxfd, &rfds, NULL, NULL, NULL);
+
+        if (FD_ISSET(socketfd1, &rfds)) // Read data from socketfd1
+        else if (FD_ISSET(socketfd2, &rfds)) // Read data from socketfd2
+      }
+  }
+
+
