@@ -157,3 +157,11 @@ I/O Multiplexing w/ Select
   }
 
 
+UDP vs TCP
+  TCP
+    > connection-oriented, stream semantics
+    > state that captures a given pair of end-points are communicating
+    > stream of bytes sent across end-points
+  UDP
+    > connectionless, datagram semantics
+    > no 'state' accross a seq of packets 
