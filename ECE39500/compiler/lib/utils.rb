@@ -38,4 +38,24 @@ module CompilerUtils
     printf: 151,
     halt: 0,
   }
+
+  class SymbolTable
+    @@num_symbols = 0
+    def initialize
+      @table = {}
+    end
+
+    def add(key, value)
+      @@num_symbols += 1
+      @table[key] = value
+    end
+
+    def get(key)
+      @table[key]
+    end
+
+    def to_s
+      puts @table
+    end
+  end
 end
