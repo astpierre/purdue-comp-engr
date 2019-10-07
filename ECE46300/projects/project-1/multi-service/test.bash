@@ -1,4 +1,6 @@
+echo "TEST"
 ./shift_client localhost 2091 ./short.txt 4 > out1.txt &
+
 ./shift_client localhost 2091 ./short.txt 7 > out2.txt &
 
 sleep 5
