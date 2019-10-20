@@ -1,3 +1,5 @@
+package mmul;
+
 class MatrixMultiply {
 
    double a[ ][ ];
@@ -58,4 +60,3 @@ class MatrixMultiply {
       return matrixMultiply;
    }
 }
-         

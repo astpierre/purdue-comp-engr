@@ -1,8 +1,11 @@
+package mcommander;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import mmul.*;
 
 public class MatrixCommander {
-  private final BlockingQueue<Job> jobQueue;
+  private final BlockingQueue<MatrixMultiply> jobQueue;
   private final Thread[] jobThreads;
   private volatile boolean shutdown;
 
@@ -18,9 +21,9 @@ public class MatrixCommander {
   }
 
 
-  public void addJob(Job r) {
+  public void addJob(MatrixMultiply mm) {
     try {
-      jobQueue.put(r);
+      jobQueue.put(mm);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
@@ -50,8 +53,8 @@ public class MatrixCommander {
     public void run() {
       while (!shutdown) {
         try {
-          Job r = jobQueue.take();
-          r.run();
+          MatrixMultiply m = jobQueue.take();
+          m.mm();
         } catch (InterruptedException e) {
         }
       }

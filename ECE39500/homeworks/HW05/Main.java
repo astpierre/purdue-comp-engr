@@ -1,5 +1,9 @@
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import mcommander.*;
+import mmul.*;
 
 class Main {
   public static void main(String[] args) {
@@ -14,7 +18,8 @@ class Main {
     double b[ ][ ] = new double[n][cCols1];
     double c[ ][ ] = new double[cRows1][cCols1];
 
-    ArrayList<MatrixMultiply> partitionedArrays = null; 
+    ArrayList<MatrixMultiply> partitionedArrays = null;
+    MatrixCommander matrixCommander = new MatrixCommander(1);
 
     initArray(a, 1.0);
     initArray(b, 1.0);
@@ -25,8 +30,11 @@ class Main {
     // printArray("Initialized c", c, true, 10);
 
     partitionedArrays = partitionArrays(a, b, c, rowPartitions, colPartitions);
-
-    multiplyArrays(partitionedArrays);
+    Iterator<MatrixMultiply> iter = partitionedArrays.iterator( );
+    while (iter.hasNext( )) {
+      matrixCommander.addJob(iter.next( ));
+    }
+    //multiplyArrays(partitionedArrays);
 
     printArray("Result in C: ", c, true, 10);
   }
@@ -89,6 +97,65 @@ class Main {
         System.out.print("" + a[i][j] + " ");
       }
       System.out.println(" ");
+    }
+  }
+}
+
+
+public class MatrixCommander {
+  private final BlockingQueue<MatrixMultiply> jobQueue;
+  private final Thread[] jobThreads;
+  private volatile boolean shutdown;
+
+
+  public MatrixCommander(int n) {
+    jobQueue = new LinkedBlockingQueue<>();
+    jobThreads = new Thread[n];
+
+    for (int i = 0; i < n; i++) {
+      jobThreads[i] = new Worker("Pool Thread " + i);
+      jobThreads[i].start();
+    }
+  }
+
+
+  public void addJob(MatrixMultiply mm) {
+    try {
+      jobQueue.put(mm);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+  }
+
+
+  public void shutdownPool() {
+    while (!jobQueue.isEmpty()) {
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+    shutdown = true;
+    for (Thread workerThread : jobThreads) {
+      workerThread.interrupt();
+    }
+  }
+
+
+  private class Worker extends Thread {
+    public Worker(String name) {
+      super(name);
+    }
+
+    public void run() {
+      while (!shutdown) {
+        try {
+          MatrixMultiply m = jobQueue.take();
+          m.mm();
+        } catch (InterruptedException e) {
+        }
+      }
     }
   }
 }
