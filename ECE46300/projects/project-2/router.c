@@ -14,11 +14,9 @@ int main(int argc, char ** argv) {
     int sockfd;
     struct sockaddr_in si_router;
     struct sockaddr_in si_ne;
+    int slen = sizeof(si_ne);
     struct hostent * ne_host;
     char buf[PACKETSIZE];
-        
-    struct pkt_INIT_REQUEST init_req;
-    init_req.router_id = router_id;
     
     /* Initialize UDP socket */
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -47,9 +45,9 @@ int main(int argc, char ** argv) {
 
     /* Send INIT_REQUEST */
     /* INIT_REQUEST to NETWORK_EMULATOR */
-    bzero(buf, PACKETSIZE);
-    buf[0] = 'A';    
-    if (sendto(sockfd, buf, (strlen(buf)+1), 0, (struct sockaddr *)&si_ne, sizeof(si_ne)) < 0) {
+    struct pkt_INIT_REQUEST init_req;
+    init_req.router_id = router_id;
+    if (sendto(sockfd, &init_req, (sizeof(init_req)+1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
         perror("sendto");
         exit(-1);
     }
@@ -58,15 +56,18 @@ int main(int argc, char ** argv) {
     /* INIT_RESPONSE from NETWORK_EMULATOR */
     for(;;) {
         fflush(stdout);
-        if(recv_len = recvfrom(sockfd, buf, PACKETSIZE, 0, (struct sockaddr *)&si_ne, sizeof(si_ne)) < 0) {
+        struct pkt_INIT_RESPONSE init_resp;
+        if(recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0) {
             perror("recvfrom");
             close(sockfd);
             exit(-1);
         }
-        printf("Data: %s\n", buf);
+        printf("Neighbors: %d\nNBR: %d,%d\n", init_resp.no_nbr, init_resp.nbrcost[0].nbr, init_resp.nbrcost[0].cost);
         break;
     }
 
+    /* Initialize routing table with INIT_RESPONSE */
+    InitRoutingTbl (init_resp, router_id);
 
     /* Instantiate UDP FD polling thread */
     /* - wait to receive RT_UPDATE packet */
@@ -77,6 +78,7 @@ int main(int argc, char ** argv) {
     /* UPDATE_INTERVAL expires */
     /* 1. ConvertTabletoPkt() */
     /* 2. RT_UPDATE() sent to all neighbors */
+
     /* FAILURE_DETECTION */
     /* CONVERGE_TIMEOUT */
 
