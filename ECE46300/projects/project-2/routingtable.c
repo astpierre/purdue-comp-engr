@@ -4,18 +4,19 @@
 
 /* ----- GLOBAL VARIABLES ----- */
 struct route_entry routingTable[MAX_ROUTERS];
-int NumRoutes;
+static int NumRoutes = 0;
 
 
 ////////////////////////////////////////////////////////////////
 void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
 	for (int i=0; i < InitResponse->no_nbr; i++) {
-		routingTable[InitResponse.nbrcost[i].nbr].dest_id = InitResponse.nbrcost[i].nbr;
-		routingTable[InitResponse.nbrcost[i].nbr].next_hop = InitResponse.nbrcost[i].nbr;
-		routingTable[InitResponse.nbrcost[i].nbr].cost = InitResponse.nbrcost[i].cost;
-		routingTable[InitResponse.nbrcost[i].nbr].path_len = 1;
-		routingTable[InitResponse.nbrcost[i].nbr].path[0] = myID;
-		routingTable[InitResponse.nbrcost[i].nbr].path[1] = InitResponse.nbrcost[i].nbr;
+		routingTable[NumRoutes].dest_id = InitResponse->nbrcost[i].nbr;
+		routingTable[NumRoutes].next_hop = InitResponse->nbrcost[i].nbr;
+		routingTable[NumRoutes].cost = InitResponse->nbrcost[i].cost;
+		routingTable[NumRoutes].path_len = 1;
+		routingTable[NumRoutes].path[0] = myID;
+		routingTable[NumRoutes].path[1] = InitResponse->nbrcost[i].nbr;
+		printf("%d,%d\n", routingTable[NumRoutes].dest_id, routingTable[NumRoutes].cost);
 		NumRoutes+=1;
 	}
 	return;

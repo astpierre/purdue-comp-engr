@@ -6,23 +6,23 @@ static clock_t _current_time = 0;
  
 
 /* Create a timer thread */
-void start_timer(int seconds) {
+/*void start_timer(int seconds) {
     pthread_t thread_id;
     if (pthread_create(&thread_id, NULL, thread_start_timer, (void*) seconds)) {
         perror("pthread_create");
         exit(-1);
     }
-}
+}*/
  
 
 /* Start the timer in another thread */
-int * thread_start_timer(void *secs) {
+/*int * thread_start_timer(void *secs) {
     int seconds = (int) secs;
     _current_time = clock() + seconds * CLOCKS_PER_SEC;
-    /* loop until the 10 seconds has reached */
+    // loop until the 10 seconds has reached 
     while(clock() < _current_time){}
     pthread_exit(NULL);
-}
+}*/
 
 /*  */
 
@@ -80,20 +80,20 @@ int main(int argc, char ** argv) {
     
     /* Receive INIT_RESPONSE */
     /* INIT_RESPONSE from NETWORK_EMULATOR */
-    for(;;) {
-        fflush(stdout);
-        struct pkt_INIT_RESPONSE init_resp;
-        if(recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0) {
-            perror("recvfrom");
-            close(sockfd);
-            exit(-1);
-        }
-        printf("Neighbors: %d\nNBR: %d,%d\n", init_resp.no_nbr, init_resp.nbrcost[0].nbr, init_resp.nbrcost[0].cost);
-        break;
+    fflush(stdout);
+    struct pkt_INIT_RESPONSE init_resp;
+    if(recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0) {
+        perror("recvfrom");
+        close(sockfd);
+        exit(-1);
     }
+    printf("Neighbors: %d\nNBR: %d,%d\n", init_resp.no_nbr, init_resp.nbrcost[0].nbr, init_resp.nbrcost[0].cost);
 
     /* Initialize routing table with INIT_RESPONSE */
-    InitRoutingTbl (init_resp, router_id);
+    InitRoutingTbl (&init_resp, router_id);
+    FILE * fp = fopen("test.log", "w");
+
+    PrintRoutes(fp, 0);
 
     /* Instantiate UDP FD polling thread */
     /* - wait to receive RT_UPDATE packet */
