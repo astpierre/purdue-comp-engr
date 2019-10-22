@@ -9,7 +9,15 @@ int NumRoutes;
 
 ////////////////////////////////////////////////////////////////
 void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
-	/* ----- YOUR CODE HERE ----- */
+	for (int i=0; i < InitResponse->no_nbr; i++) {
+		routingTable[InitResponse.nbrcost[i].nbr].dest_id = InitResponse.nbrcost[i].nbr;
+		routingTable[InitResponse.nbrcost[i].nbr].next_hop = InitResponse.nbrcost[i].nbr;
+		routingTable[InitResponse.nbrcost[i].nbr].cost = InitResponse.nbrcost[i].cost;
+		routingTable[InitResponse.nbrcost[i].nbr].path_len = 1;
+		routingTable[InitResponse.nbrcost[i].nbr].path[0] = myID;
+		routingTable[InitResponse.nbrcost[i].nbr].path[1] = InitResponse.nbrcost[i].nbr;
+		NumRoutes+=1;
+	}
 	return;
 }
 
