@@ -25,10 +25,18 @@ void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
 
 ////////////////////////////////////////////////////////////////
 int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myID){
-	/* ----- YOUR CODE HERE ----- */
+	/* ----- ADD UNKNOWN DESTINATIONS ----- */
+	for (int i=0; i < RecvdUpdatePacket->no_routes; i++) {
+		if (myTableContains(RecvdUpdatePacket->route[i].dest_id)) {
+			/* CHECK FOR BETTER PATH */
+			continue;
+		} else {
+			/* ADD ROUTE TO MY TABLE */
+			continue;
+		}
+	}
 	return 0;
 }
-
 
 ////////////////////////////////////////////////////////////////
 void ConvertTabletoPkt(struct pkt_RT_UPDATE *UpdatePacketToSend, int myID){
