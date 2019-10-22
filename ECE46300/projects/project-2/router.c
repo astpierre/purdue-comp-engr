@@ -2,6 +2,32 @@
 #include "router.h"
 #include <pthread.h>
 
+static clock_t _current_time = 0;
+ 
+
+/* Create a timer thread */
+void start_timer(int seconds) {
+    pthread_t thread_id;
+    if (pthread_create(&thread_id, NULL, thread_start_timer, (void*) seconds)) {
+        perror("pthread_create");
+        exit(-1);
+    }
+}
+ 
+
+/* Start the timer in another thread */
+int * thread_start_timer(void *secs) {
+    int seconds = (int) secs;
+    _current_time = clock() + seconds * CLOCKS_PER_SEC;
+    /* loop until the 10 seconds has reached */
+    while(clock() < _current_time){}
+    pthread_exit(NULL);
+}
+
+/*  */
+
+
+/* Main method */
 int main(int argc, char ** argv) {
     /* Get CLAs */
     if (argc != 5) {
