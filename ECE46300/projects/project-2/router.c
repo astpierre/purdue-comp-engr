@@ -47,7 +47,8 @@
         int slen = sizeof(si_ne);
         struct hostent *ne_host;
         //char buf[PACKETSIZE];
-
+        char logfilename[20];
+        
         /* Initialize UDP socket */
         if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         {
@@ -100,7 +101,10 @@
         /* Initialize routing table with INIT_RESPONSE */
         ntoh_pkt_INIT_RESPONSE(&init_resp);
         InitRoutingTbl(&init_resp, router_id);
-        FILE *fp = fopen("test.log", "a");
+        strcpy(logfilename, "router_");
+        strcat(logfilename, argv[1]);
+        strcat(logfilename, ".log");
+        FILE *fp = fopen(logfilename, "w");
         PrintRoutes(fp, 0);
 
         /* Instantiate UDP FD polling thread */
