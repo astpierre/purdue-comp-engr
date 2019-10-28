@@ -18,11 +18,18 @@ int myTableContains(unsigned int router_id) {
 
 ////////////////////////////////////////////////////////////////
 void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
+	routingTable[NumRoutes].dest_id = myID;
+	routingTable[NumRoutes].next_hop = myID;
+	routingTable[NumRoutes].cost = 0;
+	routingTable[NumRoutes].path_len = 1;
+	routingTable[NumRoutes].path[0] = myID;
+	NumRoutes += 1;
+	
 	for (int i=0; i < InitResponse->no_nbr; i++) {
 		routingTable[NumRoutes].dest_id = InitResponse->nbrcost[i].nbr;
 		routingTable[NumRoutes].next_hop = InitResponse->nbrcost[i].nbr;
 		routingTable[NumRoutes].cost = InitResponse->nbrcost[i].cost;
-		routingTable[NumRoutes].path_len = 1;
+		routingTable[NumRoutes].path_len = 2;
 		routingTable[NumRoutes].path[0] = myID;
 		routingTable[NumRoutes].path[1] = InitResponse->nbrcost[i].nbr;
 		NumRoutes+=1;
