@@ -8,7 +8,8 @@ static int NumRoutes = 0;
 
 ////////////////////////////////////////////////////////////////
 int myTableContains(unsigned int router_id) {
-	for (int i=0; i < MAX_ROUTERS; i++) {
+	int i;
+	for (i=0; i < MAX_ROUTERS; i++) {
 		if (routingTable[i].dest_id == router_id) {
 			return 1;
 		}
