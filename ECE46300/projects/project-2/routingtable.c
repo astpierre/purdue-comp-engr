@@ -55,8 +55,8 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 							routingTable[j].next_hop = RecvdUpdatePacket->sender_id;
 							routingTable[j].path_len = RecvdUpdatePacket->route[i].path_len + 1;
 							routingTable[j].path[0] = myID;
-							for (int j=0; j < RecvdUpdatePacket->route[i].path_len; j++) {
-								routingTable[j].path[j+1] = RecvdUpdatePacket->route[i].path[j];
+							for (int m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
+								routingTable[j].path[m+1] = RecvdUpdatePacket->route[i].path[m];
 							}
 						}
 					
