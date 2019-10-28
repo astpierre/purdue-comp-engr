@@ -62,7 +62,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 							ignore = 1;
 						}
 					}
-					if (!ignore) {
+					if (ignore != 1) {
 						if (routingTable[j].cost > (RecvdUpdatePacket->route[i].cost + costToNbr)) {
 							routingTable[j].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
 							routingTable[j].next_hop = RecvdUpdatePacket->sender_id;
@@ -74,7 +74,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 						}
 					
 						/* Forced update rule */
-						if (routingTable[j].next_hop == RecvdUpdatePacket->sender_id) {
+						else if (routingTable[j].next_hop == RecvdUpdatePacket->sender_id) {
 							if (RecvdUpdatePacket->route[i].cost > (routingTable[j].cost - costToNbr)) {
 								routingTable[j].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
 							}
