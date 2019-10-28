@@ -59,7 +59,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 					/* Path vector rule */
 					for (k=0; k < MAX_ROUTERS; k++) {
 						if (RecvdUpdatePacket->route[i].path[k] == myID) {
-							ignore = 1;
+							ignore = 0;
 						}
 					}
 					if (ignore != 1) {
@@ -79,7 +79,6 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 								routingTable[j].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
 							}
 						}
-						break; 
 					}
 				}
 			}
