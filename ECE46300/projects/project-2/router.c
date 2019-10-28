@@ -46,8 +46,8 @@
         struct sockaddr_in si_ne;
         int slen = sizeof(si_ne);
         struct hostent *ne_host;
-        //char buf[PACKETSIZE];
         char logfilename[20];
+        FILE * fp = NULL;
         
         /* Initialize UDP socket */
         if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
@@ -104,7 +104,7 @@
         strcpy(logfilename, "router_");
         strcat(logfilename, argv[1]);
         strcat(logfilename, ".log");
-        FILE *fp = fopen(logfilename, "w");
+        fp = fopen(logfilename, "w");
         PrintRoutes(fp, 0);
 
         /* Instantiate UDP FD polling thread */

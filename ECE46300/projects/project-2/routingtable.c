@@ -18,6 +18,8 @@ int myTableContains(unsigned int router_id) {
 
 ////////////////////////////////////////////////////////////////
 void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
+	int i;
+
 	routingTable[NumRoutes].dest_id = myID;
 	routingTable[NumRoutes].next_hop = myID;
 	routingTable[NumRoutes].cost = 0;
@@ -25,7 +27,7 @@ void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
 	routingTable[NumRoutes].path[0] = myID;
 	NumRoutes += 1;
 
-	for (int i=0; i < InitResponse->no_nbr; i++) {
+	for (i=0; i < InitResponse->no_nbr; i++) {
 		routingTable[NumRoutes].dest_id = InitResponse->nbrcost[i].nbr;
 		routingTable[NumRoutes].next_hop = InitResponse->nbrcost[i].nbr;
 		routingTable[NumRoutes].cost = InitResponse->nbrcost[i].cost;
@@ -41,15 +43,19 @@ void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
 ////////////////////////////////////////////////////////////////
 int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myID){
 	/* ----- ADD UNKNOWN DESTINATIONS ----- */
-	for (int i=0; i < RecvdUpdatePacket->no_routes; i++) {
+	int i;
+	int j;
+	int k;
+	int m;
+	for (i=0; i < RecvdUpdatePacket->no_routes; i++) {
 		if (myTableContains(RecvdUpdatePacket->route[i].dest_id)) {
 			/* CHECK FOR BETTER PATH */
 			int ignore = 0;
 			/* Path vector rule */
-			for (int j=0; j < NumRoutes; j++) {
+			for (j=0; j < NumRoutes; j++) {
 				if (routingTable[j].dest_id == RecvdUpdatePacket->route[i].dest_id) {
 					/* Path vector rule */
-					for (int k=0; k < MAX_ROUTERS; k++) {
+					for (k=0; k < MAX_ROUTERS; k++) {
 						if (RecvdUpdatePacket->route[i].path[k] == myID) {
 							printf("Path Vector Rule: path contains me.\n");
 							ignore = 1;
@@ -62,7 +68,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 							routingTable[j].next_hop = RecvdUpdatePacket->sender_id;
 							routingTable[j].path_len = RecvdUpdatePacket->route[i].path_len + 1;
 							routingTable[j].path[0] = myID;
-							for (int m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
+							for (m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
 								routingTable[j].path[m+1] = RecvdUpdatePacket->route[i].path[m];
 							}
 						}
@@ -84,7 +90,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 			routingTable[NumRoutes].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
 			routingTable[NumRoutes].path_len = RecvdUpdatePacket->route[i].path_len + 1;
 			routingTable[NumRoutes].path[0] = myID;
-			for (int j=0; j < RecvdUpdatePacket->route[i].path_len; j++) {
+			for (j=0; j < RecvdUpdatePacket->route[i].path_len; j++) {
 				routingTable[NumRoutes].path[j+1] = RecvdUpdatePacket->route[i].path[j];
 			}
 			NumRoutes += 1;
@@ -95,9 +101,10 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 
 ////////////////////////////////////////////////////////////////
 void ConvertTabletoPkt(struct pkt_RT_UPDATE *UpdatePacketToSend, int myID){
+	int i;
 	UpdatePacketToSend->sender_id = myID;
 	UpdatePacketToSend->no_routes = NumRoutes;
-	for (int i=0; i < NumRoutes; i++) {
+	for (i=0; i < NumRoutes; i++) {
 		UpdatePacketToSend->route[i] = routingTable[i];
 	}
 	return;
