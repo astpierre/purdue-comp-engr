@@ -96,12 +96,11 @@
             close(sockfd);
             exit(-1);
         }
-        printf("Neighbors: %d\nNBR: %d,%d\n", init_resp.no_nbr, init_resp.nbrcost[0].nbr, init_resp.nbrcost[0].cost);
-
+        
         /* Initialize routing table with INIT_RESPONSE */
+        ntoh_pkt_INIT_RESPONSE(&init_resp);
         InitRoutingTbl(&init_resp, router_id);
-        FILE *fp = fopen("test.log", "w");
-
+        FILE *fp = fopen("test.log", "a");
         PrintRoutes(fp, 0);
 
         /* Instantiate UDP FD polling thread */
