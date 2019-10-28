@@ -14,7 +14,7 @@
  *  This function converts struct pkt_INIT_RESPONSE
  *  from network to host byte order.
  */
-void ntoh_pkt_INIT_RESPONSE (struct pkt_INIT_RESPONSE *ne_resp) {
+void ntoh_pkt_INIT_RESPONSE (struct pkt_INIT_RESPONSE * ne_resp) {
 
 	int i;
 
