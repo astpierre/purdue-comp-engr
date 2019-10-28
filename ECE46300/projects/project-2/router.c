@@ -1,6 +1,7 @@
 #include "ne.h"
 #include "router.h"
 #include <pthread.h>
+#include <string.h>
 
 static clock_t _current_time = 0;
  
