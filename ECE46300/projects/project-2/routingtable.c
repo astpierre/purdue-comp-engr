@@ -58,9 +58,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 					/* Path vector rule */
 					for (k=0; k < MAX_ROUTERS; k++) {
 						if (RecvdUpdatePacket->route[i].path[k] == myID) {
-							printf("Path Vector Rule: path contains me.\n");
 							ignore = 1;
-							break;
 						}
 					}
 					if (!ignore) {
