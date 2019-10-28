@@ -79,7 +79,7 @@
         /* Send INIT_REQUEST */
         /* INIT_REQUEST to NETWORK_EMULATOR */
         struct pkt_INIT_REQUEST init_req;
-        init_req.router_id = router_id;
+        init_req.router_id = htonl(router_id);
         if (sendto(sockfd, &init_req, (sizeof(init_req) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0)
         {
             perror("sendto");
