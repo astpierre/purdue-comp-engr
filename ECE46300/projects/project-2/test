@@ -1,4 +1,15 @@
-#!/usr/bin/bash
+#!/bin/bash
+
+
+#while getopts ":i:n:m:e:" arg; do
+#  case $arg in
+#    i) ID=$OPTARG;;
+#    n) Name=$OPTARG;;
+#    m) Manufacturing_date=$OPTARG;;
+#    e) Expire_date=$OPTARG;;
+#  esac
+#done
+
 
 echo "Building project..."
 make clean;
