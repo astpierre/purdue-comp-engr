@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+
+echo "Building project..."
+make clean;
+make router;
+make unit-test;
+clear;
+
+echo "Running unit test on router..."
+./unit-test
+
+echo "Testing using 4_routers.conf..."
+./ne 2091 4_routers.conf&;
+./router 0 localhost 2091 3091&;
+./router 1 localhost 2091 4091&;
+./router 2 localhost 2091 5091&;
+./router 3 localhost 2091 6091&;
+
+
+echo "Tests complete!";
+exit(0)
