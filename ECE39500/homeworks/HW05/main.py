@@ -1,6 +1,6 @@
-import sys, os, threading
+import sys, os, threading, time
 from MatrixMultiply import MatrixMultiply
-from pprint import PrettyPrinter as pp
+from MatrixCommander import MatrixCommander
 
 def initArray(a, val):
     for i in range(len(a)):
@@ -17,26 +17,62 @@ def partitionArrays(a, b, c, rowPartitions, colPartitions):
     return partitionedArrays
 
 def multiplyArrays(partitionedArrays):
+    start = time.time()
     for mm in partitionedArrays:
         mm.mm()
-    return
+    end = time.time()
+    tdiff = end-start
+    print(f"\tduration: {tdiff}s")
+    return None
 
+def explain_this(*args):
+    print("="*60)
+    print(f" Performing Matrix Multiplication\n {args[0]}")
+    print("="*60)
 
 
 def main():
-    a=[0]*4
-    b=[0]*4
-    c=[0]*4
-    for i in range(4):
-        a[i]=[0]*4
-        b[i]=[0]*4
-        c[i]=[0]*4
+    m = 200
+    n = 300
+    a=[0]*m
+    b=[0]*n
+    c=[0]*m
+    for i in range(m):
+        a[i]=[0]*n
+        b[i]=[0]*n
+        c[i]=[0]*m
+    for i in range(n):
+        b[i]=[0]*m
+
     a=initArray(a, 5)
     b=initArray(b, 2)
-    partitionedArrays = partitionArrays(a,b,c,1,1)
-    for pa in partitionedArrays:
-        pa.mm()
-    print(c)
+    
+    # Partition arrays
+    partitionedArrays = partitionArrays(a,b,c,2,2)
+
+    # Perform MM() without utilizing threads + display performance
+    explain_this(f"USING NO WORKER THREADS")
+    multiplyArrays(partitionedArrays)
+
+    # Perform MM() using threads + display performance
+    num_threads = 2
+    MC = MatrixCommander(num_threads) # Create the commander obj
+
+    # Add jobs to commander's task-queue
+    for pa in partitionedArrays: MC.addJob(pa) 
+    
+    explain_this(f"USING {num_threads} WORKER THREADS")
+    MC.run() # Creates threads and executes .mm() on partitions
+    
+    # Perform MM() using threads + display performance
+    num_threads = 4
+    MC2 = MatrixCommander(num_threads) # Create the commander obj
+
+    # Add jobs to commander's task-queue
+    for pa in partitionedArrays: MC.addJob(pa)
+    
+    explain_this(f"USING {num_threads} WORKER THREADS")
+    MC2.run() # Creates threads and executes .mm() on partitions
     return None
 
 if __name__=="__main__":

@@ -14,13 +14,11 @@ class MatrixMultiply:
     def partitionLB(self, numPartitions, thisPartition, length):
         return ((thisPartition*length)/numPartitions)
     
-    
     def partitionUB(self, numPartitions, thisPartition, length):
         return (((thisPartition+1)*length)/numPartitions)-1
     
     def partition(self, rowsPartitions, thisRowsPartition,
                   colsPartitions, thisColsPartition, a):
-        print(colsPartitions, rowsPartitions)
         self.cRowLB = self.partitionLB(rowsPartitions, thisRowsPartition, len(self.c))
         self.cRowUB = self.partitionUB(rowsPartitions, thisRowsPartition, len(self.c))
         self.cColLB = self.partitionLB(colsPartitions, thisColsPartition, len(self.c[0]))
