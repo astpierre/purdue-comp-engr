@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3.8
+
 import sys, os, threading, time
 from MatrixMultiply import MatrixMultiply
 from MatrixCommander import MatrixCommander
