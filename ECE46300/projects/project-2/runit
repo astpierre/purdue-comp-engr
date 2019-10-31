@@ -1,0 +1,32 @@
+#!/bin/bash
+
+pause(){
+  read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n'
+}
+
+mkdir .test; cd .test;
+cp ../tests/* .;
+cp ../router.c .;
+cp ../routingtable.c .;
+make router;
+make unit-test;
+echo "Running unit-test"
+./unit-test
+pause;
+
+echo "Testing using 4_routers.conf..."
+./ne 2091 4_routers.conf&;
+./router 0 localhost 2091 3091&;
+./router 1 localhost 2091 4091&;
+./router 2 localhost 2091 5091&;
+./router 3 localhost 2091 6091&;
+pause;
+
+make clean;
+cd ..;
+rm -rf .test/
+
+
+
+
+
