@@ -1,5 +1,6 @@
 import json
 
+
 def get_opcodes():
     with open("opcodes.json", "r") as op:
         c = op.read()

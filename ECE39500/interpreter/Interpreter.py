@@ -3,21 +3,23 @@ import struct
 from pathlib import Path
 
 from Bytecode import Bytecode
-from Operations import Push_c
+from Operations import *
 
 from util import get_opcodes
 
 
 class Interpreter():
     def __init__(self, compiled_code):
+        self.is_dev = False
         self.compiled_code = compiled_code
         self.opcodes = get_opcodes()
-        self.rstack = [0,0,0,0]
+        self.rstack = ['\0','\0','\0','\0']
         self.sp = -1
-        self.fpstack = [0,0,0,0]
+        self.fpstack = ['\0','\0','\0','\0']
         self.fpsp = -1
-        self.pc = -1
+        self.pc = 0
         self.mem = self.read_program()
+
 
     def read_program(self):
         return [ byte for byte in Path(self.compiled_code).read_bytes() ]
@@ -27,78 +29,103 @@ class Interpreter():
         return byte in self.opcodes.keys()
 
 
-    def run_program(self):
-        for byte in self.mem:
-            if self.__is_opcode(byte):
-                if self.opcodes[byte] == "pushc":
-                    Push_c().exe(self)
-                elif self.opcodes[byte] == "pushs":
-                    Push_s().exe(self)
-                elif self.opcodes[byte] == "pushi":
-                    Push_i().exe(self)
-                elif self.opcodes[byte] == "pushf":
-                    Push_f().exe(self)
-                
-                elif self.opcodes[byte] == "pushvc":
-                    Push_vc().exe(self)
-                elif self.opcodes[byte] == "pushvs":
-                    Push_vs().exe(self)
-                elif self.opcodes[byte] == "pushvi":
-                    Push_vi().exe(self)
-                elif self.opcodes[byte] == "pushvf":
-                    Push_vf().exe(self)
-                
-                elif self.opcodes[byte] == "popm":
-                    Pop_m().exe(self)
-                elif self.opcodes[byte] == "popv":
-                    Pop_v().exe(self)
-                elif self.opcodes[byte] == "popa":
-                    Pop_a().exe(self)
-                
-                elif self.opcodes[byte] == "peekc":
-                    Peek_c().exe(self)
-                elif self.opcodes[byte] == "peeks":
-                    Peek_s().exe(self)
-                elif self.opcodes[byte] == "peeki":
-                    Peek_i().exe(self)
-                elif self.opcodes[byte] == "peekf":
-                    Peek_f().exe(self)
+    def get_bytecode(self):
+        byte = self.mem[self.pc]
+        if self.is_dev: print(self.opcodes[byte])
+        
+        if self.opcodes[byte] == "pushc":
+            return Push_c()
+        elif self.opcodes[byte] == "pushs":
+            return Push_s()
+        elif self.opcodes[byte] == "pushi":
+            return Push_i()
+        elif self.opcodes[byte] == "pushf":
+            return Push_f()
+        
+        elif self.opcodes[byte] == "pushvc":
+            return Push_vc()
+        elif self.opcodes[byte] == "pushvs":
+            return Push_vs()
+        elif self.opcodes[byte] == "pushvi":
+            return Push_vi()
+        elif self.opcodes[byte] == "pushvf":
+            return Push_vf()
+        
+        elif self.opcodes[byte] == "popm":
+            return Pop_m()
+        elif self.opcodes[byte] == "popv":
+            return Pop_v()
+        elif self.opcodes[byte] == "popa":
+            return Pop_a()
+        
+        elif self.opcodes[byte] == "peekc":
+            return Peek_c()
+        elif self.opcodes[byte] == "peeks":
+            return Peek_s()
+        elif self.opcodes[byte] == "peeki":
+            return Peek_i()
+        elif self.opcodes[byte] == "peekf":
+            return Peek_f()
 
-                elif self.opcodes[byte] == "pokec":
-                    Poke_c().exe(self)
-                elif self.opcodes[byte] == "pokes":
-                    Poke_s().exe(self)
-                elif self.opcodes[byte] == "pokei":
-                    Poke_i().exe(self)
-                elif self.opcodes[byte] == "pokef":
-                    Poke_f().exe(self)
-                
-                elif self.opcodes[byte] == "swp":
-                    Swp().exe(self)
-                
-                elif self.opcodes[byte] == "add":
-                    Add().exe(self)
-                elif self.opcodes[byte] == "sub":
-                    Sub().exe(self)
-                elif self.opcodes[byte] == "mul":
-                    Mul().exe(self)
-                elif self.opcodes[byte] == "div":
-                    Div().exe(self)
-                
-                elif self.opcodes[byte] == "printc":
-                    Print_c().exe(self)
-                elif self.opcodes[byte] == "prints":
-                    Print_s().exe(self)
-                elif self.opcodes[byte] == "printi":
-                    Print_i().exe(self)
-                elif self.opcodes[byte] == "printf":
-                    Print_f().exe(self)
-                
-                elif self.opcodes[byte] == "halt":
-                    Halt().exe(self)
-            
-            else:
-                pass
+        elif self.opcodes[byte] == "pokec":
+            return Poke_c()
+        elif self.opcodes[byte] == "pokes":
+            return Poke_s()
+        elif self.opcodes[byte] == "pokei":
+            return Poke_i()
+        elif self.opcodes[byte] == "pokef":
+            return Poke_f()
+        
+        elif self.opcodes[byte] == "swp":
+            return Swp()
+        
+        elif self.opcodes[byte] == "add":
+            return Add()
+        elif self.opcodes[byte] == "sub":
+            return Sub()
+        elif self.opcodes[byte] == "mul":
+            return Mul()
+        elif self.opcodes[byte] == "div":
+            return Div()
+        
+        elif self.opcodes[byte] == "printc":
+            return Print_c()
+        elif self.opcodes[byte] == "prints":
+            return Print_s()
+        elif self.opcodes[byte] == "printi":
+            return Print_i()
+        elif self.opcodes[byte] == "printf":
+            return Print_f()
+
+        elif self.opcodes[byte] == "cmpe":
+            return Cmpe()
+        elif self.opcodes[byte] == "cmplt":
+            return Cmplt()
+        elif self.opcodes[byte] == "cmpgt":
+            return Cmpgt()
+
+        elif self.opcodes[byte] == "jmp":
+            return Jmp()
+        elif self.opcodes[byte] == "jmpc":
+            return Jmpc()
+        elif self.opcodes[byte] == "call":
+            return Call()
+        elif self.opcodes[byte] == "ret":
+            return Ret()
+        
+        elif self.opcodes[byte] == "halt":
+            return Halt()
+        return None
+
+
+    def run_program(self):
+        runme = True
+        while(runme):
+            bc = self.get_bytecode()
+            if bc.exe(self) == False:
+                print(self)
+                runme=False
     
+
     def __str__(self):
-        return f"""rstack: {self.rstack}\tsp={self.sp}\nfpstack{self.fpstack}\tfpsp={self.fpsp}\n"""
+        return f"""\npc={self.pc}\nrstack={self.rstack}\tsp={self.sp}\nfpstack={self.fpstack}\tfpsp={self.fpsp}\n"""
