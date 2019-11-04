@@ -19,4 +19,4 @@ def main(filename):
 
 
 if __name__ == "__main__":
-    main("tests/Test_Binaries/Basics.bin")
+    main(sys.argv[1])

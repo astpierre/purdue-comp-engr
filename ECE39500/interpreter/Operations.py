@@ -29,9 +29,12 @@ class Push_i:
         i = bytearray(i)
         i = struct.unpack("<i", i)
         i=i[0]
-        #i.strip("(").strip(")").strip(",")
         obj.sp += 1
-        obj.rstack[obj.sp] = i
+        try:
+            obj.rstack[obj.sp] = i
+        except IndexError:
+            obj.rstack.append(i)
+
         obj.pc += 5
         return True
 
@@ -93,6 +96,10 @@ class Pop_v:
 
 class Pop_a:
     def exe(self, obj):
+        val_top = obj.rstack[obj.sp]
+        for i in range(val_top-1):
+            obj.rstack[obj.fpstack[obj.fpsp]+i+1] = obj.rstack[obj.sp-obj.rstack[obj.sp]+i]
+        obj.sp = obj.fpstack[obj.fpsp] + obj.rstack[obj.sp]
         obj.pc += 1
         return True
 
@@ -266,7 +273,10 @@ class Jmpc:
     def exe(self, obj):
         if(obj.rstack[obj.sp-1]):
             obj.pc = obj.rstack[obj.sp]
-        obj.sp -= 2
+            obj.sp -= 2
+        else:
+            obj.sp -= 2
+            obj.pc += 1
         return True
 
 
