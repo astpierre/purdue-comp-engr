@@ -1,0 +1,8 @@
+ld0 1
+add 1 ,  1 , 1
+addi 1, 5
+print 1
+add 1, 1, 1
+add 1,  1,  1
+print 1
+exit

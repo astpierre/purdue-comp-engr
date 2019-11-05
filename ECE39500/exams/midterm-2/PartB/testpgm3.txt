@@ -1,0 +1,7 @@
+ld0 1
+add 1 ,  1 , 1
+addi 1, 5
+store 0, 2, 1, 4
+print 1
+print 1
+exit
