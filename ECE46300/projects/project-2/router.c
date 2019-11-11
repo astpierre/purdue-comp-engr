@@ -5,9 +5,7 @@
 
 #define h_addr h_addr_list[0] /* for backward compatibility */
 
-//static clock_t _current_time = 0;
-//void bzero(void *s, size_t n);
-//void bcopy(const void *s1, void *s2, size_t n);
+/* Timeout globals */
 int convergence_timeout = 0;
 int update_timeout = 0;
 
