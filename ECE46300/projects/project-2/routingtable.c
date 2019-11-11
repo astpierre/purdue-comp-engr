@@ -48,6 +48,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 	int j;
 	int k;
 	int m;
+	int table_changed = 0;
 	for (i=0; i < RecvdUpdatePacket->no_routes; i++) {
 		if (myTableContains(RecvdUpdatePacket->route[i].dest_id)) {
 			/* CHECK FOR BETTER PATH */
@@ -71,6 +72,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 							for (m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
 								routingTable[j].path[m+1] = RecvdUpdatePacket->route[i].path[m];
 							}
+							table_changed = 1;
 						}
 					
 						/* Forced update rule */
@@ -82,6 +84,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 								for (m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
 									routingTable[j].path[m+1] = RecvdUpdatePacket->route[i].path[m];
 								}
+								table_changed = 1;
 							}
 						}
 					}
@@ -98,9 +101,10 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 				routingTable[NumRoutes].path[j+1] = RecvdUpdatePacket->route[i].path[j];
 			}
 			NumRoutes += 1;
+			table_changed = 1;
 		}
 	}
-	return 0;
+	return table_changed;
 }
 
 ////////////////////////////////////////////////////////////////
