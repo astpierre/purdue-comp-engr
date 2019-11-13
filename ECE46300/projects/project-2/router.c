@@ -36,6 +36,9 @@ void udp_update_polling() {
     struct pkt_RT_UPDATE update_packet;
     int i=0;
     int cost_to_sender = 0;
+    int sockfd_local = sockfd;
+    int slen_local = slen;
+    struct sockaddr_in si_ne_local = si_ne;
     for (;;) {
         
         if (CONVERGED) {
@@ -43,7 +46,7 @@ void udp_update_polling() {
         }
         
         bzero((void *)&update_packet, PACKETSIZE);
-        if (recvfrom(sockfd, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0) {
+        if (recvfrom(sockfd_local, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_ne_local, (socklen_t *)&slen_local) < 0) {
             perror("recvfrom");
             close(sockfd);
             return;
@@ -72,7 +75,7 @@ void udp_update_polling() {
             for (i=0; i<init_resp.no_nbr; i++) {
                 update_packet.dest_id = init_resp.nbrcost[i].nbr;
                 hton_pkt_RT_UPDATE(&update_packet);
-                if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
+                if (sendto(sockfd_local, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne_local, slen_local) < 0) {
                     perror("sendto");
                     return;
                 }
@@ -89,6 +92,9 @@ void timer_thread_manager() {
     int current_time;
     int i=0;
     struct pkt_RT_UPDATE update_packet;
+    int sockfd_local = sockfd;
+    int slen_local = slen;
+    struct sockaddr_in si_ne_local = si_ne;
     
     while(1) {
         /* ~~~~~~~ Update Interval ~~~~~~~ */
@@ -100,7 +106,7 @@ void timer_thread_manager() {
             for (i=0; i<init_resp.no_nbr; i++) {
                 update_packet.dest_id = init_resp.nbrcost[i].nbr;
                 hton_pkt_RT_UPDATE(&update_packet);
-                if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
+                if (sendto(sockfd_local, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne_local, slen_local) < 0) {
                     perror("sendto");
                     exit(-1);
                 }
