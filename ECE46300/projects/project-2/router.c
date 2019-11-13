@@ -39,6 +39,7 @@ void udp_update_polling() {
     int sockfd_local = sockfd;
     int slen_local = slen;
     struct sockaddr_in si_ne_local = si_ne;
+    struct sockaddr_in si_router_local = si_router;
     for (;;) {
         
         if (CONVERGED) {
@@ -46,7 +47,7 @@ void udp_update_polling() {
         }
         
         bzero((void *)&update_packet, PACKETSIZE);
-        if (recvfrom(sockfd_local, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_ne_local, (socklen_t *)&slen_local) < 0) {
+        if (recvfrom(sockfd_local, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_router_local, (socklen_t *)&slen_local) < 0) {
             perror("recvfrom");
             close(sockfd);
             return;
@@ -197,9 +198,8 @@ int main(int argc, char **argv) {
 
     /* Receive INIT_RESPONSE */
     /* INIT_RESPONSE from NETWORK_EMULATOR */
-    fflush(stdout);
     bzero((void *)&init_resp, sizeof(init_resp));
-    if (recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0) {
+    if (recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_router, (socklen_t *)&slen) < 0) {
         perror("recvfrom");
         close(sockfd);
         exit(-1);
