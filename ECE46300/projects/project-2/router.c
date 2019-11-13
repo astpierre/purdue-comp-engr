@@ -33,6 +33,11 @@ int udp_update_polling() {
     int i=0;
     int cost_to_sender = 0;
     for (;;) {
+        
+        if (CONVERGED) {
+            pthread_cancel(pthread_self());
+        }
+        
         bzero((void *)&update_packet, PACKETSIZE);
         if (recvfrom(sockfd, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0) {
             perror("recvfrom");
@@ -79,9 +84,6 @@ void timer_thread_manager() {
     struct pkt_RT_UPDATE update_packet;
     
     while(1) {
-        if (CONVERGED) {
-            pthread_cancel(pthread_self());
-        }
         
         convergence_timeout = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
         current_time = clock();
