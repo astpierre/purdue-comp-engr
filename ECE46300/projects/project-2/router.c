@@ -209,8 +209,8 @@ int main(int argc, char **argv) {
     /* Instantiate timer manager thread */
     timer_thread_ret_val = pthread_create(&timer_thread, NULL, timer_thread_manager, NULL);
 
-    pthread_join(&udp_polling_thread, NULL);
     pthread_join(&timer_thread, NULL);
+    pthread_join(&udp_polling_thread, NULL);
 
     close(sockfd);
     close(fp);
