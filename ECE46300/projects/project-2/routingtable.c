@@ -42,7 +42,7 @@ void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
 
 
 ////////////////////////////////////////////////////////////////
-int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myID){
+int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myID) {
 	/* ----- ADD UNKNOWN DESTINATIONS ----- */
 	int i;
 	int j;
