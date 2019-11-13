@@ -35,7 +35,7 @@ void udp_update_polling() {
     for (;;) {
         
         if (CONVERGED) {
-            pthread_cancel(pthread_self());
+            pthread_exit(0);
         }
         
         bzero((void *)&update_packet, PACKETSIZE);
@@ -102,7 +102,7 @@ void timer_thread_manager() {
         if (current_time > convergence_timeout) {
             printf("CONVERGENCE_TIMEOUT\n");
             CONVERGED = 1;
-            pthread_cancel(pthread_self());
+            pthread_exit(0);
             return;
         }
 
