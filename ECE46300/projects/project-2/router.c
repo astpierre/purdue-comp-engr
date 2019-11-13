@@ -24,11 +24,11 @@ int slen;
 struct hostent * ne_host;
 char logfilename[20];
 FILE * fp;
-int CONVERGED = 0
+int CONVERGED = 0;
 
 
 
-int udp_update_polling() {
+void udp_update_polling() {
     struct pkt_RT_UPDATE update_packet;
     int i=0;
     int cost_to_sender = 0;
@@ -42,7 +42,7 @@ int udp_update_polling() {
         if (recvfrom(sockfd, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0) {
             perror("recvfrom");
             close(sockfd);
-            exit(-1);
+            return;
         }
 
         /* Initialize routing table with INIT_RESPONSE */
@@ -68,7 +68,7 @@ int udp_update_polling() {
                 update_packet.dest_id = init_resp.nbrcost[i].nbr;
                 if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
                     perror("sendto");
-                    exit(-1);
+                    return;
                 }
             }
         }
