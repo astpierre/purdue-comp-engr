@@ -202,10 +202,10 @@ int main(int argc, char **argv) {
     PrintRoutes(fp, router_id);
 
     /* Instantiate UDP FD polling thread */
-    (void) udp_thread_ret_val = pthread_create(&udp_polling_thread, NULL, udp_update_polling, NULL);
+    udp_thread_ret_val = pthread_create(&udp_polling_thread, NULL, udp_update_polling, NULL);
 
     /* Instantiate timer manager thread */
-    (void) timer_thread_ret_val = pthread_create(&timer_thread, NULL, timer_thread_manager, NULL);
+    timer_thread_ret_val = pthread_create(&timer_thread, NULL, timer_thread_manager, NULL);
 
     pthread_join(timer_thread, NULL);
     pthread_join(udp_polling_thread, NULL);
