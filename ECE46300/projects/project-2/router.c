@@ -84,8 +84,6 @@ void timer_thread_manager() {
     struct pkt_RT_UPDATE update_packet;
     
     while(1) {
-        
-        convergence_timeout = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
         current_time = clock();
         if (current_time > update_timeout) {
             bzero((void *)&update_packet, PACKETSIZE);
