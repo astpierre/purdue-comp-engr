@@ -40,11 +40,11 @@ int udp_update_polling() {
 
         if (UpdateRoutes(&update_packet, cost_to_sender, router_id) == 1) {
             convergence_timeout = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
-            PrintRoutes(logfilename, router_id);
+            PrintRoutes(fp, router_id);
             fflush(stdout);
             
             // Send update to neighbors
-            bzero((void *)update_packet, PACKETSIZE);
+            bzero((void *)&update_packet, PACKETSIZE);
             ConvertTabletoPkt(&update_packet, router_id);
             for (i=0; i<init_resp.no_nbr; i++) {
                 update_packet.dest_id = init_resp.nbrcost[i].nbr;
@@ -58,7 +58,6 @@ int udp_update_polling() {
 }
 
 
-
 void timer_thread_manager() {
     convergence_timeout = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
     update_timeout = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
@@ -69,7 +68,15 @@ void timer_thread_manager() {
         convergence_timeout = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
         current_time = clock();
         if (current_time > update_timeout) {
-            updateNeighbors();
+            bzero((void *)&update_packet, PACKETSIZE);
+            ConvertTabletoPkt(&update_packet, router_id);
+            for (i=0; i<init_resp.no_nbr; i++) {
+                update_packet.dest_id = init_resp.nbrcost[i].nbr;
+                if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
+                    perror("sendto");
+                    exit(-1);
+                }
+            }
             update_timeout = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
         }
 
@@ -188,6 +195,7 @@ int main(int argc, char **argv) {
     pthread_join(&timer_thread, NULL);
 
     close(sockfd);
+    close(fp)
     free(nbrs_watch);
     exit(0);
 }
