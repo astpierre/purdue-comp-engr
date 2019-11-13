@@ -24,6 +24,7 @@ int slen;
 struct hostent * ne_host;
 char logfilename[20];
 FILE * fp;
+int CONVERGED = 0
 
 
 
@@ -78,6 +79,10 @@ void timer_thread_manager() {
     struct pkt_RT_UPDATE update_packet;
     
     while(1) {
+        if (CONVERGED) {
+            pthread_cancel(pthread_self());
+        }
+        
         convergence_timeout = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
         current_time = clock();
         if (current_time > update_timeout) {
@@ -96,6 +101,8 @@ void timer_thread_manager() {
         current_time = clock();
         if (current_time > convergence_timeout) {
             printf("CONVERGENCE_TIMEOUT\n");
+            CONVERGED = 1;
+            pthread_cancel(pthread_self());
             return;
         }
 
