@@ -19,10 +19,18 @@ class Compiler():
         self.state = None
         return
 
-    def compiler(self, fileName):
+    def compile(self, fileName):
         self.state = StateFactory.getState("InitState")
+        with open(filename, "r") as f:
+            lines = f.readlines()
+        for line in lines:
+            self.parseline(line)
+
+
+    def parseline(self, line):
+        if self.DEBUG:
+            print(f"\nParsing input line: {line}")
+        line = line.replace(",", " , ")
         
+        line = line.replace(",", " , ")
 
-
-    def getState(self, state):
-        return self.states[state]
