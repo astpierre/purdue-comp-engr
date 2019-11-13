@@ -32,7 +32,7 @@ int udp_update_polling() {
     int i=0;
     int cost_to_sender = 0;
     for (;;) {
-        bzero((void *)update_packet, PACKETSIZE);
+        bzero((void *)&update_packet, PACKETSIZE);
         if (recvfrom(sockfd, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0) {
             perror("recvfrom");
             close(sockfd);
@@ -190,7 +190,7 @@ int main(int argc, char **argv) {
     strcat(logfilename, argv[1]);
     strcat(logfilename, ".log");
     fp = fopen(logfilename, "w");
-    PrintRoutes(fp, argv[1]);
+    PrintRoutes(fp, router_id);
 
     /* Instantiate UDP FD polling thread */
     udp_thread_ret_val = pthread_create(&udp_polling_thread, NULL, udp_update_polling, NULL);
