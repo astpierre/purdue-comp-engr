@@ -5,26 +5,30 @@
 
 #define h_addr h_addr_list[0] /* for backward compatibility */
 
-/* Timeout globals */
-int convergence_timeout = 0;
-int update_timeout = 0;
-struct nbr_watch {
+/* Timeout Globals */
+struct nbr_t {
     int timeout; 
-    int id; 
+    int id;
+    int cost; 
 };
-struct nbr_watch * nbrs_watch = NULL;
+struct timekeeper_t {
+    int convergence;
+    int update;
+    struct nbr_t nbrs[MAX_ROUTERS-1];
+    int q_nbrs;
+};
+struct timekeeper_t timekeeper;
+
+/*  */
 struct pkt_INIT_RESPONSE init_resp;
-int router_id;
-int ne_port;
-int router_port;
-int sockfd;
+int router_id, ne_port, router_port, sockfd, slen;
 struct sockaddr_in si_router;
 struct sockaddr_in si_ne;
-int slen;
 struct hostent * ne_host;
 char logfilename[20];
 FILE * fp;
 int CONVERGED = 0;
+pthread_mutex_t lock;
 
 
 
@@ -45,19 +49,20 @@ void udp_update_polling() {
             return;
         }
 
-        /* Initialize routing table with INIT_RESPONSE */
+        /* Process update */
         ntoh_pkt_RT_UPDATE(&update_packet);
-        for (i=0; i<init_resp.no_nbr; i++) {
-            if (nbrs_watch[i].id == update_packet.sender_id) {
-                nbrs_watch[i].timeout = clock() + FAILURE_DETECTION * CLOCKS_PER_SEC;
-            }
-            if (init_resp.nbrcost[i].nbr == update_packet.sender_id) {
-                cost_to_sender = init_resp.nbrcost[i].cost;
+        pthread_mutex_lock(&lock);
+        for (i=0; i<timekeeper.q_nbrs; i++) {
+            if (timekeeper.nbrs[i].id == update_packet.sender_id) {
+                timekeeper.nbrs[i].timeout = clock() + FAILURE_DETECTION * CLOCKS_PER_SEC;
+                cost_to_sender = timekeeper.nbrs[i].cost;
             }
         }
+        pthread_mutex_unlock(&lock);
 
+        pthread_mutex_lock(&lock);
         if (UpdateRoutes(&update_packet, cost_to_sender, router_id) == 1) {
-            convergence_timeout = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
+            timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
             PrintRoutes(fp, router_id);
             fflush(stdout);
             
@@ -66,54 +71,66 @@ void udp_update_polling() {
             ConvertTabletoPkt(&update_packet, router_id);
             for (i=0; i<init_resp.no_nbr; i++) {
                 update_packet.dest_id = init_resp.nbrcost[i].nbr;
+                hton_pkt_RT_UPDATE(&update_packet);
                 if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
                     perror("sendto");
                     return;
                 }
             }
         }
+        pthread_mutex_unlock(&lock);
     }
 }
 
 
 void timer_thread_manager() {
-    convergence_timeout = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
-    update_timeout = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
+    timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
+    timekeeper.update = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
     int current_time;
     int i=0;
     struct pkt_RT_UPDATE update_packet;
     
     while(1) {
+        /* ~~~~~~~ Update Interval ~~~~~~~ */
+        pthread_mutex_lock(&lock);
         current_time = clock();
-        if (current_time > update_timeout) {
+        if (current_time > timekeeper.update) {
             bzero((void *)&update_packet, PACKETSIZE);
             ConvertTabletoPkt(&update_packet, router_id);
             for (i=0; i<init_resp.no_nbr; i++) {
                 update_packet.dest_id = init_resp.nbrcost[i].nbr;
+                hton_pkt_RT_UPDATE(&update_packet);
                 if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
                     perror("sendto");
                     exit(-1);
                 }
             }
-            update_timeout = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
+            timekeeper.update = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
         }
+        pthread_mutex_unlock(&lock);
 
+        /* ~~~~~~~ Convergence Interval ~~~~~~~ */
+        pthread_mutex_lock(&lock);
         current_time = clock();
-        if (current_time > convergence_timeout) {
-            printf("CONVERGENCE_TIMEOUT\n");
+        if (current_time > timekeeper.convergence) {
+            fprintf(fp, "%d:Converged\n", current_time-timekeeper.convergence);
+            PrintRoutes(fp, router_id);
+            fflush(fp);
             CONVERGED = 1;
+            pthread_mutex_unlock(&lock);
             pthread_exit(NULL);
-            return;
         }
+        pthread_mutex_unlock(&lock);
 
-
-        for(i=0; i<sizeof(nbrs_watch)/sizeof(struct nbr_watch); i++) {
+        /* ~~~~~~~ Failure Detection ~~~~~~~ */
+        pthread_mutex_lock(&lock);
+        for(i=0; i<timekeeper.q_nbrs; i++) {
             current_time = clock();
-            if (current_time > nbrs_watch[i].timeout) {
-                printf("UNINSTALL ROUTER ID=%d\n", nbrs_watch[i].id);
-                nbrs_watch[i].timeout = clock() + FAILURE_DETECTION*CLOCKS_PER_SEC;
+            if (current_time > timekeeper.nbrs[i].timeout) {
+                UninstallRoutesOnNbrDeath(timekeeper.nbrs[i].id);
             }
         }
+        pthread_mutex_unlock(&lock);
     }
     return;
 }
@@ -123,22 +140,23 @@ void timer_thread_manager() {
 /* Main method */
 int main(int argc, char **argv) {
     /* Get CLAs */
-    if (argc != 5)
-    {
+    if (argc != 5) {
         printf("Usage: ./router <router-ID> <NE-hostname> <NE-UDP-port> <router-UDP-port>\n");
         exit(-1);
     }
+
+    /* Assigning to globals */
     router_id = atoi(argv[1]);
     ne_port = atoi(argv[3]);
     router_port = atoi(argv[4]);
     slen = sizeof(si_ne);
+
+    /* Local variables */
     pthread_t udp_polling_thread, timer_thread;
-    int udp_thread_ret_val, timer_thread_ret_val;
     int i=0;
 
     /* Initialize UDP socket */
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-    {
+    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("socket");
         exit(-1);
     }
@@ -147,15 +165,13 @@ int main(int argc, char **argv) {
     si_router.sin_family = AF_INET;
     si_router.sin_port = htons(router_port);
     si_router.sin_addr.s_addr = htonl(INADDR_ANY);
-    if (bind(sockfd, (struct sockaddr *)&si_router, sizeof(si_router)) < 0)
-    {
+    if (bind(sockfd, (struct sockaddr *)&si_router, sizeof(si_router)) < 0) {
         perror("bind");
         exit(-1);
     }
 
     bzero((char *)&si_ne, sizeof(si_ne));
-    if ((ne_host = gethostbyname(argv[2])) == NULL)
-    {
+    if ((ne_host = gethostbyname(argv[2])) == NULL) {
         perror("gethostbyname");
         exit(-1);
     }
@@ -168,8 +184,7 @@ int main(int argc, char **argv) {
     /* INIT_REQUEST to NETWORK_EMULATOR */
     struct pkt_INIT_REQUEST init_req;
     init_req.router_id = htonl(router_id);
-    if (sendto(sockfd, &init_req, (sizeof(init_req) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0)
-    {
+    if (sendto(sockfd, &init_req, (sizeof(init_req) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
         perror("sendto");
         exit(-1);
     }
@@ -178,20 +193,20 @@ int main(int argc, char **argv) {
     /* INIT_RESPONSE from NETWORK_EMULATOR */
     fflush(stdout);
     bzero((void *)&init_resp, sizeof(init_resp));
-    if (recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0)
-    {
+    if (recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0) {
         perror("recvfrom");
         close(sockfd);
         exit(-1);
     }
-    
     ntoh_pkt_INIT_RESPONSE(&init_resp);
+
     /* Initialize the failure detection table for neighboring routers */
-    nbrs_watch = calloc(init_resp.no_nbr, sizeof(struct nbr_watch));
     for (i=0; i<init_resp.no_nbr; i++) {
-        nbrs_watch[i].id = init_resp.nbrcost[i].nbr;
-        nbrs_watch[i].timeout = clock() + FAILURE_DETECTION * CLOCKS_PER_SEC;
+        timekeeper.nbrs[i].id = init_resp.nbrcost[i].nbr;
+        timekeeper.nbrs[i].timeout = clock() + FAILURE_DETECTION * CLOCKS_PER_SEC;
+        timekeeper.nbrs[i].cost = init_resp.nbrcost[i].cost;
     }
+    timekeeper.q_nbrs = init_resp.no_nbr;
 
     /* Initialize routing table with INIT_RESPONSE */
     InitRoutingTbl(&init_resp, router_id);
@@ -201,11 +216,14 @@ int main(int argc, char **argv) {
     fp = fopen(logfilename, "w");
     PrintRoutes(fp, router_id);
 
+    /* Initialize the mutex */
+    pthread_mutex_init(&lock, NULL);
+
     /* Instantiate UDP FD polling thread */
-    udp_thread_ret_val = pthread_create(&udp_polling_thread, NULL, udp_update_polling, NULL);
+    (void) pthread_create(&udp_polling_thread, NULL, udp_update_polling, NULL);
 
     /* Instantiate timer manager thread */
-    timer_thread_ret_val = pthread_create(&timer_thread, NULL, timer_thread_manager, NULL);
+    (void) pthread_create(&timer_thread, NULL, timer_thread_manager, NULL);
 
     pthread_join(timer_thread, NULL);
     pthread_join(udp_polling_thread, NULL);
