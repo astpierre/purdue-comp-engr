@@ -199,11 +199,13 @@ int main(int argc, char **argv) {
     /* Receive INIT_RESPONSE */
     /* INIT_RESPONSE from NETWORK_EMULATOR */
     bzero((void *)&init_resp, sizeof(init_resp));
+    printf("HERE\n");
     if (recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_router, (socklen_t *)&slen) < 0) {
         perror("recvfrom");
         close(sockfd);
         exit(-1);
     }
+    printf("HERE\n");
     ntoh_pkt_INIT_RESPONSE(&init_resp);
 
     /* Initialize the failure detection table for neighboring routers */
