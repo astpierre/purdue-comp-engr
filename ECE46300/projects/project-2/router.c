@@ -96,6 +96,7 @@ void timer_thread_manager() {
         current_time = clock();
         if (current_time > convergence_timeout) {
             printf("CONVERGENCE_TIMEOUT\n");
+            return;
         }
 
 
@@ -103,6 +104,7 @@ void timer_thread_manager() {
             current_time = clock();
             if (current_time > nbrs_watch[i].timeout) {
                 printf("UNINSTALL ROUTER ID=%d\n", nbrs_watch[i].id);
+                nbrs_watch[i].timeout = clock() + FAILURE_DETECTION*CLOCKS_PER_SEC;
             }
         }
     }
