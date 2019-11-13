@@ -36,10 +36,10 @@ void udp_update_polling() {
     struct pkt_RT_UPDATE update_packet;
     int i=0;
     int cost_to_sender = 0;
-    int sockfd_local = sockfd;
-    int slen_local = slen;
-    struct sockaddr_in si_ne_local = si_ne;
-    struct sockaddr_in si_router_local = si_router;
+    //int sockfd_local = sockfd;
+    //int slen_local = slen;
+    //struct sockaddr_in si_ne_local = si_ne;
+    //struct sockaddr_in si_router_local = si_router;
     for (;;) {
         
         if (CONVERGED) {
@@ -47,7 +47,8 @@ void udp_update_polling() {
         }
         
         bzero((void *)&update_packet, PACKETSIZE);
-        if (recvfrom(sockfd_local, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_router_local, (socklen_t *)&slen_local) < 0) {
+        printf("HEER");
+        if (recvfrom(sockfd, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_router, (socklen_t *)&slen) < 0) {
             perror("recvfrom");
             close(sockfd);
             return;
@@ -76,7 +77,7 @@ void udp_update_polling() {
             for (i=0; i<init_resp.no_nbr; i++) {
                 update_packet.dest_id = init_resp.nbrcost[i].nbr;
                 hton_pkt_RT_UPDATE(&update_packet);
-                if (sendto(sockfd_local, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne_local, slen_local) < 0) {
+                if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
                     perror("sendto");
                     return;
                 }
@@ -161,23 +162,25 @@ int main(int argc, char **argv) {
     /* Local variables */
     pthread_t udp_polling_thread, timer_thread;
     int i=0;
+    int optval=1;
 
     /* Initialize UDP socket */
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("socket");
         exit(-1);
     }
-
-    bzero((char *)&si_router, sizeof(si_router));
-    si_router.sin_family = AF_INET;
-    si_router.sin_port = htons(router_port);
-    si_router.sin_addr.s_addr = htonl(INADDR_ANY);
-    if (bind(sockfd, (struct sockaddr *)&si_router, sizeof(si_router)) < 0) {
+    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (const void *)&optval, sizeof(int));
+    bzero((char *)&si_ne, sizeof(si_ne));
+    si_ne.sin_family = AF_INET;
+    si_ne.sin_port = htons(router_port);
+    si_ne.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (bind(sockfd, (struct sockaddr *)&si_ne, sizeof(si_ne)) < 0) {
         perror("bind");
         exit(-1);
     }
 
     bzero((char *)&si_ne, sizeof(si_ne));
+    bzero((char *)&si_router, sizeof(si_router));
     if ((ne_host = gethostbyname(argv[2])) == NULL) {
         perror("gethostbyname");
         exit(-1);
@@ -199,13 +202,11 @@ int main(int argc, char **argv) {
     /* Receive INIT_RESPONSE */
     /* INIT_RESPONSE from NETWORK_EMULATOR */
     bzero((void *)&init_resp, sizeof(init_resp));
-    printf("HERE\n");
     if (recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_router, (socklen_t *)&slen) < 0) {
         perror("recvfrom");
         close(sockfd);
         exit(-1);
     }
-    printf("HERE\n");
     ntoh_pkt_INIT_RESPONSE(&init_resp);
 
     /* Initialize the failure detection table for neighboring routers */
