@@ -18,6 +18,7 @@ struct timekeeper_t {
     int q_nbrs;
 };
 struct timekeeper_t timekeeper;
+int update_flag = 0;
 
 /*  */
 struct pkt_INIT_RESPONSE init_resp;
@@ -71,17 +72,7 @@ void udp_update_polling() {
             PrintRoutes(fp, router_id);
             fflush(stdout);
             
-            // Send update to neighbors
-            bzero((void *)&update_packet, PACKETSIZE);
-            ConvertTabletoPkt(&update_packet, router_id);
-            for (i=0; i<init_resp.no_nbr; i++) {
-                update_packet.dest_id = init_resp.nbrcost[i].nbr;
-                hton_pkt_RT_UPDATE(&update_packet);
-                if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
-                    perror("sendto");
-                    return;
-                }
-            }
+            update_flag = 1;
         }
         pthread_mutex_unlock(&lock);
     }
@@ -94,25 +85,28 @@ void timer_thread_manager() {
     int current_time;
     int i=0;
     struct pkt_RT_UPDATE update_packet;
-    int sockfd_local = sockfd;
-    int slen_local = slen;
-    struct sockaddr_in si_ne_local = si_ne;
+    //int sockfd_local = sockfd;
+    //int slen_local = slen;
+    //struct sockaddr_in si_ne_local = si_ne;
     
     while(1) {
         /* ~~~~~~~ Update Interval ~~~~~~~ */
         pthread_mutex_lock(&lock);
         current_time = clock();
         if (current_time > timekeeper.update) {
-            bzero((void *)&update_packet, PACKETSIZE);
-            ConvertTabletoPkt(&update_packet, router_id);
-            for (i=0; i<init_resp.no_nbr; i++) {
-                update_packet.dest_id = init_resp.nbrcost[i].nbr;
-                hton_pkt_RT_UPDATE(&update_packet);
-                if (sendto(sockfd_local, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne_local, slen_local) < 0) {
-                    perror("sendto");
-                    exit(-1);
+            if (update_flag) {
+                bzero((void *)&update_packet, PACKETSIZE);
+                ConvertTabletoPkt(&update_packet, router_id);
+                for (i=0; i<init_resp.no_nbr; i++) {
+                    update_packet.dest_id = init_resp.nbrcost[i].nbr;
+                    hton_pkt_RT_UPDATE(&update_packet);
+                    if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
+                        perror("sendto");
+                        exit(-1);
+                    }
                 }
             }
+            update_flag = 0;
             timekeeper.update = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
         }
         pthread_mutex_unlock(&lock);
