@@ -13,6 +13,18 @@ struct nbr_watch {
     int id; 
 };
 struct nbr_watch * nbrs_watch = NULL;
+struct pkt_INIT_RESPONSE init_resp;
+int router_id;
+int ne_port;
+int router_port;
+int sockfd;
+struct sockaddr_in si_router;
+struct sockaddr_in si_ne;
+int slen;
+struct hostent * ne_host;
+char logfilename[20];
+FILE * fp;
+
 
 
 int udp_update_polling() {
@@ -63,6 +75,7 @@ void timer_thread_manager() {
     update_timeout = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
     int current_time;
     int i=0;
+    struct pkt_RT_UPDATE update_packet;
     
     while(1) {
         convergence_timeout = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
@@ -106,16 +119,10 @@ int main(int argc, char **argv) {
         printf("Usage: ./router <router-ID> <NE-hostname> <NE-UDP-port> <router-UDP-port>\n");
         exit(-1);
     }
-    int router_id = atoi(argv[1]);
-    int ne_port = atoi(argv[3]);
-    int router_port = atoi(argv[4]);
-    int sockfd;
-    struct sockaddr_in si_router;
-    struct sockaddr_in si_ne;
-    int slen = sizeof(si_ne);
-    struct hostent *ne_host;
-    char logfilename[20];
-    FILE * fp = NULL;
+    router_id = atoi(argv[1]);
+    ne_port = atoi(argv[3]);
+    router_port = atoi(argv[4]);
+    slen = sizeof(si_ne);
     pthread_t udp_polling_thread, timer_thread;
     int udp_thread_ret_val, timer_thread_ret_val;
     int i=0;
@@ -161,7 +168,7 @@ int main(int argc, char **argv) {
     /* Receive INIT_RESPONSE */
     /* INIT_RESPONSE from NETWORK_EMULATOR */
     fflush(stdout);
-    struct pkt_INIT_RESPONSE init_resp;
+    bzero((void *)&init_resp, sizeof(init_resp));
     if (recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_ne, (socklen_t *)&slen) < 0)
     {
         perror("recvfrom");
@@ -195,7 +202,7 @@ int main(int argc, char **argv) {
     pthread_join(&timer_thread, NULL);
 
     close(sockfd);
-    close(fp)
+    close(fp);
     free(nbrs_watch);
     exit(0);
 }
