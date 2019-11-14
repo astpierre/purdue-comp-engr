@@ -118,7 +118,7 @@ void * timer_thread_manager() {
         current_time = clock();
         if (current_time > timekeeper.convergence) {
             if (!CONVERGED) {
-                fprintf(fp, "%d:Converged\n", (current_time-timekeeper.convergence)/CLOCKS_PER_SEC);
+                fprintf(fp, "%d:Converged\n", (current_time/CLOCKS_PER_SEC));
                 fflush(fp);
                 CONVERGED = 1;
             }
@@ -207,7 +207,7 @@ int main(int argc, char **argv) {
 
     /* Initialize routing table with INIT_RESPONSE */
     InitRoutingTbl(&init_resp, router_id);
-    strcpy(logfilename, "router_");
+    strcpy(logfilename, "router");
     strcat(logfilename, argv[1]);
     strcat(logfilename, ".log");
     fp = fopen(logfilename, "w");
