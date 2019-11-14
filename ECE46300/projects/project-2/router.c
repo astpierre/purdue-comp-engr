@@ -126,7 +126,7 @@ void * timer_thread_manager() {
         current_time = clock();
         if (current_time > timekeeper.convergence) {
             if (!CONVERGED) {
-                fprintf(fp, "%d:Converged\n", (current_time/CLOCKS_PER_SEC));
+                fprintf(fp, "%ld:Converged\n", (current_time/CLOCKS_PER_SEC));
                 fflush(fp);
                 CONVERGED = 1;
             }
