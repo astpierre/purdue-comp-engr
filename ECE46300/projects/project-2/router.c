@@ -106,6 +106,7 @@ void * timer_thread_manager() {
         pthread_mutex_unlock(&lock);
 
         /* ~~~~~~~ Failure Detection ~~~~~~~ */
+        /*
         pthread_mutex_lock(&lock);
         for(i=0; i<timekeeper.q_nbrs; i++) {
             current_time = clock();
@@ -114,7 +115,7 @@ void * timer_thread_manager() {
             }
         }
         pthread_mutex_unlock(&lock);
-        
+        */
         /* ~~~~~~~ Convergence Interval ~~~~~~~ */
         pthread_mutex_lock(&lock);
         current_time = clock();
