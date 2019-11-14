@@ -104,7 +104,6 @@ void * timer_thread_manager() {
         pthread_mutex_unlock(&lock);
 
         /* ~~~~~~~ Failure Detection ~~~~~~~ */
-        /*
         pthread_mutex_lock(&lock);
         for(i=0; i<timekeeper.q_nbrs; i++) {
             current_time = clock();
@@ -113,17 +112,15 @@ void * timer_thread_manager() {
             }
         }
         pthread_mutex_unlock(&lock);
-        */
+        
         /* ~~~~~~~ Convergence Interval ~~~~~~~ */
         pthread_mutex_lock(&lock);
         current_time = clock();
         if (current_time > timekeeper.convergence) {
             if (!CONVERGED) {
-                fprintf(fp, "%d:Converged\n", current_time-timekeeper.convergence);
-                PrintRoutes(fp, router_id);
+                fprintf(fp, "%d:Converged\n", (current_time-timekeeper.convergence)/CLOCKS_PER_SEC);
                 fflush(fp);
                 CONVERGED = 1;
-                printf("Done.");
             }
         }
         pthread_mutex_unlock(&lock);

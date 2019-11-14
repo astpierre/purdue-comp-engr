@@ -10,21 +10,11 @@ cp ../router.c .;
 cp ../routingtable.c .;
 make router;
 make unit-test;
-echo "Running unit-test"
-./unit-test
-pause;
-
-echo "Testing using 4_routers.conf..."
-./ne 2091 4_routers.conf&;
-./router 0 localhost 2091 3091&;
-./router 1 localhost 2091 4091&;
-./router 2 localhost 2091 5091&;
-./router 3 localhost 2091 6091&;
-pause;
-
-make clean;
-cd ..;
-rm -rf .test/
+./ne 2091 4_routers.conf &
+./router 0 localhost 2091 3091 &
+./router 1 localhost 2091 4091 &
+./router 2 localhost 2091 5091 &
+./router 3 localhost 2091 6091 &
 
 
 
