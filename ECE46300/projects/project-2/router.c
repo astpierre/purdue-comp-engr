@@ -44,13 +44,7 @@ void * udp_update_polling() {
     bzero(&recvaddr, sizeof(recvaddr));
 
     for (;;) {
-        
-        /*if (CONVERGED) {
-            pthread_exit(NULL);
-        }*/
-        
         bzero((void *)&update_packet, sizeof(update_packet));
-        printf("HEER");
         if (recvfrom(sockfd_local, &update_packet, sizeof(update_packet), 0, (struct sockaddr *)&recvaddr, &recvaddr_size) < 0) {
             perror("recvfrom");
             close(sockfd_local);
@@ -70,6 +64,7 @@ void * udp_update_polling() {
 
         pthread_mutex_lock(&lock);
         if (UpdateRoutes(&update_packet, cost_to_sender, router_id) == 1) {
+            CONVERGED = 0;
             timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
             PrintRoutes(fp, router_id);
             fflush(stdout);
@@ -96,19 +91,16 @@ void * timer_thread_manager() {
         pthread_mutex_lock(&lock);
         current_time = clock();
         if (current_time > timekeeper.update) {
-            if (update_flag) {
-                for (i=0; i<init_resp.no_nbr; i++) {
-                    bzero((void *)&update_packet, sizeof(update_packet));
-                    ConvertTabletoPkt(&update_packet, router_id);
-                    update_packet.dest_id = init_resp.nbrcost[i].nbr;
-                    hton_pkt_RT_UPDATE(&update_packet);
-                    if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
-                        perror("sendto");
-                        exit(-1);
-                    }
+            for (i=0; i<init_resp.no_nbr; i++) {
+                bzero((void *)&update_packet, sizeof(update_packet));
+                ConvertTabletoPkt(&update_packet, router_id);
+                update_packet.dest_id = init_resp.nbrcost[i].nbr;
+                hton_pkt_RT_UPDATE(&update_packet);
+                if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
+                    perror("sendto");
+                    exit(-1);
                 }
             }
-            update_flag = 0;
             timekeeper.update = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
         }
         pthread_mutex_unlock(&lock);
@@ -117,12 +109,17 @@ void * timer_thread_manager() {
         pthread_mutex_lock(&lock);
         current_time = clock();
         if (current_time > timekeeper.convergence) {
-            fprintf(fp, "%d:Converged\n", current_time-timekeeper.convergence);
-            PrintRoutes(fp, router_id);
-            fflush(fp);
-            CONVERGED = 1;
-            pthread_mutex_unlock(&lock);
-            printf("Done.");
+            if (!CONVERGED) {
+                fprintf(fp, "%d:Converged\n", current_time-timekeeper.convergence);
+                PrintRoutes(fp, router_id);
+                fflush(fp);
+                CONVERGED = 1;
+                pthread_mutex_unlock(&lock);
+                printf("Done.");
+            }
+            else {
+                timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
+            }
         }
         pthread_mutex_unlock(&lock);
 
