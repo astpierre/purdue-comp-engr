@@ -146,9 +146,6 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 			NumRoutes += 1;
 			table_changed = 1;
 		} else {
-			if (nbr_route.dest_id == RecvdUpdatePacket->sender_id) {
-				ignore_route = 1;
-			}
 			for (k=0; k < nbr_route.path_len; k++) {
 				if (myID == nbr_route.path[k]) {
 					ignore_route = 1;
