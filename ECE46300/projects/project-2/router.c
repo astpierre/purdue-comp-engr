@@ -50,7 +50,7 @@ void * udp_update_polling() {
         if (recvfrom(sockfd_local, &update_packet, sizeof(update_packet), 0, (struct sockaddr *)&recvaddr, &recvaddr_size) < 0) {
             perror("recvfrom");
             close(sockfd_local);
-            return;
+            return NULL;
         }
 
         /* Process update */
@@ -62,19 +62,15 @@ void * udp_update_polling() {
                 cost_to_sender = timekeeper.nbrs[i].cost;
             }
         }
-        pthread_mutex_unlock(&lock);
-
-        pthread_mutex_lock(&lock);
         if (UpdateRoutes(&update_packet, cost_to_sender, router_id) == 1) {
             CONVERGED = 0;
             timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
             PrintRoutes(fp, router_id);
-            fflush(stdout);
-            
-            update_flag = 1;
+            fflush(fp);
         }
         pthread_mutex_unlock(&lock);
     }
+    return NULL;
 }
 
 
@@ -98,9 +94,9 @@ void * timer_thread_manager() {
                 ConvertTabletoPkt(&update_packet, router_id);
                 update_packet.dest_id = init_resp.nbrcost[i].nbr;
                 hton_pkt_RT_UPDATE(&update_packet);
-                if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
+                if (sendto(sockfd, &update_packet, sizeof(update_packet), 0, (struct sockaddr *)&si_ne, slen) < 0) {
                     perror("sendto");
-                    exit(-1);
+                    return NULL;
                 }
             }
             timekeeper.update = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
@@ -133,7 +129,7 @@ void * timer_thread_manager() {
         pthread_mutex_unlock(&lock);
 
     }
-    return;
+    return NULL;
 }
 
 
