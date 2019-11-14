@@ -2,6 +2,8 @@
 #include "router.h"
 #include <pthread.h>
 #include <strings.h>
+#include <time.h>
+#include <math.h>
 
 #define h_addr h_addr_list[0] /* for backward compatibility */
 
