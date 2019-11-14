@@ -112,9 +112,9 @@ void * timer_thread_manager() {
                     UninstallRoutesOnNbrDeath(timekeeper.nbrs[i].id);
                     PrintRoutes(fp, router_id);
                     fflush(fp);
-                } else {
-                    dead_routers[timekeeper.nbrs[i].id] = 0; // To undo the death (REVIVAL)
                 }
+            } else {
+                dead_routers[timekeeper.nbrs[i].id] = 0;
             }
         }
         pthread_mutex_unlock(&lock);
