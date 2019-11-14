@@ -67,7 +67,8 @@ void * udp_update_polling() {
         if (UpdateRoutes(&update_packet, cost_to_sender, router_id) == 1) {
             CONVERGED = 0;
             timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
-            print_please = 1;
+            PrintRoutes(fp, router_id);
+            fflush(fp);
         }
         pthread_mutex_unlock(&lock);
     }
@@ -85,14 +86,6 @@ void * timer_thread_manager() {
     bzero((void *)&dead_routers, sizeof(dead_routers));
     
     while (1) {
-        pthread_mutex_lock(&lock);
-        if (print_please) {
-            PrintRoutes(fp, router_id);
-            fflush(fp);
-            print_please = 0;
-        }
-        pthread_mutex_unlock(&lock);
-
         /* ~~~~~~~ Update Interval ~~~~~~~ */
         pthread_mutex_lock(&lock);
         current_time = clock();
@@ -135,7 +128,7 @@ void * timer_thread_manager() {
         current_time = clock();
         if (current_time > timekeeper.convergence) {
             if (!CONVERGED) {
-                fprintf(fp, "%ld:Converged\n", ((resp_received-current_time)/CLOCKS_PER_SEC));
+                fprintf(fp, "%ld:Converged\n", ((current_time - resp_received)/CLOCKS_PER_SEC));
                 fflush(fp);
                 CONVERGED = 1;
             }
