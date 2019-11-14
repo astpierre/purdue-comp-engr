@@ -57,6 +57,9 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 			/* Path vector rule */
 			for (j=0; j < NumRoutes; j++) {
 				ignore = 0;
+				if (routingTable[j].cost > INFINITY) {
+					routingTable[j].cost = INFINITY;
+				}
 				if (routingTable[j].dest_id == RecvdUpdatePacket->route[i].dest_id) {
 					/* Path vector rule */
 					for (k=0; k < RecvdUpdatePacket->route[i].path_len; k++) {

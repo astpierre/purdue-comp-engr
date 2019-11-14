@@ -77,9 +77,11 @@ void * udp_update_polling() {
 void * timer_thread_manager() {
     timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
     timekeeper.update = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
+    int dead_routers[MAX_ROUTERS];
     int current_time;
     int i=0;
     struct pkt_RT_UPDATE update_packet;
+    bzero((void *)&dead_routers, sizeof(dead_routers));
     
     while (1) {
         /* ~~~~~~~ Update Interval ~~~~~~~ */
@@ -105,9 +107,14 @@ void * timer_thread_manager() {
         for(i=0; i<timekeeper.q_nbrs; i++) {
             current_time = clock();
             if (current_time > timekeeper.nbrs[i].timeout) {
-                UninstallRoutesOnNbrDeath(timekeeper.nbrs[i].id);
-                PrintRoutes(fp, router_id);
-                fflush(fp);
+                if (dead_routers[i] == 0) {
+                    dead_routers[i] = 1;
+                    UninstallRoutesOnNbrDeath(timekeeper.nbrs[i].id);
+                    PrintRoutes(fp, router_id);
+                    fflush(fp);
+                } else {
+                    dead_routers[i] = 0; // To undo the death (REVIVAL)
+                }
             }
         }
         pthread_mutex_unlock(&lock);
