@@ -1,8 +1,6 @@
 #include "ne.h"
 #include "router.h"
 #include <strings.h>
-#include <time.h>
-#include <math.h>
 
 
 /* ----- GLOBAL VARIABLES ----- */
