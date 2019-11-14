@@ -87,9 +87,9 @@ void * timer_thread_manager() {
     
     while (1) {
         /* ~~~~~~~ Update Interval ~~~~~~~ */
-        pthread_mutex_lock(&lock);
         current_time = clock();
         if (current_time > timekeeper.update) {
+            pthread_mutex_lock(&lock);
             for (i=0; i<timekeeper.q_nbrs; i++) {
                 bzero((void *)&update_packet, sizeof(update_packet));
                 ConvertTabletoPkt(&update_packet, router_id);
@@ -101,39 +101,37 @@ void * timer_thread_manager() {
                 }
             }
             timekeeper.update = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
+            pthread_mutex_unlock(&lock);
         }
-        pthread_mutex_unlock(&lock);
 
         /* ~~~~~~~ Failure Detection ~~~~~~~ */
-        pthread_mutex_lock(&lock);
         for(i=0; i<timekeeper.q_nbrs; i++) {
             current_time = clock();
             if (current_time > timekeeper.nbrs[i].timeout) {
+                pthread_mutex_lock(&lock);
                 if (dead_routers[timekeeper.nbrs[i].id] == 0) {
                     dead_routers[timekeeper.nbrs[i].id] = 1;
                     UninstallRoutesOnNbrDeath(timekeeper.nbrs[i].id);
                     PrintRoutes(fp, router_id);
                     fflush(fp);
                 }
+                pthread_mutex_unlock(&lock);
             } else {
                 dead_routers[timekeeper.nbrs[i].id] = 0;
             }
         }
-        pthread_mutex_unlock(&lock);
         
         /* ~~~~~~~ Convergence Interval ~~~~~~~ */
-        pthread_mutex_lock(&lock);
-        pthread_mutex_unlock(&lock);
-        pthread_mutex_lock(&lock);
         current_time = clock();
         if (current_time > timekeeper.convergence) {
+            pthread_mutex_lock(&lock);
             if (!CONVERGED) {
                 fprintf(fp, "%ld:Converged\n", ((current_time - resp_received)/CLOCKS_PER_SEC));
                 fflush(fp);
                 CONVERGED = 1;
             }
+            pthread_mutex_unlock(&lock);
         }
-        pthread_mutex_unlock(&lock);
 
     }
     return NULL;

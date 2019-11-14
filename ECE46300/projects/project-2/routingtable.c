@@ -1,5 +1,8 @@
 #include "ne.h"
 #include "router.h"
+#include <strings.h>
+#include <time.h>
+#include <math.h>
 
 
 /* ----- GLOBAL VARIABLES ----- */
@@ -117,9 +120,9 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 	struct route_entry nbr_route;
 	int forced_update = 0;
 	int path_vector = 0;
-	int old_cost = 0;
-	int old_path_len = 0;
-	int old_next_hop = 0; 
+	unsigned int old_cost = 0;
+	unsigned int old_path_len = 0;
+	unsigned int old_next_hop = 0; 
 
 	
 	for (i=0; i < RecvdUpdatePacket->no_routes; i++) {
@@ -153,10 +156,7 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 					ignore_route = 1;
 				}
 			}
-			if (ignore_route) {
-				continue;
-			}
-
+			
 			for (j=0; j < NumRoutes; j++) {
 				if (routingTable[j].dest_id == nbr_route.dest_id) {
 					break;
@@ -164,7 +164,13 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 			}
 			
 			if (routingTable[j].next_hop == RecvdUpdatePacket->sender_id) {
-				forced_update = 1;
+				if (nbr_route.cost > routingTable[j].cost) {
+					forced_update = 1;
+				}
+			}
+			
+			if (ignore_route && !forced_update) {
+				continue;
 			}
 
 			if ((costToNbr + nbr_route.cost) < routingTable[j].cost) {
@@ -172,10 +178,11 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 			}
 
 			if (forced_update || path_vector) {
-				if (nbr_route.path_len == MAX_PATH_LEN) {
+				/*if (nbr_route.path_len == MAX_PATH_LEN) {
 					routingTable[j].cost = INFINITY;
+					routingTable[j].path_len = MAX_PATH_LEN;
 					continue;
-				}
+				}*/
 				
 				/* Save the prev vals for reference */
 				old_cost = routingTable[j].cost;
@@ -183,6 +190,9 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 				old_next_hop = routingTable[j].next_hop;
 
 				/* Do the update */
+				if (forced_update && !path_vector) {
+					routingTable[j].cost = nbr_route.cost - 
+				}
 				routingTable[j].cost = nbr_route.cost + costToNbr;
 				routingTable[j].next_hop = RecvdUpdatePacket->sender_id;
 				routingTable[j].path_len = nbr_route.path_len + 1;
