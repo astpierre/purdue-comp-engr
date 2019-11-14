@@ -26,38 +26,40 @@ int router_id, ne_port, router_port, sockfd, slen;
 struct sockaddr_in si_router;
 struct sockaddr_in si_ne;
 struct hostent * ne_host;
-char logfilename[20];
 FILE * fp;
 int CONVERGED = 0;
 pthread_mutex_t lock;
 
 
 
-void udp_update_polling() {
+void * udp_update_polling() {
     struct pkt_RT_UPDATE update_packet;
     int i=0;
     int cost_to_sender = 0;
-    //int sockfd_local = sockfd;
-    //int slen_local = slen;
-    //struct sockaddr_in si_ne_local = si_ne;
-    //struct sockaddr_in si_router_local = si_router;
+    struct sockaddr_in recvaddr;
+    socklen_t recvaddr_size = sizeof(recvaddr);
+    pthread_mutex_lock(&lock);
+    int sockfd_local = sockfd;
+    pthread_mutex_unlock(&lock);
+    bzero(&recvaddr, sizeof(recvaddr));
+
     for (;;) {
         
-        if (CONVERGED) {
+        /*if (CONVERGED) {
             pthread_exit(NULL);
-        }
+        }*/
         
-        bzero((void *)&update_packet, PACKETSIZE);
+        bzero((void *)&update_packet, sizeof(update_packet));
         printf("HEER");
-        if (recvfrom(sockfd, &update_packet, PACKETSIZE, 0, (struct sockaddr *)&si_router, (socklen_t *)&slen) < 0) {
+        if (recvfrom(sockfd_local, &update_packet, sizeof(update_packet), 0, (struct sockaddr *)&recvaddr, &recvaddr_size) < 0) {
             perror("recvfrom");
-            close(sockfd);
+            close(sockfd_local);
             return;
         }
 
         /* Process update */
-        ntoh_pkt_RT_UPDATE(&update_packet);
         pthread_mutex_lock(&lock);
+        ntoh_pkt_RT_UPDATE(&update_packet);
         for (i=0; i<timekeeper.q_nbrs; i++) {
             if (timekeeper.nbrs[i].id == update_packet.sender_id) {
                 timekeeper.nbrs[i].timeout = clock() + FAILURE_DETECTION * CLOCKS_PER_SEC;
@@ -79,7 +81,7 @@ void udp_update_polling() {
 }
 
 
-void timer_thread_manager() {
+void * timer_thread_manager() {
     timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
     timekeeper.update = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
     int current_time;
@@ -95,9 +97,9 @@ void timer_thread_manager() {
         current_time = clock();
         if (current_time > timekeeper.update) {
             if (update_flag) {
-                bzero((void *)&update_packet, PACKETSIZE);
-                ConvertTabletoPkt(&update_packet, router_id);
                 for (i=0; i<init_resp.no_nbr; i++) {
+                    bzero((void *)&update_packet, sizeof(update_packet));
+                    ConvertTabletoPkt(&update_packet, router_id);
                     update_packet.dest_id = init_resp.nbrcost[i].nbr;
                     hton_pkt_RT_UPDATE(&update_packet);
                     if (sendto(sockfd, &update_packet, (sizeof(update_packet) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
@@ -120,7 +122,7 @@ void timer_thread_manager() {
             fflush(fp);
             CONVERGED = 1;
             pthread_mutex_unlock(&lock);
-            pthread_exit(NULL);
+            printf("Done.");
         }
         pthread_mutex_unlock(&lock);
 
@@ -155,6 +157,7 @@ int main(int argc, char **argv) {
 
     /* Local variables */
     pthread_t udp_polling_thread, timer_thread;
+    char logfilename[20];
     int i=0;
     int optval=1;
 
@@ -187,6 +190,7 @@ int main(int argc, char **argv) {
     /* Send INIT_REQUEST */
     /* INIT_REQUEST to NETWORK_EMULATOR */
     struct pkt_INIT_REQUEST init_req;
+    bzero((void *)&init_req, sizeof(init_req));
     init_req.router_id = htonl(router_id);
     if (sendto(sockfd, &init_req, (sizeof(init_req) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
         perror("sendto");
@@ -230,10 +234,8 @@ int main(int argc, char **argv) {
 
     pthread_join(timer_thread, NULL);
     pthread_join(udp_polling_thread, NULL);
-    pthread_exit(NULL);
 
-    //close(sockfd);
-    //close(fp);
-    //free(nbrs_watch);
+    close(sockfd);
+    close(fp);
     exit(0);
 }
