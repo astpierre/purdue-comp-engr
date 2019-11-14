@@ -235,7 +235,7 @@ int main(int argc, char **argv) {
     pthread_join(timer_thread, NULL);
     pthread_join(udp_polling_thread, NULL);
 
-    close(sockfd);
-    close(fp);
+    fclose(sockfd);
+    fclose(fp);
     exit(0);
 }
