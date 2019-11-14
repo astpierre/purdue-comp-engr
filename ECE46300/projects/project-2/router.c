@@ -98,9 +98,6 @@ void * timer_thread_manager() {
         current_time = clock();
         if (current_time > timekeeper.update) {
             for (i=0; i<timekeeper.q_nbrs; i++) {
-                if (!dead_routers[timekeeper.nbrs[i].id]) {
-                    continue;
-                } 
                 bzero((void *)&update_packet, sizeof(update_packet));
                 ConvertTabletoPkt(&update_packet, router_id);
                 update_packet.dest_id = timekeeper.nbrs[i].id;
