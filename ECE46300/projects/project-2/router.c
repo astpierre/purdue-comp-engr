@@ -32,6 +32,7 @@ FILE * fp;
 int CONVERGED = 0;
 pthread_mutex_t lock;
 int print_please = 0;
+int resp_received = 0;
 
 
 
@@ -137,7 +138,7 @@ void * timer_thread_manager() {
         current_time = clock();
         if (current_time > timekeeper.convergence) {
             if (!CONVERGED) {
-                fprintf(fp, "%ld:Converged\n", (current_time/CLOCKS_PER_SEC));
+                fprintf(fp, "%ld:Converged\n", ((resp_received-current_time)/CLOCKS_PER_SEC));
                 fflush(fp);
                 CONVERGED = 1;
             }
@@ -214,6 +215,7 @@ int main(int argc, char **argv) {
         close(sockfd);
         exit(-1);
     }
+    resp_received = clock();
     ntoh_pkt_INIT_RESPONSE(&init_resp);
 
     /* Initialize the failure detection table for neighboring routers */

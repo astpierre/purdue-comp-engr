@@ -116,6 +116,129 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 }
 
 
+int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myID) {
+	/* ----- ADD UNKNOWN DESTINATIONS ----- */
+	int i, j, k, m;
+	int table_changed = 0;
+	int ignore_route = 0;
+	struct route_entry nbr_route;
+	int forced_update = 0;
+	int path_vector = 0;
+
+	/* Add the route if it doesn't exist in my table */
+	if (!myTableContains(nbr_route.dest_id)) {}
+	
+	for (i=0; i < RecvdUpdatePacket->no_routes; i++) {
+		ignore_route = 0;
+		forced_update = 0;
+		path_vector = 0;
+		nbr_route = RecvdUpdatePacket->route[i];
+		if (nbr_route.dest_id == RecvdUpdatePacket->sender_id) {
+			ignore_route = 1;
+		}
+		for (k=0; k < nbr_route.path_len; k++) {
+			if (myID == nbr_route.path[k]) {
+				ignore_route = 1;
+				break;
+			}
+		}
+		if (ignore_route) {
+			return table_changed;
+		}
+
+		if (routingTable[j].next_hop == RecvdUpdatePacket->sender_id) {
+			forced_update = 1;
+		}
+
+		if ((costToNbr + nbr_route.cost) < routingTable[j].cost) {
+			path_vector = 1;
+		}
+
+		if (forced_update || path_vector) {
+			/* Do the update */
+			
+		}
+
+
+		for (j=0; j < NumRoutes; j++) {
+			if (routingTable[j].dest_id == nbr_route.dest_id) {
+				break;
+			}
+		}
+
+
+
+
+
+	}
+
+
+	for (i=0; i < RecvdUpdatePacket->no_routes; i++) {
+		if (myTableContains(RecvdUpdatePacket->route[i].dest_id)) {
+			/* CHECK FOR BETTER PATH */
+			int ignore = 0;
+			/* Path vector rule */
+			for (j=0; j < NumRoutes; j++) {
+				ignore = 0;
+				if (routingTable[j].cost > INFINITY) {
+					routingTable[j].cost = INFINITY;
+				}
+				if (routingTable[j].dest_id == RecvdUpdatePacket->route[i].dest_id) {
+					if (RecvdUpdatePacket->route[i].path_len == MAX_PATH_LEN) {
+						routingTable[j].cost = INFINITY;
+					} else {
+						/* Path vector rule */
+						for (k=0; k < RecvdUpdatePacket->route[i].path_len; k++) {
+							if (RecvdUpdatePacket->route[i].path[k] == myID) {
+								ignore = 1;
+							}
+						}
+						if (ignore != 1) {
+							if (routingTable[j].cost > (RecvdUpdatePacket->route[i].cost + costToNbr)) {
+								routingTable[j].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
+								routingTable[j].next_hop = RecvdUpdatePacket->sender_id;
+								routingTable[j].path_len = RecvdUpdatePacket->route[i].path_len + 1;
+								routingTable[j].path[0] = myID;
+								for (m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
+									routingTable[j].path[m+1] = RecvdUpdatePacket->route[i].path[m];
+								}
+								table_changed = 1;
+							}
+						
+							/* Forced update rule */
+							if (routingTable[j].next_hop == RecvdUpdatePacket->sender_id) {
+								if (RecvdUpdatePacket->route[i].cost > (routingTable[j].cost - costToNbr)) {
+									routingTable[j].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
+									routingTable[j].path_len = RecvdUpdatePacket->route[i].path_len + 1;
+									routingTable[j].path[0] = myID;
+									for (m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
+										routingTable[j].path[m+1] = RecvdUpdatePacket->route[i].path[m];
+									}
+									table_changed = 1;
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			/* ADD ROUTE TO MY TABLE */
+			routingTable[NumRoutes].dest_id = RecvdUpdatePacket->route[i].dest_id;
+			routingTable[NumRoutes].next_hop = RecvdUpdatePacket->route[i].path[0];
+			routingTable[NumRoutes].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
+			routingTable[NumRoutes].path_len = RecvdUpdatePacket->route[i].path_len + 1;
+			routingTable[NumRoutes].path[0] = myID;
+			for (j=0; j < RecvdUpdatePacket->route[i].path_len; j++) {
+				routingTable[NumRoutes].path[j+1] = RecvdUpdatePacket->route[i].path[j];
+			}
+			NumRoutes += 1;
+			table_changed = 1;
+		}
+	}
+	return table_changed;
+}
+
+
 ////////////////////////////////////////////////////////////////
 void ConvertTabletoPkt(struct pkt_RT_UPDATE *UpdatePacketToSend, int myID){
 	int i;
