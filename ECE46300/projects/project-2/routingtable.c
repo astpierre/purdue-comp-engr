@@ -9,7 +9,7 @@ static int NumRoutes = 0;
 ////////////////////////////////////////////////////////////////
 int myTableContains(unsigned int router_id) {
 	int i;
-	for (i=0; i < MAX_ROUTERS; i++) {
+	for (i=0; i < NumRoutes; i++) {
 		if (routingTable[i].dest_id == router_id) {
 			return 1;
 		}
@@ -20,6 +20,7 @@ int myTableContains(unsigned int router_id) {
 ////////////////////////////////////////////////////////////////
 void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
 	int i;
+	bzero(&routingTable, sizeof(routingTable));
 
 	routingTable[NumRoutes].dest_id = myID;
 	routingTable[NumRoutes].next_hop = myID;

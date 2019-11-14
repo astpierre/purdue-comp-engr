@@ -106,6 +106,8 @@ void * timer_thread_manager() {
             current_time = clock();
             if (current_time > timekeeper.nbrs[i].timeout) {
                 UninstallRoutesOnNbrDeath(timekeeper.nbrs[i].id);
+                PrintRoutes(fp, router_id);
+                fflush(fp);
             }
         }
         pthread_mutex_unlock(&lock);
@@ -211,6 +213,7 @@ int main(int argc, char **argv) {
     strcat(logfilename, ".log");
     fp = fopen(logfilename, "w");
     PrintRoutes(fp, router_id);
+    fflush(fp);
 
     /* Initialize the mutex */
     pthread_mutex_init(&lock, NULL);
@@ -224,7 +227,7 @@ int main(int argc, char **argv) {
     pthread_join(timer_thread, NULL);
     pthread_join(udp_polling_thread, NULL);
 
-    fclose(sockfd);
+    close(sockfd);
     fclose(fp);
     exit(0);
 }
