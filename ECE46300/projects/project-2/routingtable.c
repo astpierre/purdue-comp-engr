@@ -190,9 +190,6 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 				old_next_hop = routingTable[j].next_hop;
 
 				/* Do the update */
-				if (forced_update && !path_vector) {
-					routingTable[j].cost = nbr_route.cost - 
-				}
 				routingTable[j].cost = nbr_route.cost + costToNbr;
 				routingTable[j].next_hop = RecvdUpdatePacket->sender_id;
 				routingTable[j].path_len = nbr_route.path_len + 1;
