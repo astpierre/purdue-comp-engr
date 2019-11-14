@@ -39,6 +39,16 @@ void InitRoutingTbl (struct pkt_INIT_RESPONSE *InitResponse, int myID){
 		routingTable[NumRoutes].path[1] = InitResponse->nbrcost[i].nbr;
 		NumRoutes+=1;
 	}
+
+	/* To avoid confusion */
+	for (i=NumRoutes; i < MAX_ROUTERS; i++) {
+		routingTable[i].dest_id = -1;
+		routingTable[i].next_hop = -1;
+		routingTable[i].cost = -1;
+		routingTable[i].path[0] = -1;
+		routingTable[i].path_len = -1;
+	}
+
 	return;
 }
 
@@ -173,11 +183,11 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 			}
 
 			if (forced_update || path_vector) {
-				/*if (nbr_route.path_len == MAX_PATH_LEN) {
+				if (nbr_route.path_len == MAX_PATH_LEN) {
 					routingTable[j].cost = INFINITY;
 					routingTable[j].path_len = MAX_PATH_LEN;
 					continue;
-				}*/
+				}
 				
 				/* Save the prev vals for reference */
 				old_cost = routingTable[j].cost;

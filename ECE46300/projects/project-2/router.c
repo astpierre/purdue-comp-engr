@@ -33,6 +33,7 @@ int CONVERGED = 0;
 pthread_mutex_t lock;
 int print_please = 0;
 int resp_received = 0;
+int dead_routers[MAX_ROUTERS];
 
 
 
@@ -61,6 +62,7 @@ void * udp_update_polling() {
         for (i=0; i<timekeeper.q_nbrs; i++) {
             if (timekeeper.nbrs[i].id == update_packet.sender_id) {
                 timekeeper.nbrs[i].timeout = clock() + FAILURE_DETECTION * CLOCKS_PER_SEC;
+                dead_routers[timekeeper.nbrs[i].id] = 0;
                 cost_to_sender = timekeeper.nbrs[i].cost;
             }
         }
@@ -79,7 +81,6 @@ void * udp_update_polling() {
 void * timer_thread_manager() {
     timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
     timekeeper.update = clock() + UPDATE_INTERVAL * CLOCKS_PER_SEC;
-    int dead_routers[MAX_ROUTERS];
     int current_time;
     int i=0;
     struct pkt_RT_UPDATE update_packet;
