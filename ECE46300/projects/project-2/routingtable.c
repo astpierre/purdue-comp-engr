@@ -197,8 +197,9 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 				for (m=0; m < nbr_route.path_len; m++) {
 					routingTable[j].path[m+1] = nbr_route.path[m];
 				}
-				if (routingTable[j].cost > INFINITY) {
-					routingTable[j].cost = INFINITY;
+				if (routingTable[j].cost > (unsigned int)INFINITY)
+				{
+					routingTable[j].cost = (unsigned int)INFINITY;
 				}
 
 				if ((routingTable[j].cost != old_cost) || (routingTable[j].next_hop != old_next_hop) || (routingTable[j].path_len != old_path_len)) {
@@ -250,13 +251,13 @@ void UninstallRoutesOnNbrDeath(int DeadNbr) {
 	for (i = 0; i < MAX_ROUTERS; i++) {
 		/* If DeadNbr, set cost to infinity */
 		if (routingTable[i].dest_id == DeadNbr) {
-			routingTable[i].cost = INFINITY;
+			routingTable[i].cost = (unsigned int)INFINITY;
 			continue;
 		}
 		/* Not just for DeadNbr, check the path for DeadNbr */
 		for (j = 0; j < routingTable[i].path_len; j++) {
 			if (routingTable[i].path[j] == DeadNbr) {
-				routingTable[i].cost = INFINITY;
+				routingTable[i].cost = (unsigned int)INFINITY;
 				break;
 			}
 		}
