@@ -61,34 +61,38 @@ int UpdateRoutes(struct pkt_RT_UPDATE *RecvdUpdatePacket, int costToNbr, int myI
 					routingTable[j].cost = INFINITY;
 				}
 				if (routingTable[j].dest_id == RecvdUpdatePacket->route[i].dest_id) {
-					/* Path vector rule */
-					for (k=0; k < RecvdUpdatePacket->route[i].path_len; k++) {
-						if (RecvdUpdatePacket->route[i].path[k] == myID) {
-							ignore = 1;
-						}
-					}
-					if (ignore != 1) {
-						if (routingTable[j].cost > (RecvdUpdatePacket->route[i].cost + costToNbr)) {
-							routingTable[j].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
-							routingTable[j].next_hop = RecvdUpdatePacket->sender_id;
-							routingTable[j].path_len = RecvdUpdatePacket->route[i].path_len + 1;
-							routingTable[j].path[0] = myID;
-							for (m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
-								routingTable[j].path[m+1] = RecvdUpdatePacket->route[i].path[m];
+					if (RecvdUpdatePacket->route[i].path_len == MAX_PATH_LEN) {
+						routingTable[j].cost = INFINITY;
+					} else {
+						/* Path vector rule */
+						for (k=0; k < RecvdUpdatePacket->route[i].path_len; k++) {
+							if (RecvdUpdatePacket->route[i].path[k] == myID) {
+								ignore = 1;
 							}
-							table_changed = 1;
 						}
-					
-						/* Forced update rule */
-						if (routingTable[j].next_hop == RecvdUpdatePacket->sender_id) {
-							if (RecvdUpdatePacket->route[i].cost > (routingTable[j].cost - costToNbr)) {
+						if (ignore != 1) {
+							if (routingTable[j].cost > (RecvdUpdatePacket->route[i].cost + costToNbr)) {
 								routingTable[j].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
+								routingTable[j].next_hop = RecvdUpdatePacket->sender_id;
 								routingTable[j].path_len = RecvdUpdatePacket->route[i].path_len + 1;
 								routingTable[j].path[0] = myID;
 								for (m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
 									routingTable[j].path[m+1] = RecvdUpdatePacket->route[i].path[m];
 								}
 								table_changed = 1;
+							}
+						
+							/* Forced update rule */
+							if (routingTable[j].next_hop == RecvdUpdatePacket->sender_id) {
+								if (RecvdUpdatePacket->route[i].cost > (routingTable[j].cost - costToNbr)) {
+									routingTable[j].cost = RecvdUpdatePacket->route[i].cost + costToNbr;
+									routingTable[j].path_len = RecvdUpdatePacket->route[i].path_len + 1;
+									routingTable[j].path[0] = myID;
+									for (m=0; m < RecvdUpdatePacket->route[i].path_len; m++) {
+										routingTable[j].path[m+1] = RecvdUpdatePacket->route[i].path[m];
+									}
+									table_changed = 1;
+								}
 							}
 						}
 					}

@@ -107,13 +107,13 @@ void * timer_thread_manager() {
         for(i=0; i<timekeeper.q_nbrs; i++) {
             current_time = clock();
             if (current_time > timekeeper.nbrs[i].timeout) {
-                if (dead_routers[i] == 0) {
-                    dead_routers[i] = 1;
+                if (dead_routers[timekeeper.nbrs[i].id] == 0) {
+                    dead_routers[timekeeper.nbrs[i].id] = 1;
                     UninstallRoutesOnNbrDeath(timekeeper.nbrs[i].id);
                     PrintRoutes(fp, router_id);
                     fflush(fp);
                 } else {
-                    dead_routers[i] = 0; // To undo the death (REVIVAL)
+                    dead_routers[timekeeper.nbrs[i].id] = 0; // To undo the death (REVIVAL)
                 }
             }
         }
