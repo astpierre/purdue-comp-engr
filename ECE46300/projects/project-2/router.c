@@ -45,7 +45,7 @@ void * udp_update_polling() {
     pthread_mutex_unlock(&lock);
     bzero(&recvaddr, sizeof(recvaddr));
 
-    for (;;) {
+    while (1) {
         bzero((void *)&update_packet, sizeof(update_packet));
         if (recvfrom(sockfd_local, &update_packet, sizeof(update_packet), 0, (struct sockaddr *)&recvaddr, &recvaddr_size) < 0) {
             perror("recvfrom");
@@ -80,11 +80,8 @@ void * timer_thread_manager() {
     int current_time;
     int i=0;
     struct pkt_RT_UPDATE update_packet;
-    //int sockfd_local = sockfd;
-    //int slen_local = slen;
-    //struct sockaddr_in si_ne_local = si_ne;
     
-    while(1) {
+    while (1) {
         /* ~~~~~~~ Update Interval ~~~~~~~ */
         pthread_mutex_lock(&lock);
         current_time = clock();
@@ -114,6 +111,8 @@ void * timer_thread_manager() {
         pthread_mutex_unlock(&lock);
         
         /* ~~~~~~~ Convergence Interval ~~~~~~~ */
+        pthread_mutex_lock(&lock);
+        pthread_mutex_unlock(&lock);
         pthread_mutex_lock(&lock);
         current_time = clock();
         if (current_time > timekeeper.convergence) {
