@@ -31,6 +31,7 @@ struct hostent * ne_host;
 FILE * fp;
 int CONVERGED = 0;
 pthread_mutex_t lock;
+int print_please = 0;
 
 
 
@@ -65,8 +66,7 @@ void * udp_update_polling() {
         if (UpdateRoutes(&update_packet, cost_to_sender, router_id) == 1) {
             CONVERGED = 0;
             timekeeper.convergence = clock() + CONVERGE_TIMEOUT * CLOCKS_PER_SEC;
-            PrintRoutes(fp, router_id);
-            fflush(fp);
+            print_please = 1;
         }
         pthread_mutex_unlock(&lock);
     }
@@ -84,14 +84,25 @@ void * timer_thread_manager() {
     bzero((void *)&dead_routers, sizeof(dead_routers));
     
     while (1) {
+        pthread_mutex_lock(&lock);
+        if (print_please) {
+            PrintRoutes(fp, router_id);
+            fflush(fp);
+            print_please = 0;
+        }
+        pthread_mutex_unlock(&lock);
+
         /* ~~~~~~~ Update Interval ~~~~~~~ */
         pthread_mutex_lock(&lock);
         current_time = clock();
         if (current_time > timekeeper.update) {
-            for (i=0; i<init_resp.no_nbr; i++) {
+            for (i=0; i<timekeeper.q_nbrs; i++) {
+                if (!dead_routers[timekeeper.nbrs[i].id]) {
+                    continue;
+                } 
                 bzero((void *)&update_packet, sizeof(update_packet));
                 ConvertTabletoPkt(&update_packet, router_id);
-                update_packet.dest_id = init_resp.nbrcost[i].nbr;
+                update_packet.dest_id = timekeeper.nbrs[i].id;
                 hton_pkt_RT_UPDATE(&update_packet);
                 if (sendto(sockfd, &update_packet, sizeof(update_packet), 0, (struct sockaddr *)&si_ne, slen) < 0) {
                     perror("sendto");
