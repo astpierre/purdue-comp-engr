@@ -148,14 +148,13 @@ void UninstallRoutesOnNbrDeath(int DeadNbr) {
 		/* If DeadNbr, set cost to infinity */
 		if (routingTable[i].dest_id == DeadNbr) {
 			routingTable[i].cost = INFINITY;
+			continue;
 		}
-		/* Not DeadNbr, check the path for DeadNbr */
-		else {
-			for (j = 0; j < routingTable[i].path_len; j++) {
-				if (routingTable[i].path[j] == DeadNbr) {
-					routingTable[i].cost = INFINITY;
-					break;
-				}
+		/* Not just for DeadNbr, check the path for DeadNbr */
+		for (j = 0; j < routingTable[i].path_len; j++) {
+			if (routingTable[i].path[j] == DeadNbr) {
+				routingTable[i].cost = INFINITY;
+				break;
 			}
 		}
 	}
