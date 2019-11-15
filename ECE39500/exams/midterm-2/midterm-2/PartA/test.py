@@ -1,19 +1,15 @@
+from AddState import AddState
+from Compiler import *
+from CompilerState import CompilerState
+from CVCVState import CVCVState
+from VCVState import  VCVState
+from ErrorState import ErrorState
+from InitState import InitState
+from StateFactory import StateFactory
+from EofState import EofState
 
-'''
-public class Test {
 
-    public static void main(String args[]) {
-
-        if (args.length != 1) {
-            System.out.println("Test filename")
-            System.exit(0)
-        }
-        if (Compiler.DEBUG) {
-            System.out.println("Compiling "+args[0])
-        }
-        Compiler compiler = new Compiler()
-        StateFactory f = new StateFactory(compiler)
-        compiler.compile(args[0])
-    }
-}
-'''
+def main(filename):
+    compiler = Compiler()
+    statefactory = StateFactory(compiler)
+    compiler.compile(filename)
