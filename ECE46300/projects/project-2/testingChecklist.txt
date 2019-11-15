@@ -18,7 +18,28 @@ Result of Valgrind: nothing definitely lost, some possibly lost
 
 =================================================
 KILL AND REVIVE ROUTER TEST CASE:
+Indicate Topology: 2_routers.conf
+Indicate Router to kill/revive: 1
+Convergence after Killing Router: consistently gets correct routing table
+Convergence after RevivingRouter: consistently gets correct routing table
+=================================================
+=================================================
+KILL AND REVIVE ROUTER TEST CASE:
 Indicate Topology: 4_routers.conf
+Indicate Router to kill/revive: 1
+Convergence after Killing Router: consistently gets correct routing table
+Convergence after RevivingRouter: does not always converge to correct tables
+=================================================
+=================================================
+KILL AND REVIVE ROUTER TEST CASE:
+Indicate Topology: 5_routers.conf
+Indicate Router to kill/revive: 1
+Convergence after Killing Router: consistently gets correct routing table
+Convergence after RevivingRouter: does not always converge to correct tables
+=================================================
+=================================================
+KILL AND REVIVE ROUTER TEST CASE:
+Indicate Topology: 10_routers.conf
 Indicate Router to kill/revive: 1
 Convergence after Killing Router: consistently gets correct routing table
 Convergence after RevivingRouter: does not always converge to correct tables
