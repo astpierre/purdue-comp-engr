@@ -22,8 +22,7 @@ struct timekeeper_t {
 struct timekeeper_t timekeeper;
 int update_flag = 0;
 
-/*  */
-struct pkt_INIT_RESPONSE init_resp;
+/* Global variables */
 int router_id, ne_port, router_port, sockfd, slen;
 struct sockaddr_in si_router;
 struct sockaddr_in si_ne;
@@ -191,15 +190,16 @@ int main(int argc, char **argv) {
     struct pkt_INIT_REQUEST init_req;
     bzero((void *)&init_req, sizeof(init_req));
     init_req.router_id = htonl(router_id);
-    if (sendto(sockfd, &init_req, (sizeof(init_req) + 1), 0, (struct sockaddr *)&si_ne, slen) < 0) {
+    if (sendto(sockfd, &init_req, sizeof(init_req), 0, (struct sockaddr *)&si_ne, slen) < 0) {
         perror("sendto");
         exit(-1);
     }
 
     /* Receive INIT_RESPONSE */
     /* INIT_RESPONSE from NETWORK_EMULATOR */
+    struct pkt_INIT_RESPONSE init_resp;
     bzero((void *)&init_resp, sizeof(init_resp));
-    if (recvfrom(sockfd, &init_resp, PACKETSIZE, 0, (struct sockaddr *)&si_router, (socklen_t *)&slen) < 0) {
+    if (recvfrom(sockfd, &init_resp, sizeof(init_resp), 0, (struct sockaddr *)&si_router, (socklen_t *)&slen) < 0) {
         perror("recvfrom");
         close(sockfd);
         exit(-1);

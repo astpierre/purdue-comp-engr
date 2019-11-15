@@ -1,0 +1,25 @@
+=================================================
+== Student: Andrew St Pierre
+=================================================
+
+=================================================
+BASIC CONVERGENCE TEST CASES:
+Basic 2_routers.conf Convergence:   consistently gets correct routing table
+Basic 4_routers.conf Convergence:   consistently gets correct routing table
+Basic 5_routers.conf Convergence:   consistently gets correct routing table
+Basic 10_routers.conf Convergence:  consistently gets correct routing table
+=================================================
+
+=================================================
+VALGRIND TEST CASE:
+Indicate Topology: 4_routers.conf
+Result of Valgrind: nothing definitely lost, some possibly lost
+=================================================
+
+=================================================
+KILL AND REVIVE ROUTER TEST CASE:
+Indicate Topology: 4_routers.conf
+Indicate Router to kill/revive: 1
+Convergence after Killing Router: consistently gets correct routing table
+Convergence after RevivingRouter: does not always converge to correct tables
+=================================================
