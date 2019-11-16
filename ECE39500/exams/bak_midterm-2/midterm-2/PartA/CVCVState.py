@@ -3,7 +3,7 @@ from StateFactory import StateFactory
 import sys
 
 class CVCVState(CompilerState):
-    INT_MIN = -sys.maxint - 1
+    INT_MIN = -sys.maxsize - 1
 
     def __init__(self, compiler):
         self.compiler = compiler

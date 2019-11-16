@@ -1,9 +1,8 @@
-from CompilerState import CompilerState
-from StateFactory import StateFactory
+from CompilerState import CompilerState, StateFactory
 import sys
 
 class EofState(CompilerState):
-    INT_MIN = -sys.maxint - 1
+    INT_MIN = -sys.maxsize - 1
 
     def __init__(self, compiler):
         self.compiler = compiler

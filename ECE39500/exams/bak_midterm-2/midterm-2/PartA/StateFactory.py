@@ -1,5 +1,3 @@
-from CompilerState import CompilerState
-from Compiler import Compiler
 from AddState import AddState
 from CVCVState import CVCVState
 from InitState import InitState
@@ -9,7 +7,7 @@ from VCVState import VCVState
 import sys
 
 class StateFactory():
-    INT_MIN = -sys.maxint - 1
+    INT_MIN = -sys.maxsize - 1
 
     def __init__(self, compiler):
         self.compiler = compiler

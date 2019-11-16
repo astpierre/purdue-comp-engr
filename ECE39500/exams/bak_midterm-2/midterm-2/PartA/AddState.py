@@ -1,9 +1,9 @@
 from CompilerState import CompilerState
-from StateFactory import StateFactory
+from Compiler import StateFactory
 import sys
 
 class AddState(CompilerState):
-    INT_MIN = -sys.maxint - 1
+    INT_MIN = -sys.maxsize - 1
 
     def __init__(self, compiler):
         self.compiler = compiler

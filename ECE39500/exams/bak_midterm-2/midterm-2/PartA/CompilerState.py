@@ -1,7 +1,7 @@
 import sys
 
 class CompilerState():
-    INT_MIN = -sys.maxint - 1
+    INT_MIN = -sys.maxsize - 1
 
     def __init__(self):
         return

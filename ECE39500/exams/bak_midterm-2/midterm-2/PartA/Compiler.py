@@ -1,5 +1,4 @@
 from CompilerState import CompilerState
-from StateFactory import StateFactory
 from AddState import AddState
 from CVCVState import CVCVState
 from InitState import InitState
@@ -9,8 +8,25 @@ from VCVState import VCVState
 import sys
 import re
 
+class StateFactory():
+    INT_MIN = -sys.maxsize - 1
+
+    def __init__(self, compiler):
+        self.compiler = compiler
+        self.states = {
+            "add": AddState(compiler),
+            "CVCVState": CVCVState(compiler),
+            "EofState": EofState(compiler),
+            "ErrorState": ErrorState(compiler),
+            "InitState": InitState(compiler),
+            "VCVState": VCVState(compiler),
+        }
+        return
+    
+    def getState(self, state):
+        return self.states[state]
 class Compiler():
-    INT_MIN = -sys.maxint - 1
+    INT_MIN = -sys.maxsize - 1
 
     def __init__(self):
         self.DEBUG = False
