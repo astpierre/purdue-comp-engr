@@ -5,11 +5,11 @@ public class StateFactory {
 
    private Compiler compiler;
    private static String[ ] classes = {"AddState", "CVCVState", "EofState", 
-                                       "ErrorState", "InitState", "VCVState"};
+                                       "ErrorState", "InitState", "VCVState", "CVState", "VState", "Ld0State", "AddiState", "PrintState", "ExitState" };
 
    // used to decode command names to the corresponding class name
    private static String[ ] commands = {"add", "CVCVState", "EofState", 
-                                        "ErrorState", "InitState", "VCVState"};
+                                        "ErrorState", "InitState", "VCVState", "CVState", "VState", "ld0", "addi", "print", "exit"};
 
    private static Map<String,CompilerState> states = 
       new HashMap<String,CompilerState>( );
