@@ -7,17 +7,17 @@ public class AddiState extends CompilerState {
    }
 
    public void comma( ) {
-       
       System.out.println("Parsing Addi, expected int, found ,");
       compiler.state = StateFactory.getState("ErrorState");
    }
 
    public void value(String str) {
       compiler.values[++compiler.valueCount] = Integer.parseInt(str);
+      compiler.state = StateFactory.getState("CVState");
    }
 
    public void eol( ) {
-      System.out.print("reg[0] = reg["+0+"] + 5");
+      System.out.println("reg[0] = reg["+0+"] + 5");
        compiler.state = StateFactory.getState("InitState");
    }
       

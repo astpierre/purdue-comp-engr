@@ -13,7 +13,7 @@ public class Ld0State extends CompilerState {
 
    public void value(String str) {
       compiler.values[Integer.parseInt(str)] = 0;
-      System.out.print("reg["+Integer.parseInt(str)+"] = 0");
+      System.out.println("reg["+Integer.parseInt(str)+"] = 0");
    }
 
    public void eol( ) {
