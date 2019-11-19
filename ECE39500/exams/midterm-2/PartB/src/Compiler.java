@@ -68,7 +68,7 @@ public class Compiler {
       }
       if (token.matches("[+-]?[0-9][0-9]*")) { 
         state.value(token);
-      } else if (token.matches("addi|ld0|add|print|exit")) {
+      } else if (token.matches("addi|ld0|add|print|exit|store")) {
          for (int i = 0; i < 3; i++) {
             values[i] = Integer.MIN_VALUE;
          }
