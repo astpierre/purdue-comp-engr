@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+javac MyRemote.java
+javac MyRemoteImpl.java
+javac MyRemoteClient.java

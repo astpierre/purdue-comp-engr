@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+rmic MyRemoteImpl
+rmiregistry &
+java MyRemoteImpl &
