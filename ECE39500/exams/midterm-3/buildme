@@ -3,3 +3,4 @@
 javac MyRemote.java
 javac MyRemoteImpl.java
 javac MyRemoteClient.java
+rmic MyRemoteImpl
