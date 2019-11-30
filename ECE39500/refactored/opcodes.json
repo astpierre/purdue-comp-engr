@@ -1,0 +1,146 @@
+[
+    {
+        "opcode": "cmpe",
+        "value": 132
+    },
+    {
+        "opcode": "cmplt",
+        "value": 136
+    },
+    {
+        "opcode": "cmpgt",
+        "value": 140
+    },
+    {
+        "opcode": "jmp",
+        "value": 36
+    },
+    {
+        "opcode": "jmpc",
+        "value": 40
+    },
+    {
+        "opcode": "call",
+        "value": 44
+    },
+    {
+        "opcode": "ret",
+        "value": 48
+    },
+    {
+        "opcode": "pushc",
+        "value": 68
+    },
+    {
+        "opcode": "pushs",
+        "value": 69
+    },
+    {
+        "opcode": "pushi",
+        "value": 70
+    },
+    {
+        "opcode": "pushf",
+        "value": 71
+    },
+    {
+        "opcode": "pushvc",
+        "value": 72
+    },
+    {
+        "opcode": "pushvs",
+        "value": 73
+    },
+    {
+        "opcode": "pushvi",
+        "value": 74
+    },
+    {
+        "opcode": "pushvf",
+        "value": 75
+    },
+    {
+        "opcode": "popm",
+        "value": 76
+    },
+    {
+        "opcode": "popv",
+        "value": 80
+    },
+    {
+        "opcode": "popa",
+        "value": 77
+    },
+    {
+        "opcode": "peekc",
+        "value": 84
+    },
+    {
+        "opcode": "peeks",
+        "value": 85
+    },
+    {
+        "opcode": "peeki",
+        "value": 86
+    },
+    {
+        "opcode": "peekf",
+        "value": 87
+    },
+    {
+        "opcode": "pokec",
+        "value": 88
+    },
+    {
+        "opcode": "pokes",
+        "value": 89
+    },
+    {
+        "opcode": "pokei",
+        "value": 90
+    },
+    {
+        "opcode": "pokef",
+        "value": 91
+    },
+    {
+        "opcode": "swp",
+        "value": 94
+    },
+    {
+        "opcode": "add",
+        "value": 100
+    },
+    {
+        "opcode": "sub",
+        "value": 104
+    },
+    {
+        "opcode": "mul",
+        "value": 108
+    },
+    {
+        "opcode": "div",
+        "value": 112
+    },
+    {
+        "opcode": "printc",
+        "value": 144
+    },
+    {
+        "opcode": "prints",
+        "value": 145
+    },
+    {
+        "opcode": "printi",
+        "value": 146
+    },
+    {
+        "opcode": "printf",
+        "value": 147
+    },
+    {
+        "opcode": "halt",
+        "value": 0
+    }
+]
