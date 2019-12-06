@@ -3,7 +3,7 @@
 import sys
 import os
 import time
-import struct
+#import struct
 from pathlib import Path
 
 from Bytecode import Bytecode

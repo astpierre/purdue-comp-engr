@@ -1,5 +1,5 @@
 import sys, os, time
-import struct
+#import struct
 from pathlib import Path
 
 from Bytecode import Bytecode
@@ -13,9 +13,15 @@ class Interpreter():
         self.is_dev = False
         self.compiled_code = compiled_code
         self.opcodes = get_opcodes()
-        self.rstack = ['\0','\0','\0','\0']
+        self.rstack = ['\0', '\0', '\0', '\0', '\0', '\0', '\0',
+                       '\0', '\0', '\0', '\0', '\0', '\0', '\0', 
+                       '\0', '\0', '\0', '\0', '\0', '\0', '\0', 
+                       '\0', '\0', '\0']
         self.sp = -1
-        self.fpstack = ['\0','\0','\0','\0']
+        self.fpstack = ['\0', '\0', '\0', '\0', '\0', '\0', '\0',
+                        '\0', '\0', '\0', '\0', '\0', '\0', '\0', 
+                        '\0', '\0', '\0', '\0', '\0', '\0', '\0', 
+                        '\0', '\0', '\0']
         self.fpsp = -1
         self.pc = 0
         self.mem = self.read_program()
@@ -128,4 +134,21 @@ class Interpreter():
     
 
     def __str__(self):
-        return f"""\npc={self.pc}\nrstack={self.rstack}\tsp={self.sp}\nfpstack={self.fpstack}\tfpsp={self.fpsp}\n"""
+        __fpstack = []
+        __rstack = []
+
+        for f in self.fpstack:
+            if f != '\0':
+                __fpstack.append(f)
+        for r in self.rstack:
+            if r != '\0':
+                __rstack.append(r)
+
+        print_string = f"""\n--- Interpreter after execution ---
+            =========== Interpreter(obj)::{self.compiled_code}
+            ======== pc={self.pc}
+            ======== rstack={__rstack}\n
+            ======== sp={self.sp}
+            ======== fpstack={__fpstack}
+            ======== fpsp={self.fpsp}\n"""
+        return print_string

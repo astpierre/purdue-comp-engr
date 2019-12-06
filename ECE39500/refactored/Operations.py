@@ -203,7 +203,7 @@ class Div:
 
 class Print_c:
     def exe(self, obj):
-        print(f"{obj.rstack[obj.sp]}")
+        print(f"{obj.rstack[obj.sp]:.2f}")
         obj.sp -= 1
         obj.pc += 1
         return True
@@ -211,7 +211,7 @@ class Print_c:
 
 class Print_s:
     def exe(self, obj):
-        print(f"{obj.rstack[obj.sp]}")
+        print(f"{obj.rstack[obj.sp]:.2f}")
         obj.sp -= 1
         obj.pc += 1
         return True
@@ -219,7 +219,7 @@ class Print_s:
 
 class Print_i:
     def exe(self, obj):
-        print(f"{obj.rstack[obj.sp]}")
+        print(f"{obj.rstack[obj.sp]:.2f}")
         obj.sp -= 1
         obj.pc += 1
         return True
@@ -227,7 +227,7 @@ class Print_i:
 
 class Print_f:
     def exe(self, obj):
-        print(f"{obj.rstack[obj.sp]}")
+        print(f"{obj.rstack[obj.sp]:.2f}")
         obj.sp -= 1
         obj.pc += 1
         return True
